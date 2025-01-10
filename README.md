@@ -32,6 +32,8 @@ A webapp that keeps track of your videogame library (manual or Steam API imports
 
 ### Jonathan
 
+My name is Jonathan, I am a senior majoring in computer science at Eastern Michigan University. I have the most experience coding in Java, but I have done some work in Javascript, Python, and C#. My passion is in backend development, as I enjoy seeing all the work put into a project pay off. I love hanging out with my friends, whether that means sitting around and chatting for hours on end, board games, or trying something new. 
+
 ### Eric
 
 ### Chris
