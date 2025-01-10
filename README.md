@@ -44,6 +44,8 @@ My name is Chris, I am a data science major senior at Eastern Michigan Universit
 
 ### Trevor
 
+My name is Trevor, I am a computer science major and a senior in my last semester at EMU. In my spare time I enjoy playing video games, going to the gym (when I can), and working on side projects. From my courses I have the most experience with Java, although I more so prefer the simplicity of Python along with using it for Machine Learning and neural networks. 
+
 ### Ethan
 
 ### Matt
