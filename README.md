@@ -49,3 +49,5 @@ My name is Trevor, I am a computer science major and a senior in my last semeste
 ### Ethan
 
 ### Matt
+
+Hey there! I'm Matt, but often go by Boonem. I'm a Computer Science Senior at EMU passionate about media and storytelling (including games!) as well as making innovative digital experiences, both practical and more creative. My other off-the-clock activities include enjoying the company of my favorite people and critters, losing myself in the world of a movie or game, or meddling with musicmaking. My idea for BoilerRoom originated as a simple spreadsheet to help traverse my overgrown library of untouched games, and I am excited to see the places our team will take it.
