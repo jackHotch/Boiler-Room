@@ -6,23 +6,23 @@
 
 #### Absence Policy:
 
-- Illness, Weather, Emergency when able be in discord during class time
+- Absences are excused in the case of illness, weather, or some other emergency preventing attendance. If able, absent members should be available in discord during class time.
 
 #### Ethic Policy:
 
-- If you purposefully and intentionally delete work you fail out.
+- Purposeful and Intentional deletion of work against the interests of the team will be reported to the instructor so that it can be considered against your grade.
 
 #### Language Policy:
 
-- None of us speak non english language
+- All current members are native English speakers and will use English in team communications.
 
 #### Code/Work Modification Guidelines:
 
-- Matthew and Jonathan will be in charge of final merges and conflict resolutions at either of their discretions
+- Matt and Jonathan will be in charge of resolving final merges and conflict resolutions at their discretion.
 
 #### Face Mask Policy:
 
-- If it gets bad again or if you are pushing through sickness wear a mask, otherwise up to personal choice.
+- In the event an infectious disease is widespread or you suspect you may have an infectious disease and/or are feeling sick, members will wear a mask. Otherwise, mask-wearing is up to personal choice.
 
 ## Project Description
 
