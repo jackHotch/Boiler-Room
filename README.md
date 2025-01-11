@@ -1,4 +1,4 @@
-# Steam Social
+# BoilerRoom
 
 ## Team Info
 
@@ -41,6 +41,8 @@ My name is Jonathan, I am a senior majoring in computer science at Eastern Michi
 My name is Chris, I am a data science major senior at Eastern Michigan University. This is my last semester before graduation. In my spare time I enjoy going to the gym as well as playing board games with my friends. When it comes to coding my prefered language is Python and I mostly work with webscraping/api collection tools as well as visualisations using that information.
 
 ### Jack
+
+My name is Jack, I am a Computer Science major in my last semester at Eastern. I like to work out, play video games, work on side projects, and hang out with my friends. Most of my experience in web development is in frontend which is what I enjoy the most but I have some backend experience as well. I haven't worked with 3rd party APIs much so I look forward to working on this project.
 
 ### Trevor
 
