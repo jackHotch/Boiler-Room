@@ -50,6 +50,8 @@ My name is Trevor, I am a computer science major and a senior in my last semeste
 
 ### Ethan
 
+My Name is Ethan, I am a senior Computer Science Major at Eastern Michigan University. My hobbies consist of going to the gym, extracurricular learning, listening to music, and collecting fragrances. Collecting fragrances is a niche that helps me appreciate the art of creativity and encourages me to explore different parts of myself. Most of my technical experience has been in front-end development, though I do have experience in the backend. My preferred language is Python, though I have a solid foundation in others such as Java, HTML, and Javascript.
+
 ### Matt
 
 Hey there! I'm Matt, but often go by Boonem. I'm a Computer Science Senior at EMU passionate about media and storytelling (including games!) as well as making innovative digital experiences, both practical and more creative. My other off-the-clock activities include enjoying the company of my favorite people and critters, losing myself in the world of a movie or game, or meddling with musicmaking. My idea for BoilerRoom originated as a simple spreadsheet to help traverse my overgrown library of untouched games, and I am excited to see the places our team will take it.
