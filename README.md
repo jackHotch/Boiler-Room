@@ -36,6 +36,8 @@ My name is Jonathan, I am a senior majoring in computer science at Eastern Michi
 
 ### Eric
 
+My name is Eric, and I am a second bachelor's student studying Computer Science at Eastern Michigan University. My primary programming languages are Python and Java, though I also have experience with several others. I come from a sports and coaching background, and I plan to leverage this experience, combined with my Computer Science degree, to create platforms and applications that enhance access to statistics tracking, video analysis, and other essential tools for athletes in underfunded programs.
+
 ### Chris
 
 My name is Chris, I am a data science major senior at Eastern Michigan University. This is my last semester before graduation. In my spare time I enjoy going to the gym as well as playing board games with my friends. When it comes to coding my prefered language is Python and I mostly work with webscraping/api collection tools as well as visualisations using that information.
