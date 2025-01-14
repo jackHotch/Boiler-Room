@@ -1,12 +1,12 @@
 import express from 'express'
 import pg from 'pg'
-const { Pool } = pg
 import cors from 'cors'
 import dotenv from 'dotenv'
+
+const { Pool } = pg
 dotenv.config()
 const app = express()
 const port = 8080
-
 app.use(express.json())
 app.use(cors())
 
