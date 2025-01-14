@@ -40,7 +40,7 @@ My name is Eric, and I am a second bachelor's student studying Computer Science 
 
 ### Chris
 
-My name is Chris, I am a data science major senior at Eastern Michigan University. This is my last semester before graduation. In my spare time I enjoy going to the gym as well as playing board games with my friends. When it comes to coding my prefered language is Python and I mostly work with webscraping/api collection tools as well as visualisations using that information.
+My name is Chris, I am a data science major senior at Eastern Michigan University. This is my last semester before graduation. In my spare time I enjoy going to the gym as well as playing board games with my friends. When it comes to coding, my prefered language is Python and I mostly work with webscraping/api collection tools as well as visualisations using that information.
 
 ### Jack
 
