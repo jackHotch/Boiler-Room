@@ -34,4 +34,10 @@ app.get('/supabase', async (req, res) => {
   res.send(rows[0].message)
 })
 
+app.get('/people', async(req, res) => {
+  const { rows } = await pool.query(`SELECT * FROM userstest`);
+  const peopleData = rows.map(row => row.people).join('\n');
+  res.send(peopleData);
+})
+
 export default app
