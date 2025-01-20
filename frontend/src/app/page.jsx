@@ -17,9 +17,10 @@ export default function Home() {
   return (
     <>
       <h1>This is the home page</h1>
-      <button onClick={() => router.push('/SingleGame')}>Go to single game page</button>
-      <button onClick={() => router.push('/DatabaseCon')}>Go to database test page</button>
-      <button onClick={handleClick}>click to fetch message</button>
+      <button onClick={() => router.push('/DatabaseCon')}>
+        Go to database test page
+      </button>
+      <button onClick={() => router.push('/Steam')}>Go to SteamAPI page</button>
       <p>{databaseMessage}</p>
     </>
   )
