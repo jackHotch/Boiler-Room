@@ -5,9 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon ./src/index.ts",
-    "start": "node ./dist/src/index.js",
+    "start": "node ./dist/index.js",
     "build": "tsc --build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -22,9 +22,14 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.6",
     "@types/pg": "^8.11.10",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
