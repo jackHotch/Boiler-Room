@@ -32,7 +32,7 @@ A webapp that keeps track of your videogame library (manual or Steam API imports
 
 ### Jonathan
 
-My name is Jonathan, I am a senior majoring in computer science at Eastern Michigan University. I have the most experience coding in Java, but I have done some work in Javascript, Python, and C#. My passion is in backend development, as I enjoy seeing all the work put into a project pay off. I love hanging out with my friends, whether that means sitting around and chatting for hours on end, board games, or trying something new. 
+My name is Jonathan, I am a senior majoring in computer science at Eastern Michigan University. I have the most experience coding in Java, but I have done some work in Javascript, Python, and C#. My passion is in backend development, as I enjoy seeing all the work put into a project pay off. I love hanging out with my friends and family, whether that means sitting around and chatting for hours on end, board games, or trying something new.
 
 ### Eric
 
@@ -48,7 +48,7 @@ My name is Jack, I am a Computer Science major in my last semester at Eastern. I
 
 ### Trevor
 
-My name is Trevor, I am a computer science major and a senior in my last semester at EMU. In my spare time I enjoy playing video games, going to the gym (when I can), and working on side projects. From my courses I have the most experience with Java, although I more so prefer the simplicity of Python along with using it for Machine Learning and neural networks. 
+My name is Trevor, I am a computer science major and a senior in my last semester at EMU. In my spare time I enjoy playing video games, going to the gym (when I can), and working on side projects. From my courses I have the most experience with Java, although I more so prefer the simplicity of Python along with using it for Machine Learning and neural networks.
 
 ### Ethan
 
