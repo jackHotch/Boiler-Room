@@ -1,0 +1,60 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  Frontend:
+    name: Frontend Build and Test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies in Frontend
+        run: npm install
+
+      - name: Build the Frontend
+        run: npm run build
+
+      - name: Test the Frontend
+        run: npm run test
+
+  Backend:
+    name: Backend Build and Test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies in Backend
+        run: npm install
+
+      - name: Build the Backend
+        run: npm run build
+
+      - name: Build the Backend
+        run: npm run test
