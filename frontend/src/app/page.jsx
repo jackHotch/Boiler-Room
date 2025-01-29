@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <>
-      <h1>This is the home page.</h1>
+      <h1>This is the home page......</h1>
       <button onClick={() => router.push('/DatabaseCon')}>
         Go to database test page
       </button>
