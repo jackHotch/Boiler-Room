@@ -1,5 +1,16 @@
 {
   "dependencies": {
-    "openid-client": "^6.1.7"
+    "axios": "^1.7.9",
+    "express-session": "^1.18.1",
+    "node-steam-openid": "^2.0.0",
+    "openid": "^2.0.12",
+    "openid-client": "^6.1.7",
+    "passport": "^0.7.0",
+    "passport-steam": "^1.0.18",
+    "steam-login": "^0.1.7",
+    "steam-signin": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/express-session": "^1.18.1"
   }
 }
