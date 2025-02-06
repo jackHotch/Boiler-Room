@@ -11,7 +11,6 @@ const { Pool } = pg
 const port = 8080
 const app = express();
 
-// ✅ Ensure this is placed BEFORE any routes
 app.use(session({
   secret: 'your_secret_key', // Change to a strong, random value
   resave: true,
