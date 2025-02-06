@@ -1,7 +1,9 @@
 'use client'
-
 import { useState } from 'react'
 import axios from 'axios'
+
+import SteamButton from '../../components/SteamButton/SteamButton'
+
 
 export default function Steam() {
   const [steamData, setsteamData] = useState([])
@@ -11,11 +13,10 @@ export default function Steam() {
     const data = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam')
     setsteamData(data.data)
   }
-
   return (
     <>
-      <h1>This is the home page</h1>
-      <button onClick={handleClick}>click to fetch data from steam</button>
+      <h1>This is the Steam Login page</h1>
+      <SteamButton />
       <table>
         <thead>
           <tr>
@@ -23,7 +24,6 @@ export default function Steam() {
             <th>Value</th>
           </tr>
         </thead>
-
         {steamData.map((game, key) => {
           return (
             <tbody key={key}>

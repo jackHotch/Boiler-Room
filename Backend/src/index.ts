@@ -11,6 +11,45 @@ const port = 8080
 app.use(express.json())
 app.use(cors())
 
+app.get('/auth/steam', (req, res) => {
+  const steamOpenIDUrl = 'https://steamcommunity.com/openid/login';
+  
+  const params = new URLSearchParams({
+    'openid.ns': 'http://specs.openid.net/auth/2.0',  // OpenID 2.0 namespace
+    'openid.mode': 'checkid_setup',  // Start the authentication process
+    'openid.return_to': 'http://localhost:8080/steam',  // Update this to match your backend port
+    'openid.realm': 'http://localhost:8080/steam',  // Your realm URL
+    'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',  // Steam OpenID identifier
+    'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select'  // Steam OpenID identity
+  });
+
+  // Construct the full URL
+  const authUrl = `${steamOpenIDUrl}?${params.toString()}`;
+  
+  // Redirect the user to Steam's OpenID login page
+  res.redirect(authUrl);
+});
+
+app.get('/steam', async(req, res) => {
+    console.log("Received query params:", req.query);
+    const queryParams = req.query;
+    const steamId = queryParams['openid.claimed_id'];
+
+    if (steamId) 
+      console.log("Steam Authentication Confirmed")
+    else 
+      res.status(400).send('Steam ID not found');
+   
+  let id = steamId.toString()
+  id = id.slice(id.lastIndexOf('/id/') + 4); // Adding 4 to skip "/id/"
+  const key = process.env.STEAM_API_KEY
+  const data = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${key}&steamid=${id}&format=json`)
+  res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2]])
+});
+
+
+
+
 // Connect to the database
 const pool = new Pool({
   connectionString: process.env.DB_URL,
@@ -42,11 +81,5 @@ app.get('/people', async(req, res) => {
   res.send(peopleData);
 })
 
-app.get('/steam', async (req, res) => {
-  const key = process.env.STEAM_API_KEY
-  const steamId = 76561199509790498n
-  const data = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true `)
-  res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2]])
-})
 
 export default app
