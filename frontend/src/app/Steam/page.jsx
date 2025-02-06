@@ -2,7 +2,9 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-import SteamButton from '../../components/SteamButton/SteamButton'
+import Login from '../../components/SteamComponents/Login'
+import Logout from '../../components/SteamComponents/Logout'
+import SteamIdDisplay from '../../components/SteamComponents/SteamIdDisplay'
 
 
 export default function Steam() {
@@ -10,20 +12,29 @@ export default function Steam() {
 
   async function handleClick() {
     // fetch data from the backend
-    const data = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam')
-    setsteamData(data.data)
+    const gameResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/fetchRecent`, {
+      withCredentials: true, // Important for sessions!
+    });
+
+    setsteamData(gameResponse.data)
   }
   return (
     <>
       <h1>This is the Steam Login page</h1>
-      <SteamButton />
-      <table>
+      <button onClick={handleClick}>Fetch Recent Games</button>
+      
+      <Login />
+      <Logout />
+      <SteamIdDisplay />
+      
+          <table>
         <thead>
           <tr>
             <th>Property</th>
             <th>Value</th>
           </tr>
         </thead>
+
         {steamData.map((game, key) => {
           return (
             <tbody key={key}>
