@@ -1,45 +1,55 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SteamIdDisplay =() => {
+import Login from '../../components/SteamComponents/Login'
+import Logout from '../../components/SteamComponents/Logout'
+
+const SteamIdDisplay = () => {
   const [steamId, setSteamId] = useState(null); // For storing Steam ID
   const [steamName, setSteamName] = useState(null); // For storing Steam account name
   const [loading, setLoading] = useState(true); // For loading state
   const [error, setError] = useState(null); // For error state
 
   useEffect(() => {
-    async function fetchSteamData() {
+    async function fetchProfileData() {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/getSteamId`, {
-          withCredentials: true, // Ensure cookies are sent
+        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo', {
+          withCredentials: true,  // Ensure credentials (cookies) are sent
         });
-
-        // Set the Steam ID and name in state
+        
+        console.log('Response Data:', response.data); // Check what data is returned
+          
         setSteamId(response.data.steamId || "None");
         setSteamName(response.data.steamName || "None");
       } catch (error) {
         console.error('Error fetching Steam ID:', error);
         setError('Not Logged In');
       } finally {
-        setLoading(false); // End loading state
+        setLoading(false);  // End loading state
       }
     }
-
-    fetchSteamData();
-  }, []); // Empty array ensures it runs only once after component mounts
+  
+    fetchProfileData();
+  }, []); // Empty array ensures this runs only once on mount
 
   return (
     <div style={styles.container}>
-      {loading ? (
-        <p style={styles.loadingText}>Loading Steam data...</p>  // Show loading message
-      ) : error ? (
-        <p style={styles.errorText}>{error}</p>  // Show error message
-      ) : (
-        <div style={styles.infoContainer}>
-          <p style={styles.steamInfo}><strong>Steam ID:</strong> {steamId}</p>
-          <p style={styles.steamInfo}><strong>Steam Account Name:</strong> {steamName}</p>
-        </div>
-      )}
+      <div style={styles.infoContainer}>
+        {loading ? (
+          <p style={styles.loadingText}>Loading Steam data...</p>  // Show loading message
+        ) : error ? (
+          <>
+            <p style={styles.errorText}>{error}</p>  {/* Show error message */}
+            <Login />  {/* Show login button */}
+          </>
+        ) : (
+          <>
+            <p style={styles.steamInfo}><strong>Steam ID:</strong> {steamId}</p>
+            <p style={styles.steamInfo}><strong>Steam Account Name:</strong> {steamName}</p>
+            <Logout />  {/* Show logout button */}
+          </>
+        )}
+      </div>
     </div>
   );
 };
@@ -54,7 +64,7 @@ const styles = {
     alignItems: 'center',
     position: 'absolute',
     top: '10px', // Set the distance from the top
-    right: '60%', // Set the distance from the right
+    right: '5%', // Set the distance from the right
     zIndex: 1000, // Ensure it stays on top of other elements
   },
   loadingText: {
@@ -80,4 +90,5 @@ const styles = {
     margin: '10px 0',
   },
 };
+
 export default SteamIdDisplay;

@@ -1,22 +1,30 @@
 import pg from 'pg'
 import cors from 'cors'
-import { None } from 'openid-client';
 const express = require('express');
 const session = require('express-session');
-const axios = require('axios');
-const dotenv = require('dotenv');
+import axios from 'axios';
+import dotenv from 'dotenv';
+
 dotenv.config();
 
 const { Pool } = pg
 const port = 8080
 const app = express();
 
-app.use(session({
-  secret: 'your_secret_key', // Change to a strong, random value
-  resave: true,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set to true only if using HTTPS
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,  // Use true for HTTPS in production
+      httpOnly: true, // Prevent access to the cookie from JavaScript
+      sameSite: 'lax', // Allow cookies in cross-origin requests
+      maxAge: 1000 * 60 * 60 * 24, // Session expires in 24 hours
+    },
+  })
+);
+
 
 app.use(express.json()); // Support for JSON bodies
 app.use(express.urlencoded({ extended: true })); // Support URL-encoded bodies
@@ -27,6 +35,9 @@ app.use(cors({
   credentials: true // Allows sending cookies/sessions
 }));
 
+
+
+// Go through steams open id process
 app.get('/auth/steam', (req, res) => {
   const steamOpenIDUrl = 'https://steamcommunity.com/openid/login';
   
@@ -46,31 +57,72 @@ app.get('/auth/steam', (req, res) => {
   res.redirect(authUrl);
 });
 
+// Receives steam open id data and extracts the steam id of the authed user
+// Stores in express session for 24-hours
+app.get('/steam', async (req, res) => {
+  console.log("Received query params:", req.query);
+  const queryParams = req.query;
+  const steamId = queryParams['openid.claimed_id'];
 
-app.get('/steam', (req, res) => {
-    console.log("Received query params:", req.query);
-    const queryParams = req.query;
-    const steamId = queryParams['openid.claimed_id'];
+  if (!steamId) 
+    return res.status(400).send('Steam ID not found');
 
-    if (steamId) 
-      console.log("Steam Authentication Confirmed")
-    else 
-      res.status(400).send('Steam ID not found');
-   
-  let id = steamId.toString()
+  let id = steamId.toString();
   id = id.slice(id.lastIndexOf('/id/') + 4); // Adding 4 to skip "/id/"
-  req.session.steamId = id;
-  console.log(req.session.steamId + " : " + id)
-  res.redirect("http://localhost:3000/Steam")
+
+  // Fetch the steamName asynchronously and store it in the session
+  try {
+    const response = await axios.get('http://localhost:8080/steam/username', {
+      params: { steamid: id }  // Send the steamid in the request
+    });
+
+    const steamName = response.data.username || 'Unknown'; // Extract the username
+    req.session.steamId = id;
+    req.session.steamName = steamName;
+
+    console.log("Steam ID Authenticated: " + req.session.steamId);
+    res.redirect("http://localhost:3000");
+  } catch (error) {
+    console.error('Error fetching Steam username:', error);
+    res.status(500).send('Error fetching Steam username');
+  }
+});
+
+app.get('/steam/username', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId;
+
+  if (!steamId) {
+    return res.status(400).send('Steam ID is required');
+  }
+
+  try {
+    const response = await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`, {
+      params: {
+        key: process.env.STEAM_API_KEY,
+        steamids: steamId
+      }
+    });
+
+    const username = response.data.response.players[0]?.personaname; // Extracting the username
+    console.log('Fetched username:', username);
+
+    if (username) {
+      res.json({ username });
+    } else {
+      res.status(404).send('Username not found');
+    }
+  } catch (error) {
+    console.error('Error fetching Steam username:', error);
+    res.status(500).send('Error fetching Steam username');
+  }
 });
 
 
-app.get('/fetchRecent', async (req, res) => {
-    console.log(req.session.steamId )
-  console.log("Session Data:", req.session); // Log session info
 
+
+app.get('/fetchRecent', async (req, res) => {
   if (!req.session.steamId) {
-    return res.status(400).send('Steam ID not found in session');
+    res.status(400).send('Steam ID not found in session');
   }
 
   const steamId = req.session.steamId;
@@ -89,52 +141,37 @@ app.get('/fetchRecent', async (req, res) => {
     res.send(games);
   } catch (error) {
     console.error("Error fetching Steam data:", error);
-    res.status(500).send('Error fetching Steam data');
+    res.redirect("http://localhost:3000");
   }
 });
 
 
 app.get('/steam/logout', (req, res) => {
-  console.log(req.session.steamId )
-  console.log("Session Data:", req.session); // Log session info
+  console.log(req.session.steamId);
+  console.log("Session Data:", req.session);
 
   if (req.session.steamId) {
-     req.session.steamId = None
+    req.session.steamId = null; 
+    req.session.username = null; 
   }
-  res.redirect('/getSteamId')
-});
+    
+ // Redirect the user back to the referring page
+ res.redirect('http://localhost:3000');});
 
-app.get('/getSteamId', async (req, res) => {
-  if (req.session.steamId) {
-    try {
-      const steamId = req.session.steamId;
-      const key = process.env.STEAM_API_KEY; // Ensure your API key is set in .env
 
-      // Fetch the player's summary data using Steam API
-      const { data } = await axios.get(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/`, {
-        params: {
-          key: key,
-          steamids: steamId,
-        }
-      });
-
-      const player = data.response.players[0];
-      if (player) {
-        const steamName = player.personaname;  // Get the Steam account name
-        res.json({ steamId, steamName });
-      } else {
-        res.status(400).send('Player not found');
-      }
-    } catch (error) {
-      console.error('Error fetching Steam player summary:', error);
-      res.status(500).send('Error fetching player summary');
-    }
-  } else {
-    res.redirect("http://localhost:3000/Steam")
+ // Used for fetching display card info after login
+ app.get('/steam/getdisplayinfo', async (req, res) => {
+  if (req.session.steamId && req.session.steamName) {
+    // If Steam ID and name are in the session, return them
+    return res.json({
+      steamId: req.session.steamId,
+      steamName: req.session.steamName,
+    });
+  
   }
+  res.redirect('http://localhost:3000');
 });
-
-
+  
 // Connect to the database
 const pool = new Pool({
   connectionString: process.env.DB_URL,

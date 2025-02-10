@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import Login from '../components/SteamComponents/Login'
+import Logout from '../components/SteamComponents/Logout'
+import SteamIdDisplay from '../components/SteamComponents/SteamIdDisplay'
 
 export default function Home() {
   const [databaseMessage, setdatabaseMessage] = useState('')
@@ -16,6 +19,7 @@ export default function Home() {
 
   return (
     <>
+      <SteamIdDisplay />    
       <h1>This is the home page.</h1>
       <button onClick={() => router.push('/DatabaseCon')}>
         Go to database test page
