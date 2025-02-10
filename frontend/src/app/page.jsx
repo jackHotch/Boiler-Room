@@ -14,6 +14,17 @@ export default function Home() {
     setdatabaseMessage(data.data)
   }
 
+  async function getRandomGameIds() {
+    try {
+        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/games');
+        console.log("Random game IDs:", response.data);
+    } catch (error) {
+        console.error("Error fetching game IDs:", error);
+    }
+    
+}
+
+
   return (
     <>
       <h1>This is the home page.</h1>
@@ -22,6 +33,7 @@ export default function Home() {
       </button>
       <button onClick={() => router.push('/Steam')}>Go to SteamAPI page</button>
       <p>{databaseMessage}</p>
+      <button onClick = {getRandomGameIds}> Get random images </button>
     </>
   )
 }

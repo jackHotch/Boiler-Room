@@ -30,23 +30,35 @@ app.get('/test', (req, res) => {
   res.json({ message: 'this is a test from the backend' })
 })
 
-app.get('/supabase', async (req, res) => {
-  const { rows } = await pool.query(`SELECT * FROM test`)
-  res.send(rows[0].message)
-})
+// app.get('/supabase', async (req, res) => {
+//   const { rows } = await pool.query(`SELECT * FROM test`)
+//   res.send(rows[0].message)
+// })
 
 
-app.get('/people', async(req, res) => {
-  const { rows } = await pool.query(`SELECT * FROM userstest`);
-  const peopleData = rows.map(row => row.people).join('\n');
-  res.send(peopleData);
+// app.get('/people', async(req, res) => {
+//   const { rows } = await pool.query(`SELECT * FROM userstest`);
+//   const peopleData = rows.map(row => row.people).join('\n');
+//   res.send(peopleData);
+// })
+
+app.get('/games', async(req, res) => {
+  try {
+    const { rows } = await pool.query(`SELECT "header_image" FROM "Games" LIMIT 3`);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching game IDs:", error);
+    res.status(500).json({ error: error.message });
+  }
 })
 
 app.get('/steam', async (req, res) => {
   const key = process.env.STEAM_API_KEY
-  const steamId = 76561199509790498n
+  const steamId = 76561198312573287n
   const data = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true `)
-  res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2]])
+  const gamesList = [...data.data.response.games];
+  res.send(gamesList)
+  //res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2], data.data.response.games[3]])
 })
 
 export default app
