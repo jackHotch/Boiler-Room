@@ -9,7 +9,7 @@ const LandingPage = () => {
                     <h1 className={styles.logo}>Boiler Room</h1>
                     <nav>
                         <ul className={styles.navList}>
-                            <li><a href="#" className={styles.navLink}>Sign In</a></li>
+                            <li><a href="http://localhost:8080/auth/steam" className={styles.navLink}>Sign In</a></li>
                             <li><a href="#" className={styles.navLink}>Sign Up</a></li>
                         </ul>
                     </nav>
