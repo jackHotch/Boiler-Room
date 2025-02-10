@@ -120,7 +120,7 @@ app.get('/steam/username', async (req, res) => {
 
 
 
-app.get('/fetchRecent', async (req, res) => {
+app.get('/steam/recent', async (req, res) => {
   if (!req.session.steamId) {
     res.status(400).send('Steam ID not found in session');
   }
