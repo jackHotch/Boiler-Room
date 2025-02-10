@@ -49,11 +49,6 @@ app.get('/steam', async (req, res) => {
   res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2]])
 })
 
-// app.get('/ball', async (req, res) => {
-//   const login_ret_code = await checkAccount('76561199509790498')
-//   res.json({code:login_ret_code})
-// })
-
 async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
