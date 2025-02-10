@@ -63,8 +63,8 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    top: '10px', // Set the distance from the top
-    right: '5%', // Set the distance from the right
+    top: '15%', // Set the distance from the top
+    right: '0%', // Set the distance from the right
     zIndex: 1000, // Ensure it stays on top of other elements
   },
   loadingText: {

@@ -1,31 +1,57 @@
-'use client'
+import React from 'react';
+import styles from './Home.module.css';
 
-import { useState } from 'react'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
-import Login from '../components/SteamComponents/Login'
-import Logout from '../components/SteamComponents/Logout'
-import SteamIdDisplay from '../components/SteamComponents/SteamIdDisplay'
+const LandingPage = () => {
+    return (
+        <div className={styles.container}>
+            <header className={styles.header}>
+                <div className={styles.navContainer}>
+                    <h1 className={styles.logo}>Boiler Room</h1>
+                    <nav>
+                        <ul className={styles.navList}>
+                            <li><a href="http://localhost:8080/auth/steam" className={styles.navLink}>Sign In</a></li>
+                            <li><a href="#" className={styles.navLink}>Sign Up</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
 
-export default function Home() {
-  const [databaseMessage, setdatabaseMessage] = useState('')
-  const router = useRouter()
+            <section className={styles.hero}>
+                <div className={styles.heroOverlay}>
+                    <div className={styles.heroContent}>
+                        <h2 className={styles.heroTitle}>Welcome to Boiler Room</h2>
+                        <p className={styles.heroSubtitle}>Discover, play, and share amazing games.</p>
+                        <a href="#" className={styles.exploreButton}>Explore Now</a>
+                    </div>
+                </div>
+            </section>
 
-  async function handleClick() {
-    // fetch data from the backend
-    const data = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/supabase')
-    setdatabaseMessage(data.data)
-  }
+            <section className={styles.featuredGames}>
+                <h3 className={styles.sectionTitle}>Featured Games</h3>
+                <div className={styles.gamesGrid}>
+                    <div className={styles.gameCard}>
+                        <img src="https://via.placeholder.com/300x200" alt="Game 1" className={styles.gameImage} />
+                        <h4 className={styles.gameTitle}>Game Title 1</h4>
+                        <p className={styles.gameDescription}>An exciting adventure awaits.</p>
+                    </div>
+                    <div className={styles.gameCard}>
+                        <img src="https://via.placeholder.com/300x200" alt="Game 2" className={styles.gameImage} />
+                        <h4 className={styles.gameTitle}>Game Title 2</h4>
+                        <p className={styles.gameDescription}>Experience the thrill of action.</p>
+                    </div>
+                    <div className={styles.gameCard}>
+                        <img src="https://via.placeholder.com/300x200" alt="Game 3" className={styles.gameImage} />
+                        <h4 className={styles.gameTitle}>Game Title 3</h4>
+                        <p className={styles.gameDescription}>A journey you won't forget.</p>
+                    </div>
+                </div>
+            </section>
 
-  return (
-    <>
-      <SteamIdDisplay />    
-      <h1>This is the home page.</h1>
-      <button onClick={() => router.push('/DatabaseCon')}>
-        Go to database test page
-      </button>
-      <button onClick={() => router.push('/Steam')}>Go to SteamAPI page</button>
-      <p>{databaseMessage}</p>
-    </>
-  )
-}
+            <footer className={styles.footer}>
+                &copy; 2025 Boiler Room. All rights reserved.
+            </footer>
+        </div>
+    );
+};
+
+export default LandingPage;
