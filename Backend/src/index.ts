@@ -11,6 +11,12 @@ const { Pool } = pg
 const port = 8080
 const app = express();
 
+// Connect to the database
+const pool = new Pool({
+  connectionString: process.env.DB_URL,
+})
+pool.connect()
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key',
@@ -171,12 +177,16 @@ app.get('/steam/logout', (req, res) => {
   }
   res.redirect('http://localhost:3000');
 });
-  
-// Connect to the database
-const pool = new Pool({
-  connectionString: process.env.DB_URL,
+
+app.get('/steam/friendsList', async (req, res) => {
+  if (req.session.steamId) {
+    const steamId = req.session.steamId
+    const API_KEY = process.env.STEAM_API_KEY
+    const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
+    res.json(data.data.friendslist.friends)
+  }
+  res.redirect('http://localhost:3000')
 })
-pool.connect()
 
 // Endpoints
 app.listen(port, () => {
@@ -185,10 +195,6 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
   res.send('hello')
-})
-
-app.get('/test', (req, res) => {
-  res.json({ message: 'this is a test from the backend' })
 })
 
 app.get('/supabase', async (req, res) => {
