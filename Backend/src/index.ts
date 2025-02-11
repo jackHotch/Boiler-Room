@@ -131,7 +131,7 @@ app.get('/steam/recentgames', async (req, res) => {
     res.status(400).send('Steam ID not found in session');
   }
 
-  const steamId = req.session.steamId;
+  const steamId = req.query.steamid || req.session.steamId;
   const key = process.env.STEAM_API_KEY;
 
   try {
@@ -181,7 +181,6 @@ app.get('/steam/logout', (req, res) => {
 app.get('/steam/friendsList', async (req, res) => {
   if (req.session.steamId) {
     const steamId = req.session.steamId
-    console.log("hello" + steamId)
     const API_KEY = process.env.STEAM_API_KEY
     const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
     return res.json(data.data.friendslist.friends)
