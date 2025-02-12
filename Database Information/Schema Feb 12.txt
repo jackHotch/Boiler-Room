@@ -15,7 +15,7 @@ create table Games (
 	platform int, --stores whether or not the game is available linux, macOS, or Windows by adding a score of 1,2, or 4 respectively. 7 is all 3
 	metacritic_score int, --stores the metacritic score if one was given
 	released date, -- stores the date the game was released even if it is in the future
-	price float, --stores the price as a 2 digit decimal
+	price float, --stores the price as a 2 digit decimal in USD
 	hltb_score float, --stores "how long to beat" the game
 	recommendations int, --stores how many people recommend the game on steam
 	description text, --stores a short description of the 
