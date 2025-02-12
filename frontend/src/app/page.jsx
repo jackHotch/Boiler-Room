@@ -1,9 +1,32 @@
-import React from 'react';
+'use client'
+import React, {useEffect, useState} from 'react';
 import styles from './Home.module.css';
 
 const LandingPage = () => {
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/games'); // Use the backend port
+    
+        // Ensure the response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server did not return JSON');
+        }
+    
+        const data = await response.json();
+        setGames(data);
+      } catch (error) {
+        console.error('Error fetching game images:', error);
+      }
+    };
+    fetchGames();
+  }, []);
+
     return (
-        <div className={styles.container}>
+        <div className={styles.container}>  
             <header className={styles.header}>
                 <div className={styles.navContainer}>
                     <h1 className={styles.logo}>Boiler Room</h1>
@@ -29,21 +52,13 @@ const LandingPage = () => {
             <section className={styles.featuredGames}>
                 <h3 className={styles.sectionTitle}>Featured Games</h3>
                 <div className={styles.gamesGrid}>
-                    <div className={styles.gameCard}>
-                        <img src="https://via.placeholder.com/300x200" alt="Game 1" className={styles.gameImage} />
-                        <h4 className={styles.gameTitle}>Game Title 1</h4>
-                        <p className={styles.gameDescription}>An exciting adventure awaits.</p>
-                    </div>
-                    <div className={styles.gameCard}>
-                        <img src="https://via.placeholder.com/300x200" alt="Game 2" className={styles.gameImage} />
-                        <h4 className={styles.gameTitle}>Game Title 2</h4>
-                        <p className={styles.gameDescription}>Experience the thrill of action.</p>
-                    </div>
-                    <div className={styles.gameCard}>
-                        <img src="https://via.placeholder.com/300x200" alt="Game 3" className={styles.gameImage} />
-                        <h4 className={styles.gameTitle}>Game Title 3</h4>
-                        <p className={styles.gameDescription}>A journey you won't forget.</p>
-                    </div>
+                    {games.map((game, index) => (
+                        <div key={index} className={styles.gameCard}>
+                            <img src={game.header_image} alt={game.name} className={styles.gameImage} />
+                            <h4 className={styles.gameTitle}>{game.name}</h4>
+                            <p className={styles.gameDescription}>An exciting adventure awaits.</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 

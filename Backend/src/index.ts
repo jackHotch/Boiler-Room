@@ -44,13 +44,14 @@ app.get('/test', (req, res) => {
 
 app.get('/games', async(req, res) => {
   try {
-    const { rows } = await pool.query(`SELECT "header_image" FROM "Games" LIMIT 3`);
+    const { rows } = await pool.query(`SELECT "name", "header_image" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching game IDs:", error);
     res.status(500).json({ error: error.message });
   }
 })
+
 
 app.get('/steam', async (req, res) => {
   const key = process.env.STEAM_API_KEY
