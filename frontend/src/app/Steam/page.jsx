@@ -11,7 +11,7 @@ export default function Steam() {
   async function handleClick() {
     // fetch data from the backend
     const gameResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/steam/recentgames`, {
-      withCredentials: true, // Important for sessions!
+      withCredentials: true, // pass session credentials
     });
 
     setsteamData(gameResponse.data)
