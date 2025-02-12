@@ -28,7 +28,6 @@ app.use(
 
 app.use(express.json()); // Support for JSON bodies
 app.use(express.urlencoded({ extended: true })); // Support URL-encoded bodies
-app.use(express.json())
 
 app.use(cors({
   origin: "http://localhost:3000",
