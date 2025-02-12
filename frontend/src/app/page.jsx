@@ -48,7 +48,7 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
-
+           
             <section className={styles.featuredGames}>
                 <h3 className={styles.sectionTitle}>Featured Games</h3>
                 <div className={styles.gamesGrid}>
@@ -56,7 +56,7 @@ const LandingPage = () => {
                         <div key={index} className={styles.gameCard}>
                             <img src={game.header_image} alt={game.name} className={styles.gameImage} />
                             <h4 className={styles.gameTitle}>{game.name}</h4>
-                            <p className={styles.gameDescription}>An exciting adventure awaits.</p>
+                            <p className={styles.gameDescription}>{game.description}</p>
                         </div>
                     ))}
                 </div>
