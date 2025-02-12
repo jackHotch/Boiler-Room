@@ -44,7 +44,7 @@ app.get('/test', (req, res) => {
 
 app.get('/games', async(req, res) => {
   try {
-    const { rows } = await pool.query(`SELECT "description", "name", "header_image" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
+    const { rows } = await pool.query(`SELECT "game_id", "description", "name", "header_image" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching game IDs:", error);

@@ -54,7 +54,9 @@ const LandingPage = () => {
                 <div className={styles.gamesGrid}>
                     {games.map((game, index) => (
                         <div key={index} className={styles.gameCard}>
+                          <a href = {`https://store.steampowered.com/app/${game.game_id}`}> 
                             <img src={game.header_image} alt={game.name} className={styles.gameImage} />
+                          </a>
                             <h4 className={styles.gameTitle}>{game.name}</h4>
                             <p className={styles.gameDescription}>{game.description}</p>
                         </div>
