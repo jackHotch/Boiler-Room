@@ -5,18 +5,31 @@ import GameTable from '@/components/GameDisplays/GameTable/GameTable';
 
 export default function Dashboard() {
     
+    {/*A component for some filters should eventually go here*/}
+
+
     {/*some placeholder games for now*/}
-    const featuredGames = [
-    {cover:"https://steamcdn-a.akamaihd.net/steam/apps/753640/library_600x900_2x.jpg", label : "Quick Pick"},
-    {cover:"https://steamcdn-a.akamaihd.net/steam/apps/632360/library_600x900_2x.jpg", label : "Acclaimed Classic"},
-    {cover:"https://steamcdn-a.akamaihd.net/steam/apps/1145360/library_600x900_2x.jpg", label : "Hidden Gem"}
+    const games = [
+        {appId:753640},
+        {appId:632360},
+        {appId:1145360}
+    ]
+
+    const featuredGames = games.slice(0,3);
+
+    {/*some example/potential default categories for the featured games, 
+        can be changed according to user prefs*/}
+    const featuredCategories = [
+        {label : "Quick Pick"},
+        {label : "Acclaimed Classic"},
+        {label : "Hidden Gem"}
     ]
     
     return (
         <div className={styles.container}>
             <h1 className={styles.header}>Dashboard</h1>
             <section className={styles.featuredGames}>
-                <DashGameGallery games={featuredGames}/>
+                <DashGameGallery games={featuredGames} categories={featuredCategories}/>
             </section>
             <section className={styles.otherGames}>
                 <GameTable games="placeholder"/> {/*change value of games when available*/}
