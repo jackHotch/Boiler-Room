@@ -82,7 +82,13 @@ async function checkAccount(steamId) {
   } catch (error) {
       console.error("Error fetching Steam API:", error.message);
   }
-
+/*
+retVal:
+ = 3 - account is all public and good to go
+ = 2 - game details public, not friends list
+ = 1 - friends list public, not game details
+ = 0 - nothing public
+*/ 
   return retVal;
 }
 
