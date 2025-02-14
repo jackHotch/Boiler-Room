@@ -26,18 +26,28 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 200px;
+  width: auto; /* Remove fixed width */
+  min-width: 200px; /* Ensures it has at least some width */
+  max-width: 100%; /* Allows it to expand */
 }
 
 .cover {
   background-color: #2d3748;
   width: 100%;
-  height: 250px;
+  min-height: 250px; /* Ensures it doesn’t collapse */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
   border-radius: 8px;
+  overflow: hidden; /* Ensures images don’t break the layout */
+}
+
+.cover img {
+  width: 100%;
+  height: auto; /* Maintains aspect ratio */
+  max-height: 100%; /* Prevents it from growing too large */
+  object-fit: contain; /* Ensures the whole image fits without distortion */
+  display: block;
 }
 
 .gameInfo {
@@ -70,6 +80,18 @@
 
 .gameSummary {
   grid-column: 1 / 2;
+  background-color: #2d3748;
+  padding: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  
+  /* Fixed height and scroll */
+  height: 150px; /* Adjust this as needed */
+  overflow-y: auto; /* Enables scrolling if text overflows */
 }
 
 .ratings {

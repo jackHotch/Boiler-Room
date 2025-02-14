@@ -47,16 +47,16 @@ const SingleGamePage = () => {
         {/* Left Column */}
         <div className={styles.gameLeft}>
           <img className={styles.cover} src={game.header_image} alt={game.name} />
-          <div className={styles.gameInfo}>Additional game info here</div>
+          <div className={styles.gameInfo}>Number of recommendations: {game.recommendations}</div>
         </div>
 
         {/* Right Column */}
         <div className={styles.gameRight}>
-          <div className={styles.gameSummary}>Game Summary</div>
-          <div className={styles.ratings}>Ratings</div>
-          <div className={styles.reviews}>Reviews/Discussion</div>
-          <div className={styles.playStatus}>Rate/Mark Play Status</div>
-          <div className={styles.writeReview}>Write a review/post</div>
+          <div className={styles.gameSummary}>{game.description}</div>
+          <div className={styles.ratings}>Metacritic Rating: {game.metacritic_score}/100</div>
+          <div className={styles.reviews}>Release Date: {game.released}</div>
+          <div className={styles.playStatus}>How long to Beat score: {game.hltb_score}</div>
+          <div className={styles.writeReview}>Platforms: {game.platform}</div>
         </div>
       </div>
     </div>

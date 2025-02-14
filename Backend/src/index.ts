@@ -53,25 +53,26 @@ app.get("/games", async (req, res) => {
   }
 });
 
-// app.get("/games/:gameid", async (req, res) => {
-//   const { gameid } = req.params;
+app.get("/games/:gameid", async (req, res) => {
+  const { gameid } = req.params;
 
-//   try {
-//     const { rows } = await pool.query(
-//       `SELECT "name", "header_image" FROM "Games" WHERE "game_id" = $1`,
-//       [gameid]
-//     );
+  try {
+    const { rows } = await pool.query(
+      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", "price", "metacritic_score", "released", "platform"  FROM "Games" WHERE "game_id" = $1`,
+      [gameid]
+    );
 
-//     if (rows.length === 0) {
-//       return res.status(404).json({ error: "Game not found" });
-//     }
-
-//     res.json(rows[0]);
-//   } catch (error) {
-//     console.error("Error fetching game:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Game not found" });
+    } else {
+      //console.log("Game data from DB:", rows[0]); // Debugging
+      res.json(rows[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching game:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.get("/steam", async (req, res) => {
   const key = process.env.STEAM_API_KEY;
