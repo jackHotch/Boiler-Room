@@ -1,0 +1,66 @@
+'use client';
+import React, { useEffect, useState } from 'react';
+import styles from './SingleGame.module.css';
+import { useParams } from 'next/navigation';
+
+const SingleGamePage = () => {
+  const { gameid } = useParams(); // Get game ID from dynamic route
+  const [game, setGame] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/games/${gameid}`); // Backend route
+
+        // Ensure the response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server did not return JSON');
+        }
+
+        const data = await response.json();
+        setGame(data);
+      } catch (error) {
+        console.error('Error fetching game details:', error);
+        setError('Failed to load game details.');
+      }
+    };
+
+    if (gameid) {
+      fetchGame();
+    }
+  }, [gameid]);
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
+
+  if (!game) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
+
+  return (
+    <div className={styles.singleGameContainer}>
+      <h1 className={styles.gameTitle}>{game.name}</h1>
+      <div className={styles.gameContent}>
+        {/* Left Column */}
+        <div className={styles.gameLeft}>
+          <img className={styles.cover} src={game.header_image} alt={game.name} />
+          <div className={styles.gameInfo}>Additional game info here</div>
+        </div>
+
+        {/* Right Column */}
+        <div className={styles.gameRight}>
+          <div className={styles.gameSummary}>Game Summary</div>
+          <div className={styles.ratings}>Ratings</div>
+          <div className={styles.reviews}>Reviews/Discussion</div>
+          <div className={styles.playStatus}>Rate/Mark Play Status</div>
+          <div className={styles.writeReview}>Write a review/post</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SingleGamePage;
