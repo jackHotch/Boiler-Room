@@ -1,7 +1,51 @@
 .container{
-
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ width: 100vw;
+ gap: 8px;
+ font-family: Arial, sans-serif;
 }
 
 .list_of_friends {
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.friend_info {
+  background-color: #051227;
+  padding: 16px;
+  border-radius: 12px;
+  width: 60%;
+}
+
+.username {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.recent_game_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recent_game {
+  background-color: #0a1c3a;
+  border: 1px solid #0f335f;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+}
+
+.recent_game span {
+  color: #ddd;
+  font-size: 1rem;
 }

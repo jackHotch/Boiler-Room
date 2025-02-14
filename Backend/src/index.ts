@@ -110,7 +110,6 @@ app.get('/steam/username', async (req, res) => {
     });
 
     const username = response.data.response.players[0]?.personaname; // Extracting the username
-    console.log('Fetched username:', username);
 
     if (username) {
       res.json({ username });

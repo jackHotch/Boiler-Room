@@ -3,9 +3,11 @@
 import styles from './Friends.module.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Link from 'next/link'
 
 export default function page() {
   const [friendsInfo, setFriendsInfo] = useState([])
+  const [loading, setLoading] = useState(true)
 
   async function fetchFriendsList() {
     try {
@@ -52,6 +54,8 @@ export default function page() {
         })
       } catch (error) {
         console.error('Error Fetching Friends Info:', error)
+      } finally {
+        setLoading(false)
       }
     }
     return friendsInfoList
@@ -71,21 +75,28 @@ export default function page() {
     <div className={styles.container}>
       <h1>Your Friends</h1>
       <div className={styles.list_of_friends}>
-        {friendsInfo?.map((friend, key) => {
-          return (
-            <div key={key}>
-              <h4>{friend.username}</h4>
-              {friend.recentGames?.map((game, key) => {
-                return (
-                  <div key={key}>
-                    <p>{game.name}</p> <p>{game.playtime_forever}</p>
+        {loading
+          ? 'Fetching Friends Data...'
+          : friendsInfo?.map((friend, key) => {
+              return (
+                <div className={styles.friend_info} key={key}>
+                  <h4 className={styles.username}>{friend.username}</h4>
+
+                  <div className={styles.recent_game_list}>
+                    {friend.recentGames?.map((game, key) => {
+                      return (
+                        <Link className={styles.recent_game} key={key} href='/SingleGame'>
+                          <span>{game.name}</span>
+                          <span>
+                            {Math.round(game.playtime_forever / 60)} hours played
+                          </span>
+                        </Link>
+                      )
+                    })}
                   </div>
-                )
-              })}
-              <br />
-            </div>
-          )
-        })}
+                </div>
+              )
+            })}
       </div>
     </div>
   )
