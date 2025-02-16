@@ -16,6 +16,16 @@ const GameTable = ({games}) => {
                         <th>Played?</th>
                     </tr>
                     {/* add map function for creating rows for games here*/}
+                    {games.map((game) => (
+                        <tr key={game.appId}>
+                            <td>GameTitle</td>
+                            <td>3 {/*placeholder for actual rating*/}</td>
+                            <td>32 {/*placeholder for actual length*/} Hrs</td>
+                            <td>100 {/*placeholder for actual BOIL*/}</td>
+                            <td><a href={'https://store.steampowered.com/app/' + game.appId}>Steam</a></td>
+                            <td><input type="checkbox" /></td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>

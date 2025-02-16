@@ -11,11 +11,11 @@ export default function Dashboard() {
     {/*some placeholder games for now*/}
     const games = [
         {appId:753640},
-        {appId:632360},
-        {appId:1145360}
+        {appId:1145360},
+        {appId:632360}
     ]
 
-    const featuredGames = games.slice(0,3);
+    const featuredGames = games.slice(0,3); {/*use the first 3 games for featured games*/}
 
     {/*some example/potential default categories for the featured games, 
         can be changed according to user prefs*/}
@@ -32,7 +32,7 @@ export default function Dashboard() {
                 <DashGameGallery games={featuredGames} categories={featuredCategories}/>
             </section>
             <section className={styles.otherGames}>
-                <GameTable games="placeholder"/> {/*change value of games when available*/}
+                <GameTable games={games}/> {/*change value of games when available*/}
             </section>
         </div>
 );
