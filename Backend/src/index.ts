@@ -119,7 +119,7 @@ app.get('/steam/username', async (req, res) => {
     const username = response.data.response.players[0]?.personaname
 
     if (username) {
-      res.json({ username })
+      res.status(200).json({ username })
     } else {
       res.status(404).send('Username not found')
     }
@@ -131,33 +131,29 @@ app.get('/steam/username', async (req, res) => {
 
 // Get three most recent games from steam id
 app.get('/steam/recentgames', async (req, res) => {
-  // Ensure steam id exists in session (user is logged in)
   if (!req.session.steamId) {
-    res.status(400).send('Steam ID not found in session')
+    res.status(400).send('Steam ID not found in session');
   }
 
   const steamId = req.query.steamid || req.session.steamId;
   const key = process.env.STEAM_API_KEY;
 
   try {
-    const { data } = await axios.get(
-      `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`,
-      {
-        params: {
-          key: process.env.STEAM_API_KEY,
-          steamid: req.session.steamId,
-          format: 'json',
-        },
+    const { data } = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`, {
+      params: {
+        key: key,
+        steamid: steamId,
+        format: 'json'
       }
-    )
+    });
 
-    const games = data.response.games?.slice(0, 3) || []
-    res.send(games)
+    const games = data.response.games?.slice(0, 3) || [];
+    res.send(games);
   } catch (error) {
-    console.error('Error fetching Steam data:', error)
-    res.redirect(process.env.FRONTEND_URL)
+    console.error("Error fetching Steam data:", error);
+    res.redirect("http://localhost:3000");
   }
-})
+});
 
 // "Logout" i.e. remove steam id and name from session storage
 app.get('/steam/logout', (req, res) => {
@@ -177,11 +173,13 @@ app.get('/steam/logout', (req, res) => {
 app.get('/steam/getdisplayinfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId && req.session.steamName) {
+    console.log(req.session.steamId)
     return res.json({
       steamId: req.session.steamId,
       steamName: req.session.steamName,
     })
   } else {
+    console.log('no')
     return res.json({
       steamId: null,
       steamName: null,
