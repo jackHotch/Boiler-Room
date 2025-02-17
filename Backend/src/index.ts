@@ -5,11 +5,13 @@ const session = require('express-session');
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-dotenv.config();
-
 const { Pool } = pg
 const port = 8080
 const app = express();
+
+dotenv.config();
+
+var useHTTPS = (process.env.USE_HTTPS?.toLowerCase?.() === 'true');
 
 app.use(
   session({
@@ -17,8 +19,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,  // Use true for HTTPS in production
-      httpOnly: true, // Prevent access to the cookie from JavaScript
+      secure: useHTTPS,  // Use true for HTTPS in production
+      httpOnly: !useHTTPS, // Prevent access to the cookie from JavaScript
       sameSite: 'lax', // Allow cookies in cross-origin requests
       maxAge: 1000 * 60 * 60 * 24, // Session expires in 24 hours
     },
@@ -38,7 +40,7 @@ app.use(cors({
 // Go through steams open id process
 app.get('/auth/steam', (req, res) => {
   const steamOpenIDUrl = 'https://steamcommunity.com/openid/login';
-  
+
   const params = new URLSearchParams({
     'openid.ns': 'http://specs.openid.net/auth/2.0',  // OpenID 2.0 namespace
     'openid.mode': 'checkid_setup',  // Start the authentication process
@@ -74,7 +76,7 @@ app.get('/steam', async (req, res) => {
 
   // Fetch the steamName asynchronously and store it in the session
   try {
-    const response = await axios.get('http://localhost:8080/steam/username', {
+    const response = await axios.get(process.env.BACKEND_URL + '/steam/username', {
       params: { steamid: id }  // Send the steamid in the request
     });
 
@@ -83,7 +85,7 @@ app.get('/steam', async (req, res) => {
     req.session.steamName = steamName;
 
     console.log("Steam ID Authenticated: " + req.session.steamId);
-    res.redirect("http://localhost:3000");
+    res.redirect(process.env.FRONTEND_URL);
   } catch (error) {
     console.error('Error fetching Steam username:', error);
     res.status(500).send('Error fetching Steam username');
@@ -141,7 +143,7 @@ app.get('/steam/recentgames', async (req, res) => {
     res.send(games);
   } catch (error) {
     console.error("Error fetching Steam data:", error);
-    res.redirect("http://localhost:3000");
+    res.redirect(process.env.FRONTEND_URL);
   }
 });
 
@@ -156,7 +158,7 @@ app.get('/steam/logout', (req, res) => {
   }
     
  // Redirect the user back to the referring page
- res.redirect('http://localhost:3000');});
+ res.redirect(process.env.FRONTEND_URL);});
 
 
  // Used for fetching display card info after login
@@ -170,7 +172,7 @@ app.get('/steam/logout', (req, res) => {
     });
   
   }
-  res.redirect('http://localhost:3000');
+  res.redirect(process.env.FRONTEND_URL);
 });
   
 // Connect to the database
