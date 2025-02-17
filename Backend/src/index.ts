@@ -11,6 +11,12 @@ const { Pool } = pg
 const port = 8080
 const app = express();
 
+// Connect to the database
+const pool = new Pool({
+  connectionString: process.env.DB_URL,
+})
+pool.connect()
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key',
@@ -104,7 +110,6 @@ app.get('/steam/username', async (req, res) => {
     });
 
     const username = response.data.response.players[0]?.personaname; // Extracting the username
-    console.log('Fetched username:', username);
 
     if (username) {
       res.json({ username });
@@ -125,7 +130,7 @@ app.get('/steam/recentgames', async (req, res) => {
     res.status(400).send('Steam ID not found in session');
   }
 
-  const steamId = req.session.steamId;
+  const steamId = req.query.steamid || req.session.steamId;
   const key = process.env.STEAM_API_KEY;
 
   try {
@@ -171,12 +176,20 @@ app.get('/steam/logout', (req, res) => {
   }
   res.redirect('http://localhost:3000');
 });
-  
-// Connect to the database
-const pool = new Pool({
-  connectionString: process.env.DB_URL,
+
+// Get the entrie friends list from steam
+app.get('/steam/friendsList', async (req, res) => {
+  if (req.session.steamId) {
+    const steamId = req.session.steamId
+    const API_KEY = process.env.STEAM_API_KEY
+    const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
+    return res.json(data.data.friendslist.friends)
+  }
+  else {
+    console.log('no steam id')
+  }
+  res.redirect('http://localhost:3000')
 })
-pool.connect()
 
 // Endpoints
 app.listen(port, () => {
@@ -185,10 +198,6 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
   res.send('hello')
-})
-
-app.get('/test', (req, res) => {
-  res.json({ message: 'this is a test from the backend' })
 })
 
 app.get('/supabase', async (req, res) => {
