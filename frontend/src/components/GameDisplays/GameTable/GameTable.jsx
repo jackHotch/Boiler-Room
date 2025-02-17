@@ -15,14 +15,13 @@ const GameTable = ({games}) => {
                         <th>Steam Page</th>
                         <th>Played?</th>
                     </tr>
-                    {/* add map function for creating rows for games here*/}
                     {games.map((game) => (
-                        <tr key={game.appId}>
-                            <td>GameTitle</td>
-                            <td>3 {/*placeholder for actual rating*/}</td>
-                            <td>32 {/*placeholder for actual length*/} Hrs</td>
-                            <td>100 {/*placeholder for actual BOIL*/}</td>
-                            <td><a href={'https://store.steampowered.com/app/' + game.appId}>Steam</a></td>
+                        <tr key={game.game_id}>
+                            <td><a href={'/SingleGame/' + game.game_id}>{game.name}</a></td>
+                            <td>{game.metacritic_score /*Replace with aggregate score when available*/}</td>
+                            <td>{game.hltb_score} Hrs</td>
+                            <td>100{/*Put Boil rating here when possible*/}</td>
+                            <td><a href={'https://store.steampowered.com/app/' + game.game_id}>Steam</a></td>
                             <td><input type="checkbox" /></td>
                         </tr>
                     ))}

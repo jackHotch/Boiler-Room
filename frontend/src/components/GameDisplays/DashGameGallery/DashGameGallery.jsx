@@ -17,7 +17,7 @@ const DashGameGallery = ({ games, categories }) => {
                     onMouseEnter={() => setEnlargedId(index)}
                 >
                     <img
-                        src={"https://steamcdn-a.akamaihd.net/steam/apps/"+game.appId+"/library_600x900_2x.jpg"}
+                        src={"https://steamcdn-a.akamaihd.net/steam/apps/"+game.game_id+"/library_600x900_2x.jpg"}
                         className={index === enlargedId ? styles.enlarged : ""}
                     />
                     <p className={styles.gameTitle}>{categories[index].label}</p>
