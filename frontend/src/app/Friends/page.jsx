@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 
-export default function page() {
+export default function Friends() {
   const [friendsInfo, setFriendsInfo] = useState([])
   const [loading, setLoading] = useState(true)
 

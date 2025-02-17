@@ -3,6 +3,10 @@
  flex-direction: column;
  align-items: center;
  width: 100vw;
+ min-height: calc(100vh - 83.5px);
+ background-color: #111;
+ color: white;
+ padding-bottom: 16px;
  gap: 8px;
  font-family: Arial, sans-serif;
 }
