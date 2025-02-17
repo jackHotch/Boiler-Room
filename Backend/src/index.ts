@@ -1,21 +1,21 @@
-import pg from 'pg'
-import cors from 'cors'
-const express = require('express');
-const session = require('express-session');
-import axios from 'axios';
-import dotenv from 'dotenv';
+import express from "express";
+import pg from "pg";
+import cors from "cors";
+import dotenv from "dotenv";
+import axios from "axios";
 
-dotenv.config();
-
-const { Pool } = pg
-const port = 8080
+const { Pool } = pg;
 const app = express();
+const port = 8080;
+dotenv.config();
+app.use(express.json());
+app.use(cors());
 
 // Connect to the database
 const pool = new Pool({
   connectionString: process.env.DB_URL,
-})
-pool.connect()
+});
+pool.connect();
 
 app.use(
   session({
@@ -193,16 +193,16 @@ app.get('/steam/friendsList', async (req, res) => {
 
 // Endpoints
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
-})
+  console.log(`Server running on port ${port}`);
+});
 
-app.get('/', (req, res) => {
-  res.send('hello')
-})
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 
-app.get('/test', (req, res) => {
-  res.json({ message: 'this is a test from the backend' })
-})
+app.get("/test", (req, res) => {
+  res.json({ message: "this is a test from the backend" });
+});
 
 // app.get('/supabase', async (req, res) => {
 //   const { rows } = await pool.query(`SELECT * FROM test`)
@@ -215,6 +215,7 @@ app.get('/test', (req, res) => {
 //   res.send(peopleData);
 // })
 
+
 // Created Backend route to access the games table from database
 app.get('/games', async(req, res) => {
   try {
@@ -225,17 +226,47 @@ app.get('/games', async(req, res) => {
     console.error("Error fetching game IDs:", error);
     res.status(500).json({ error: error.message });
   }
-})
+});
 
+app.get("/games/:gameid", async (req, res) => {
+  const { gameid } = req.params;
 
-app.get('/steam', async (req, res) => {
-  const key = process.env.STEAM_API_KEY
-  const steamId = 76561198312573287n
-  const data = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true `)
+  // Ensure gameid is a valid number
+  if (isNaN(Number(gameid))) {
+    res.status(400).json({ error: "Invalid game ID format" });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
+              "price", "metacritic_score", "released", "platform"  
+       FROM "Games" WHERE "game_id" = $1`,
+      [gameid]
+    );
+
+    console.log("Query result for gameid:", gameid, rows); // Debugging log
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Game not found" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/steam", async (req, res) => {
+  const key = process.env.STEAM_API_KEY;
+  const steamId = 76561198312573287n;
+  const data = await axios.get(
+    `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true `
+  );
   const gamesList = [...data.data.response.games];
-  res.send(gamesList)
+  res.send(gamesList);
   //res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2], data.data.response.games[3]])
-})
+});
 
 async function checkAccount(steamId) {
   let retVal = 0;
