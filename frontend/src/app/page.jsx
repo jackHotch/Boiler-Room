@@ -48,12 +48,15 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
-           
+
+
+           // Dynamically update each card to match the name and description with the corresponding game id. 
             <section className={styles.featuredGames}>
                 <h3 className={styles.sectionTitle}>Featured Games</h3>
                 <div className={styles.gamesGrid}>
                     {games.map((game, index) => (
                         <div key={index} className={styles.gameCard}>
+                          // Have the image link point to the steam single game page until landing page is pushed to main
                           <a href = {`https://store.steampowered.com/app/${game.game_id}`}> 
                             <img src={game.header_image} alt={game.name} className={styles.gameImage} />
                           </a>

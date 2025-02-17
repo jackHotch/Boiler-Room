@@ -42,8 +42,10 @@ app.get('/test', (req, res) => {
 //   res.send(peopleData);
 // })
 
+// Created Backend route to access the games table from database
 app.get('/games', async(req, res) => {
   try {
+    // Uses sql command to grab 3 random game ids from the database and corresponding description, name, and header image id then returning json object.
     const { rows } = await pool.query(`SELECT "game_id", "description", "name", "header_image" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
     res.json(rows);
   } catch (error) {
