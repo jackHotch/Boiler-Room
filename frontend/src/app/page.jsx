@@ -32,7 +32,7 @@ const LandingPage = () => {
                     <h1 className={styles.logo}>Boiler Room</h1>
                     <nav>
                         <ul className={styles.navList}>
-                            <li><a href="#" className={styles.navLink}>Sign In</a></li>
+                            <li><a href="http://localhost:8080/auth/steam" className={styles.navLink}>Sign In</a></li>
                             <li><a href="#" className={styles.navLink}>Sign Up</a></li>
                         </ul>
                     </nav>
@@ -48,15 +48,18 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
-
+            {/*Dynamically Update the featured games section to display 3 random games from the data base.*/}
             <section className={styles.featuredGames}>
                 <h3 className={styles.sectionTitle}>Featured Games</h3>
                 <div className={styles.gamesGrid}>
                     {games.map((game, index) => (
                         <div key={index} className={styles.gameCard}>
+                          {/* Link to the game's Steam page */}
+                          <a href = {`https://store.steampowered.com/app/${game.game_id}`}> 
                             <img src={game.header_image} alt={game.name} className={styles.gameImage} />
+                          </a>
                             <h4 className={styles.gameTitle}>{game.name}</h4>
-                            <p className={styles.gameDescription}>An exciting adventure awaits.</p>
+                            <p className={styles.gameDescription}>{game.description}</p>
                         </div>
                     ))}
                 </div>

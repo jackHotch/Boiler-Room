@@ -1,22 +1,28 @@
 'use client'
-
 import { useState } from 'react'
 import axios from 'axios'
+
+import SteamIdDisplay from '../../components/SteamComponents/SteamIdDisplay'
+
 
 export default function Steam() {
   const [steamData, setsteamData] = useState([])
 
   async function handleClick() {
     // fetch data from the backend
-    const data = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam')
-    setsteamData(data.data)
-  }
+    const gameResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/steam/recentgames`, {
+      withCredentials: true, // Important for sessions!
+    });
 
+    setsteamData(gameResponse.data)
+  }
   return (
     <>
-      <h1>This is the home page</h1>
-      <button onClick={handleClick}>click to fetch data from steam</button>
-      <table>
+      <h1>This is the Steam Login page</h1>
+      <button onClick={handleClick}>Fetch Recent Games</button>
+
+      <SteamIdDisplay />    
+          <table>
         <thead>
           <tr>
             <th>Property</th>
