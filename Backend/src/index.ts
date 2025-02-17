@@ -56,20 +56,28 @@ app.get("/games", async (req, res) => {
 app.get("/games/:gameid", async (req, res) => {
   const { gameid } = req.params;
 
+  // Ensure gameid is a valid number
+  if (isNaN(Number(gameid))) {
+    res.status(400).json({ error: "Invalid game ID format" });
+  }
+
   try {
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", "price", "metacritic_score", "released", "platform"  FROM "Games" WHERE "game_id" = $1`,
+      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
+              "price", "metacritic_score", "released", "platform"  
+       FROM "Games" WHERE "game_id" = $1`,
       [gameid]
     );
 
+    console.log("Query result for gameid:", gameid, rows); // Debugging log
+
     if (rows.length === 0) {
       res.status(404).json({ error: "Game not found" });
-    } else {
-      //console.log("Game data from DB:", rows[0]); // Debugging
-      res.json(rows[0]);
     }
+
+    res.json(rows[0]);
   } catch (error) {
-    console.error("Error fetching game:", error);
+    console.error("Database error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
