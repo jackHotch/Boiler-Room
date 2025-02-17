@@ -1,0 +1,111 @@
+.singleGameContainer {
+  background-color: #1a202c;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.gameTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.gameContent {
+  display: flex;
+  max-width: 900px;
+  width: 100%;
+  gap: 20px;
+}
+
+/* Left Side */
+.gameLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: auto; /* Remove fixed width */
+  min-width: 200px; /* Ensures it has at least some width */
+  max-width: 100%; /* Allows it to expand */
+}
+
+.cover {
+  background-color: #2d3748;
+  width: 100%;
+  min-height: 250px; /* Ensures it doesn’t collapse */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden; /* Ensures images don’t break the layout */
+}
+
+.cover img {
+  width: 100%;
+  height: auto; /* Maintains aspect ratio */
+  max-height: 100%; /* Prevents it from growing too large */
+  object-fit: contain; /* Ensures the whole image fits without distortion */
+  display: block;
+}
+
+.gameInfo {
+  background-color: #2d3748;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+/* Right Side */
+.gameRight {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+}
+
+.gameSummary,
+.ratings,
+.reviews,
+.playStatus,
+.writeReview {
+  background-color: #2d3748;
+  padding: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.gameSummary {
+  grid-column: 1 / 2;
+  background-color: #2d3748;
+  padding: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  
+  /* Fixed height and scroll */
+  height: 150px; /* Adjust this as needed */
+  overflow-y: auto; /* Enables scrolling if text overflows */
+}
+
+.ratings {
+  grid-column: 2 / 3;
+}
+
+.reviews {
+  grid-column: 1 / 2;
+}
+
+.playStatus {
+  grid-column: 2 / 3;
+}
+
+.writeReview {
+  grid-column: 1 / 3;
+}

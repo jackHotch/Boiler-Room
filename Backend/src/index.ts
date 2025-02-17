@@ -17,6 +17,12 @@ var useHTTPS = process.env.USE_HTTPS?.toLowerCase?.() === 'true'
 app.use(express.json()) // Support for JSON bodies
 app.use(express.urlencoded({ extended: true })) // Support URL-encoded bodies
 
+// Connect to the database
+const pool = new Pool({
+  connectionString: process.env.DB_URL,
+})
+pool.connect()
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
@@ -110,8 +116,7 @@ app.get('/steam/username', async (req, res) => {
       }
     )
 
-    const username = response.data.response.players[0]?.personaname // Extracting the username
-    console.log('Fetched username:', username)
+    const username = response.data.response.players[0]?.personaname
 
     if (username) {
       res.json({ username })
@@ -130,6 +135,9 @@ app.get('/steam/recentgames', async (req, res) => {
   if (!req.session.steamId) {
     res.status(400).send('Steam ID not found in session')
   }
+
+  const steamId = req.query.steamid || req.session.steamId;
+  const key = process.env.STEAM_API_KEY;
 
   try {
     const { data } = await axios.get(
@@ -181,12 +189,19 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
   }
 })
 
-// Connect to the database
-const pool = new Pool({
-  connectionString: process.env.DB_URL,
+// Get the entrie friends list from steam
+app.get('/steam/friendsList', async (req, res) => {
+  if (req.session.steamId) {
+    const steamId = req.session.steamId
+    const API_KEY = process.env.STEAM_API_KEY
+    const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
+    return res.json(data.data.friendslist.friends)
+  }
+  else {
+    console.log('no steam id')
+  }
+  res.redirect('http://localhost:3000')
 })
-
-pool.connect()
 
 // Endpoints
 app.listen(port, () => {
@@ -201,15 +216,109 @@ app.get('/test', (req, res) => {
   res.json({ message: 'this is a test from the backend' })
 })
 
-app.get('/supabase', async (req, res) => {
-  const { rows } = await pool.query(`SELECT * FROM test`)
-  res.send(rows[0].message)
+// app.get('/supabase', async (req, res) => {
+//   const { rows } = await pool.query(`SELECT * FROM test`)
+//   res.send(rows[0].message)
+// })
+
+// app.get('/people', async(req, res) => {
+//   const { rows } = await pool.query(`SELECT * FROM userstest`);
+//   const peopleData = rows.map(row => row.people).join('\n');
+//   res.send(peopleData);
+// })
+
+// Created Backend route to access the games table from database
+app.get('/games', async(req, res) => {
+  try {
+    // Uses sql command to grab 3 random game ids from the database and corresponding description, name, and header image id then returning json object.
+    const { rows } = await pool.query(`SELECT "game_id", "description", "name", "header_image" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching game IDs:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get('/steam', async (req, res) => {
+  const key = process.env.STEAM_API_KEY
+  const steamId = 76561198312573287n
+  const data = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true `)
+  const gamesList = [...data.data.response.games];
+  res.send(gamesList)
+  //res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2], data.data.response.games[3]])
 })
 
-app.get('/people', async (req, res) => {
-  const { rows } = await pool.query(`SELECT * FROM userstest`)
-  const peopleData = rows.map((row) => row.people).join('\n')
-  res.send(peopleData)
-})
+app.get("/games/:gameid", async (req, res) => {
+  const { gameid } = req.params;
+
+  // Ensure gameid is a valid number
+  if (isNaN(Number(gameid))) {
+    res.status(400).json({ error: "Invalid game ID format" });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
+              "price", "metacritic_score", "released", "platform"  
+       FROM "Games" WHERE "game_id" = $1`,
+      [gameid]
+    );
+
+    console.log("Query result for gameid:", gameid, rows); // Debugging log
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Game not found" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+async function checkAccount(steamId) {
+  let retVal = 0;
+  const KEY = process.env.STEAM_API_KEY;
+
+  try {
+      // Checking game details
+      const gameResponse = await axios.get('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
+          params: {
+              steamid: steamId,
+              include_appinfo: true,
+              key: KEY
+          }
+      });
+
+      if (Object.keys(gameResponse.data.response).length > 0) {
+          retVal += 2;
+      }
+
+      // Checking friends list access
+      const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
+          params: {
+              steamid: steamId,
+              relationship: "friend",
+              key: KEY
+          }
+      });
+
+      if (Object.keys(friendsResponse.data).length > 0) {
+          retVal += 1;
+      }
+  } catch (error) {
+      console.error("Error fetching Steam API:", error.message);
+  }
+/*
+retVal:
+ = 3 - account is all public and good to go
+ = 2 - game details public, not friends list
+ = 1 - friends list public, not game details
+ = 0 - nothing public
+*/ 
+  return retVal;
+}
 
 export default app
