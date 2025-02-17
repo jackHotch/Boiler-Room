@@ -177,6 +177,7 @@ app.get('/steam/logout', (req, res) => {
   res.redirect('http://localhost:3000');
 });
 
+// Get the entrie friends list from steam
 app.get('/steam/friendsList', async (req, res) => {
   if (req.session.steamId) {
     const steamId = req.session.steamId

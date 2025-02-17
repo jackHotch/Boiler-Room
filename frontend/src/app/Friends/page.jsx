@@ -24,7 +24,7 @@ export default function Friends() {
     }
   }
 
-  async function fetchFriendsInfo(friendsList) {
+  async function fetchFriendsRecentGames(friendsList) {
     const friendsInfoList = []
     for (const friend of friendsList) {
       try {
@@ -64,7 +64,7 @@ export default function Friends() {
   useEffect(() => {
     async function fetchData() {
       const friendsList = await fetchFriendsList()
-      const friendsInfoList = await fetchFriendsInfo(friendsList)
+      const friendsInfoList = await fetchFriendsRecentGames(friendsList)
       setFriendsInfo(friendsInfoList)
     }
 
@@ -83,16 +83,24 @@ export default function Friends() {
                   <h4 className={styles.username}>{friend.username}</h4>
 
                   <div className={styles.recent_game_list}>
-                    {friend.recentGames?.map((game, key) => {
-                      return (
-                        <Link className={styles.recent_game} key={key} href='/SingleGame'>
-                          <span>{game.name}</span>
-                          <span>
-                            {Math.round(game.playtime_forever / 60)} hours played
-                          </span>
-                        </Link>
-                      )
-                    })}
+                    {friendsInfo.recentGames?.length != 0 ? (
+                      friend.recentGames?.map((game, key) => {
+                        return (
+                          <Link
+                            className={styles.recent_game}
+                            key={key}
+                            href='/SingleGame'
+                          >
+                            <span>{game.name}</span>
+                            <span>
+                              {Math.round(game.playtime_forever / 60)} hours played
+                            </span>
+                          </Link>
+                        )
+                      })
+                    ) : (
+                      <span>No Games Played</span>
+                    )}
                   </div>
                 </div>
               )
