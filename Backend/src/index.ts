@@ -225,7 +225,7 @@ app.get('/games', async(req, res) => {
     console.error("Error fetching game IDs:", error);
     res.status(500).json({ error: error.message });
   }
-})
+});
 
 
 app.get('/steam', async (req, res) => {
@@ -236,6 +236,35 @@ app.get('/steam', async (req, res) => {
   res.send(gamesList)
   //res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2], data.data.response.games[3]])
 })
+
+app.get("/games/:gameid", async (req, res) => {
+  const { gameid } = req.params;
+
+  // Ensure gameid is a valid number
+  if (isNaN(Number(gameid))) {
+    res.status(400).json({ error: "Invalid game ID format" });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
+              "price", "metacritic_score", "released", "platform"  
+       FROM "Games" WHERE "game_id" = $1`,
+      [gameid]
+    );
+
+    console.log("Query result for gameid:", gameid, rows); // Debugging log
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: "Game not found" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 async function checkAccount(steamId) {
   let retVal = 0;
