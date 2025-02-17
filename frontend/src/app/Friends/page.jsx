@@ -73,7 +73,7 @@ export default function Friends() {
 
   return (
     <div className={styles.container}>
-      <h1>Your Friends</h1>
+      <h1 className={styles.title}>Your Friends</h1>
       <div className={styles.list_of_friends}>
         {loading
           ? 'Fetching Friends Data...'
@@ -82,20 +82,30 @@ export default function Friends() {
                 <div className={styles.friend_info} key={key}>
                   <h4 className={styles.username}>{friend.username}</h4>
 
+                  <span>Recently Played Games</span>
                   <div className={styles.recent_game_list}>
                     {friendsInfo.recentGames?.length != 0 ? (
                       friend.recentGames?.map((game, key) => {
                         return (
-                          <Link
-                            className={styles.recent_game}
-                            key={key}
-                            href='/SingleGame'
-                          >
-                            <span>{game.name}</span>
+                          <div className={styles.recent_game} key={key}>
+                            <Link
+                              href={`https://store.steampowered.com/app/230410/${game.appid}`}
+                            >
+                              <img
+                                className={styles.image}
+                                src={
+                                  'https://steamcdn-a.akamaihd.net/steam/apps/' +
+                                  game.appid +
+                                  '/library_600x900_2x.jpg'
+                                }
+                                alt={game.name}
+                              />
+                            </Link>
                             <span>
-                              {Math.round(game.playtime_forever / 60)} hours played
+                              {Math.round(game.playtime_2weeks / 60)} hours in last 2
+                              weeks
                             </span>
-                          </Link>
+                          </div>
                         )
                       })
                     ) : (
