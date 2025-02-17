@@ -46,7 +46,7 @@ const SingleGamePage = () => {
       <div className={styles.gameContent}>
         {/* Left Column */}
         <div className={styles.gameLeft}>
-          <img className={styles.cover} src={game.header_image} alt={game.name} />
+          <img className={styles.cover} src={"https://steamcdn-a.akamaihd.net/steam/apps/"+gameid+"/library_600x900_2x.jpg"} alt={game.name} />
           <div className={styles.gameInfo}>Number of recommendations: {game.recommendations}</div>
         </div>
 
