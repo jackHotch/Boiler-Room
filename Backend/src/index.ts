@@ -237,4 +237,47 @@ app.get('/steam', async (req, res) => {
   //res.send([data.data.response.games[0], data.data.response.games[1], data.data.response.games[2], data.data.response.games[3]])
 })
 
+async function checkAccount(steamId) {
+  let retVal = 0;
+  const KEY = process.env.STEAM_API_KEY;
+
+  try {
+      // Checking game details
+      const gameResponse = await axios.get('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
+          params: {
+              steamid: steamId,
+              include_appinfo: true,
+              key: KEY
+          }
+      });
+
+      if (Object.keys(gameResponse.data.response).length > 0) {
+          retVal += 2;
+      }
+
+      // Checking friends list access
+      const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
+          params: {
+              steamid: steamId,
+              relationship: "friend",
+              key: KEY
+          }
+      });
+
+      if (Object.keys(friendsResponse.data).length > 0) {
+          retVal += 1;
+      }
+  } catch (error) {
+      console.error("Error fetching Steam API:", error.message);
+  }
+/*
+retVal:
+ = 3 - account is all public and good to go
+ = 2 - game details public, not friends list
+ = 1 - friends list public, not game details
+ = 0 - nothing public
+*/ 
+  return retVal;
+}
+
 export default app
