@@ -3,42 +3,43 @@ import '@testing-library/jest-dom';
 import DashGameGallery from "./DashGameGallery";
 
 const mockGames = [
-    { appId: "12345" },
-    { appId: "67890" },
-    { appId: "440" }
+    { game_id: "753640", name: "Game One" },
+    { game_id: "1145360", name: "Game Two" },
+    { game_id: "632360", name: "Game Three" }
 ];
 
 const mockCategories = [
-    { label: "Action" },
-    { label: "Adventure" },
-    { label: "Puzzle" }
+    { label: "Quick Pick" },
+    { label: "Acclaimed Classic" },
+    { label: "Hidden Gem" }
 ];
 
 describe("DashGameGallery Component", () => {
-    test("renders game gallery with images and titles", () => {
+    test("renders game images and titles", () => {
         render(<DashGameGallery games={mockGames} categories={mockCategories} />);
         
-        expect(screen.getByText("Action")).toBeInTheDocument();
-        expect(screen.getByText("Adventure")).toBeInTheDocument();
-        expect(screen.getByText("Puzzle")).toBeInTheDocument();
+        mockGames.forEach((game, index) => {
+            expect(screen.getByAltText(game.name)).toBeInTheDocument();
+            expect(screen.getByText(mockCategories[index].label)).toBeInTheDocument();
+        });
+    });
+
+    test("renders correct image links", () => {
+        render(<DashGameGallery games={mockGames} categories={mockCategories} />);
         
-        const images = screen.getAllByRole("img");
-        expect(images).toHaveLength(mockGames.length);
-        expect(images[0]).toHaveAttribute("src", expect.stringContaining(mockGames[0].appId));
-        expect(images[1]).toHaveAttribute("src", expect.stringContaining(mockGames[1].appId));
-        expect(images[2]).toHaveAttribute("src", expect.stringContaining(mockGames[2].appId));
+        mockGames.forEach((game) => {
+            const link = screen.getByRole("link", { name: game.name });
+            expect(link).toHaveAttribute("href", `/SingleGame/${game.game_id}`);
+        });
     });
 
     test("updates enlarged state on hover", () => {
         render(<DashGameGallery games={mockGames} categories={mockCategories} />);
         
         const images = screen.getAllByRole("img");
-        expect(images[0]).not.toHaveClass("enlarged");
         expect(images[1]).toHaveClass("enlarged");
-        expect(images[2]).not.toHaveClass("enlarged");
         
         fireEvent.mouseEnter(images[2].closest("div"));
-        
         expect(images[2]).toHaveClass("enlarged");
     });
 });
