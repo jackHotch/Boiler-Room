@@ -18,6 +18,7 @@ const DashGameGallery = ({ games, categories }) => {
                 >
                     <img
                         src={"https://steamcdn-a.akamaihd.net/steam/apps/"+game.game_id+"/library_600x900_2x.jpg"}
+                        alt={game.name}
                         className={index === enlargedId ? styles.enlarged : ""}
                     />
                     <p className={styles.gameTitle}>{categories[index].label}</p>
