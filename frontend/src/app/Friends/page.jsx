@@ -8,6 +8,21 @@ import Link from 'next/link'
 export default function Friends() {
   const [friendsInfo, setFriendsInfo] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loggedIn, setLoggedIn] = useState(true)
+
+  async function checkIfUserLoggedIn() {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + '/steam/username',
+        {
+          withCredentials: true,
+        }
+      )
+      return true
+    } catch (err) {
+      return false
+    }
+  }
 
   async function fetchFriendsList() {
     try {
@@ -21,6 +36,7 @@ export default function Friends() {
       return response.data
     } catch (error) {
       console.error('Error fetching Steam ID:', error)
+      // setLoggedIn(false)
     }
   }
 
@@ -54,6 +70,7 @@ export default function Friends() {
         })
       } catch (error) {
         console.error('Error Fetching Friends Info:', error)
+        // setLoggedIn(false)
       } finally {
         setLoading(false)
       }
@@ -63,13 +80,21 @@ export default function Friends() {
 
   useEffect(() => {
     async function fetchData() {
-      const friendsList = await fetchFriendsList()
-      const friendsInfoList = await fetchFriendsRecentGames(friendsList)
-      setFriendsInfo(friendsInfoList)
+      if (await checkIfUserLoggedIn()) {
+        const friendsList = await fetchFriendsList()
+        const friendsInfoList = await fetchFriendsRecentGames(friendsList)
+        setFriendsInfo(friendsInfoList)
+      } else {
+        setLoggedIn(false)
+      }
     }
 
     fetchData()
   }, [])
+
+  if (!loggedIn) {
+    return <h1 className={styles.title}>Not Logged In</h1>
+  }
 
   return (
     <div className={styles.container}>
@@ -82,20 +107,30 @@ export default function Friends() {
                 <div className={styles.friend_info} key={key}>
                   <h4 className={styles.username}>{friend.username}</h4>
 
+                  <span>Recently Played Games</span>
                   <div className={styles.recent_game_list}>
                     {friendsInfo.recentGames?.length != 0 ? (
                       friend.recentGames?.map((game, key) => {
                         return (
-                          <Link
-                            className={styles.recent_game}
-                            key={key}
-                            href='/SingleGame'
-                          >
-                            <span>{game.name}</span>
+                          <div className={styles.recent_game} key={key}>
+                            <Link
+                              href={`https://store.steampowered.com/app/230410/${game.appid}`}
+                            >
+                              <img
+                                className={styles.image}
+                                src={
+                                  'https://steamcdn-a.akamaihd.net/steam/apps/' +
+                                  game.appid +
+                                  '/library_600x900_2x.jpg'
+                                }
+                                alt={game.name}
+                              />
+                            </Link>
                             <span>
-                              {Math.round(game.playtime_forever / 60)} hours played
+                              {Math.round(game.playtime_2weeks / 60)} hours in last 2
+                              weeks
                             </span>
-                          </Link>
+                          </div>
                         )
                       })
                     ) : (
