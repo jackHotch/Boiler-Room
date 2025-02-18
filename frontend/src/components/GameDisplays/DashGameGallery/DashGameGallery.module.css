@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     gap: 15px;
-    width: 100%;
+    width: calc(100% - 40px);
     max-width: 1700px;
     margin: auto;
     padding: 80px 20px;
