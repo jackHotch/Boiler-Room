@@ -79,32 +79,76 @@ app.get('/steam', async (req, res) => {
   // Returns the steam ID in url format this trims it down
   id = id.slice(id.lastIndexOf('/id/') + 4) // Adding 4 to skip "/id/"
 
-  // Fetch the steamName asynchronously and store it in the session
+  // Redirect to check visibility
+  res.redirect(`/steam/validvisibility/${id}`)
+})
+
+// Checks visibiltiy of a given steam id
+app.get('/steam/validvisibility/:steamId', async (req, res) => {
+  const id = req.params.steamId;  // Capture the 'id' parameter from the URL
+  let profile_visibilty = await checkAccount(id)
+  console.log("Profile vis: " + profile_visibilty)
+  switch (profile_visibilty) {
+case 0:
+  res.status(200).send(renderMessagePage({
+    title: "Don't be a loner...",
+    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+  }));
+  break;
+
+case 1:
+  res.status(200).send(renderMessagePage({
+    title: "Gatekeeping games...",
+    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+  }));
+  break;
+
+case 2:
+  res.status(200).send(renderMessagePage({
+    title: "Wow! Looks like you've got no friends...",
+    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+  }));
+  break;
+
+    default:
+      res.redirect(`/steam/setsession/${id}`)
+      break
+  }})
+
+
+// Sets session variables for a given steam id
+app.get('/steam/setsession/:steamId', async (req, res) => {
+  const id = req.params.steamId
+ // Fetch the steamName asynchronously and store it in the session
   try {
-    const response = await axios.get(process.env.BACKEND_URL + '/steam/username', {
+    const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
       params: { steamid: id }, // Send the steamid in the request
     })
 
-    const steamName = response.data.username || 'Unknown' // Extract the username
     req.session.steamId = id
-    req.session.steamName = steamName
+    req.session.steamName = response.data.username
+    req.session.steamPFP = response.data.userImage
 
     console.log('Steam ID Authenticated: ' + req.session.steamId)
-    res.redirect(process.env.FRONTEND_URL)
+    res.redirect(process.env.FRONTEND_URL + "/Dashboard")
   } catch (error) {
     console.error('Error fetching Steam username:', error)
-    res.status(500).send('Error fetching Steam username')
+    // Only send one response, error occurs when redirecting back from login error
+    if (!res.headersSent) return res.status(500).send('Error fetching Steam username');
   }
 })
 
-// Gets username from steam api using session steam ID
-app.get('/steam/username', async (req, res) => {
+app.get('/steam/loggedin', async (req, res) => {
+  if (req.session.steamId)
+    res.send(true)
+})
+
+// Gets username and profile picture from steam api using session steam ID
+app.get('/steam/playersummary', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamId
 
-  if (!steamId) {
-    return res.status(400).send('Steam ID is required')
-  }
-
+  if (!steamId) return res.status(400).send('Steam ID is required')
+  
   try {
     const response = await axios.get(
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
@@ -117,9 +161,10 @@ app.get('/steam/username', async (req, res) => {
     )
 
     const username = response.data.response.players[0]?.personaname
-
+    const userImage = response.data.response.players[0]?.avatarfull
+    console.log(userImage)
     if (username) {
-      res.status(200).json({ username })
+      res.status(200).json({ username: username, userImage: userImage })
     } else {
       res.status(404).send('Username not found')
     }
@@ -151,7 +196,7 @@ app.get('/steam/recentgames', async (req, res) => {
     res.send(games);
   } catch (error) {
     console.error("Error fetching Steam data:", error);
-    res.redirect("http://localhost:3000");
+    res.redirect(process.env.FRONTEND_URL);
   }
 });
 
@@ -163,6 +208,7 @@ app.get('/steam/logout', (req, res) => {
   if (req.session.steamId) {
     req.session.steamId = null
     req.session.username = null
+    req.session.steamPFP = null
   }
 
   // Redirect the user back to the referring page
@@ -173,16 +219,19 @@ app.get('/steam/logout', (req, res) => {
 app.get('/steam/getdisplayinfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId && req.session.steamName) {
-    console.log(req.session.steamId)
+    console.log("ID: " + req.session.steamId)
+    console.log("Steam Name: " + req.session.steamName)
+    console.log("Steam PFP URL: " + req.session.steamPFP)
+
     return res.json({
       steamId: req.session.steamId,
       steamName: req.session.steamName,
+      steamPFP: req.session.steamPFP
     })
   } else {
     console.log('no')
     return res.json({
-      steamId: null,
-      steamName: null,
+      steamId: null
     })
   }
 })
@@ -207,7 +256,10 @@ app.listen(port, () => {
 })
 
 app.get('/', (req, res) => {
-  res.send('hello')
+  if (req.session.steamid != null)
+    res.redirect(process.env.FRONTEND_URL + '/Dashboard')
+  else
+    res.redirect(process.env.FRONTEND_URL)
 })
 
 // Created Backend route to access the games table from database
@@ -294,4 +346,55 @@ retVal:
   return retVal;
 }
 
+// For profile visibilty errors
+const renderMessagePage = (message) => {
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Steam Profile Setup</title>
+        <style>
+          body {
+            background-color: #121212;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+          }
+          h1 {
+            color: #ff5733;
+            font-size: 24px;
+          }
+          p {
+            font-size: 16px;
+            margin-top: 15px;
+          }
+          button {
+            background-color: #ff5733;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+          }
+          button:hover {
+            background-color: #e04e28;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${message.title}</h1>
+        <p>${message.text}</p>
+        <button onclick="window.location.href='${process.env.BACKEND_URL + '/auth/steam'}'"><strong>Try Again</strong></button>
+      </body>
+    </html>
+  `;
+}
+
 export default app
+
+

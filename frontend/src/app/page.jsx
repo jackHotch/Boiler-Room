@@ -58,7 +58,7 @@ const LandingPage = () => {
             <p className={styles.heroSubtitle}>
               Discover, play, and share amazing games.
             </p>
-            <a href='#' className={styles.exploreButton}>
+            <a href='/Dashboard' className={styles.exploreButton}>
               Explore Now
             </a>
           </div>

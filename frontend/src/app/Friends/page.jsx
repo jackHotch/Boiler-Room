@@ -13,7 +13,7 @@ export default function Friends() {
   async function checkIfUserLoggedIn() {
     try {
       const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND + '/steam/username',
+        process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary',
         {
           withCredentials: true,
         }
@@ -45,7 +45,7 @@ export default function Friends() {
     for (const friend of friendsList) {
       try {
         const username = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/username',
+          process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary',
           {
             withCredentials: true,
             params: {
