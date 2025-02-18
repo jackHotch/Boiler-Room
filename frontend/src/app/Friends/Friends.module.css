@@ -60,3 +60,9 @@
   max-width: 200px;
   margin-bottom: 8px;
 }
+
+.title {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: white;
+}

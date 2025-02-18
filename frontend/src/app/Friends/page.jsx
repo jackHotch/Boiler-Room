@@ -8,6 +8,21 @@ import Link from 'next/link'
 export default function Friends() {
   const [friendsInfo, setFriendsInfo] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loggedIn, setLoggedIn] = useState(true)
+
+  async function checkIfUserLoggedIn() {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + '/steam/username',
+        {
+          withCredentials: true,
+        }
+      )
+      return true
+    } catch (err) {
+      return false
+    }
+  }
 
   async function fetchFriendsList() {
     try {
@@ -21,6 +36,7 @@ export default function Friends() {
       return response.data
     } catch (error) {
       console.error('Error fetching Steam ID:', error)
+      // setLoggedIn(false)
     }
   }
 
@@ -54,6 +70,7 @@ export default function Friends() {
         })
       } catch (error) {
         console.error('Error Fetching Friends Info:', error)
+        // setLoggedIn(false)
       } finally {
         setLoading(false)
       }
@@ -63,17 +80,25 @@ export default function Friends() {
 
   useEffect(() => {
     async function fetchData() {
-      const friendsList = await fetchFriendsList()
-      const friendsInfoList = await fetchFriendsRecentGames(friendsList)
-      setFriendsInfo(friendsInfoList)
+      if (await checkIfUserLoggedIn()) {
+        const friendsList = await fetchFriendsList()
+        const friendsInfoList = await fetchFriendsRecentGames(friendsList)
+        setFriendsInfo(friendsInfoList)
+      } else {
+        setLoggedIn(false)
+      }
     }
 
     fetchData()
   }, [])
 
+  if (!loggedIn) {
+    return <h1 className={styles.title}>Not Logged In</h1>
+  }
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Your Friends</h1>
+      <h1>Your Friends</h1>
       <div className={styles.list_of_friends}>
         {loading
           ? 'Fetching Friends Data...'
