@@ -1,103 +1,132 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+"use client";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Login from "@/components/SteamComponents/Login";
+import Logout from "@/components/SteamComponents/Logout";
 
-import Login from '../../components/SteamComponents/Login'
-import Logout from '../../components/SteamComponents/Logout'
-
-const SteamIdDisplay = () => {
-  const [steamId, setSteamId] = useState(null) // For storing Steam ID
-  const [steamName, setSteamName] = useState(null) // For storing Steam account name
-  const [loading, setLoading] = useState(true) // For loading state
-  const [error, setError] = useState(null) // For error state
+export default function SteamIdDisplay() {
+  const [steamId, setSteamId] = useState(null);
+  const [steamName, setSteamName] = useState(null);
+  const [steamPFP, setPFP] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchProfileData() {
       try {
         const response = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo',
+          process.env.NEXT_PUBLIC_BACKEND + "/steam/getdisplayinfo",
           {
-            withCredentials: true, // Ensure credentials (cookies) are sent
+            withCredentials: true,
           }
-        )
+        );
 
-        console.log('Response Data:', response.data) // Check what data is returned
+        console.log("Response Data:", response.data);
+        setSteamId(response.data.steamId);
+        setSteamName(response.data.steamName);
+        setPFP(response.data.steamPFP);
 
-        setSteamId(response.data.steamId)
-        setSteamName(response.data.steamName)
-
-        if (response.data.steamId == null) setError('Not Logged In')
+        if (response.data.steamId === null) setError("Not Logged In");
       } catch (error) {
-        console.error('Error fetching Steam ID:', error)
-        setError('Not Logged In')
+        console.error("Error fetching Steam ID:", error);
+        setError("Not Logged In");
       } finally {
-        setLoading(false) // End loading state
+        setLoading(false);
       }
     }
 
-    fetchProfileData()
-  }, []) // Empty array ensures this runs only once on mount
+    fetchProfileData();
+  }, []);
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.infoContainer}>
-        {loading ? (
-          <p style={styles.loadingText}>Loading Steam data...</p> // Show loading message
-        ) : error ? (
-          <>
-            <p style={styles.errorText}>{error}</p> {/* Show error message */}
-            <Login /> {/* Show login button */}
-          </>
-        ) : (
-          <>
-            <p style={styles.steamInfo}>
-              <strong>Steam ID:</strong> {steamId}
-            </p>
-            <p style={styles.steamInfo}>
-              <strong>Steam Account Name:</strong> {steamName}
-            </p>
-            <Logout /> {/* Show logout button */}
-          </>
-        )}
-      </div>
+ return (
+  <div className="steamProfileDisplay" style={styles.container}>
+    <div style={styles.infoContainer}>
+      {loading ? (
+        <p style={styles.loadingText}>Loading Steam data...</p>
+      ) : error ? (
+        <>
+          <p style={styles.errorText}>{error}</p>
+          <Login />
+        </>
+      ) : (
+        <>
+          <div style={styles.profileWrapper}>
+            <img src={steamPFP} alt="Steam Profile Picture" style={styles.profileImage} />
+            <div style={styles.textContainer}>
+              <p style={styles.steamName}>
+                <strong>{steamName}</strong>
+              </p>
+              <p style={styles.steamId}>
+                <strong>Steam ID: {steamId}</strong>
+              </p>
+            </div>
+          </div>
+          <Logout />
+        </>
+      )}
     </div>
-  )
+  </div>
+);
+
 }
 
-// Styles for the component
 const styles = {
   container: {
-    fontFamily: 'Arial, sans-serif',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: '15%', // Set the distance from the top
-    right: '0%', // Set the distance from the right
-    zIndex: 1000, // Ensure it stays on top of other elements
-  },
-  loadingText: {
-    fontSize: '18px',
-    color: '#666',
-  },
-  errorText: {
-    fontSize: '18px',
-    color: 'red',
-    fontWeight: 'bold',
+    fontFamily: "Arial, sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: "100%",
+    right: "0%",
+    zIndex: 100000,
   },
   infoContainer: {
-    background: 'white',
-    borderRadius: '10px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-    padding: '20px',
-    textAlign: 'center',
-    width: '300px',
+    background: "rgba(0, 0, 0, 0.6)", 
+    backdropFilter: "blur(10px)",
+    borderRadius: "15px",
+    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)", 
+    padding: "20px",
+    textAlign: "center",
+    width: "320px",
+    border: "1px solid rgba(255, 255, 255, 0.2)", 
   },
-  steamInfo: {
-    fontSize: '16px',
-    color: '#333',
-    margin: '10px 0',
+  profileWrapper: {
+    display: "flex", // Align the profile image and text horizontally
+    alignItems: "center", // Vertically center the items
+    marginBottom: "10px",
   },
-}
-
-export default SteamIdDisplay
+  profileImage: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%", // Make it circular
+    marginRight: "10px", // Add space between the image and text
+    border: "2px solid white",
+  },
+  textContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center", // Center the text vertically
+    alignItems: "flex-start", // Align text to the left
+  },
+  loadingText: {
+    fontSize: "18px",
+    color: "#bbb",
+  },
+  errorText: {
+    fontSize: "18px",
+    color: "#ff6b6b",
+    fontWeight: "bold",
+  },
+  steamId: {
+    fontSize: "12px",
+    color: "#fffa",
+    margin: "8px 0",
+  },
+  steamName: {
+    fontSize: "16px",
+    color: "#fff",
+    margin: "8px 0",
+  },
+};

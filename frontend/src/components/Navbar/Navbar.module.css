@@ -4,9 +4,10 @@
   align-items: center;
   padding: 16px 24px;
   font-family: Arial, sans-serif;
-  background-color: #051227;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  text-align: center;
 }
-
 .nav_options {
   display: flex;
   gap: 16px;
@@ -24,7 +25,7 @@
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
 }
 
@@ -64,4 +65,20 @@
 
 .searchbar:focus {
   outline: 1px solid #6299f0;
+}
+
+.accountContainer {
+  position: relative;
+  /* Needed for absolute positioning */
+}
+
+.accountContainer:hover .steamComponent {
+  display: block;
+}
+
+.steamComponent {
+  position: absolute;
+  /* Adjust for spacing */
+  display: none;
+  padding: 10px;
 }
