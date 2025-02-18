@@ -1,58 +1,67 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import Login from '../../components/SteamComponents/Login'
 import Logout from '../../components/SteamComponents/Logout'
 
 const SteamIdDisplay = () => {
-  const [steamId, setSteamId] = useState(null); // For storing Steam ID
-  const [steamName, setSteamName] = useState(null); // For storing Steam account name
-  const [loading, setLoading] = useState(true); // For loading state
-  const [error, setError] = useState(null); // For error state
+  const [steamId, setSteamId] = useState(null) // For storing Steam ID
+  const [steamName, setSteamName] = useState(null) // For storing Steam account name
+  const [loading, setLoading] = useState(true) // For loading state
+  const [error, setError] = useState(null) // For error state
 
   useEffect(() => {
     async function fetchProfileData() {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo', {
-          withCredentials: true,  // Ensure credentials (cookies) are sent
-        });
-        
-        console.log('Response Data:', response.data); // Check what data is returned
-          
-        setSteamId(response.data.steamId || "None");
-        setSteamName(response.data.steamName || "None");
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo',
+          {
+            withCredentials: true, // Ensure credentials (cookies) are sent
+          }
+        )
+
+        console.log('Response Data:', response.data) // Check what data is returned
+
+        setSteamId(response.data.steamId)
+        setSteamName(response.data.steamName)
+
+        if (response.data.steamId == null) setError('Not Logged In')
       } catch (error) {
-        console.error('Error fetching Steam ID:', error);
-        setError('Not Logged In');
+        console.error('Error fetching Steam ID:', error)
+        setError('Not Logged In')
       } finally {
-        setLoading(false);  // End loading state
+        setLoading(false) // End loading state
       }
     }
-  
-    fetchProfileData();
-  }, []); // Empty array ensures this runs only once on mount
+
+    fetchProfileData()
+  }, []) // Empty array ensures this runs only once on mount
 
   return (
     <div style={styles.container}>
       <div style={styles.infoContainer}>
         {loading ? (
-          <p style={styles.loadingText}>Loading Steam data...</p>  // Show loading message
+          <p style={styles.loadingText}>Loading Steam data...</p> // Show loading message
         ) : error ? (
           <>
-            <p style={styles.errorText}>{error}</p>  {/* Show error message */}
-            <Login />  {/* Show login button */}
+            <p style={styles.errorText}>{error}</p> {/* Show error message */}
+            <Login /> {/* Show login button */}
           </>
         ) : (
           <>
-            <p style={styles.steamInfo}><strong>Steam ID:</strong> {steamId}</p>
-            <p style={styles.steamInfo}><strong>Steam Account Name:</strong> {steamName}</p>
-            <Logout />  {/* Show logout button */}
+            <p style={styles.steamInfo}>
+              <strong>Steam ID:</strong> {steamId}
+            </p>
+            <p style={styles.steamInfo}>
+              <strong>Steam Account Name:</strong> {steamName}
+            </p>
+            <Logout /> {/* Show logout button */}
           </>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Styles for the component
 const styles = {
@@ -89,6 +98,6 @@ const styles = {
     color: '#333',
     margin: '10px 0',
   },
-};
+}
 
-export default SteamIdDisplay;
+export default SteamIdDisplay
