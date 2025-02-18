@@ -16,6 +16,7 @@ var useHTTPS = process.env.USE_HTTPS?.toLowerCase?.() === 'true'
 
 app.use(express.json()) // Support for JSON bodies
 app.use(express.urlencoded({ extended: true })) // Support URL-encoded bodies
+app.set("trust proxy", 1);
 
 // Connect to the database
 const pool = new Pool({
@@ -28,10 +29,12 @@ app.use(
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
     resave: false,
     saveUninitialized: false,
+    proxy: true,
+    name: 'steamidSession',
     cookie: {
       secure: useHTTPS, // Use true for HTTPS in production
       httpOnly: !useHTTPS, // Prevent access to the cookie from JavaScript
-      sameSite: 'lax', // Allow cookies in cross-origin requests
+      sameSite: process.env.SAME_SITE, // Allow cookies in cross-origin requests
       maxAge: 1000 * 60 * 60 * 24, // Session expires in 24 hours
     },
   })
