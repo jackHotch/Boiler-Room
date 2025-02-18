@@ -51,8 +51,8 @@ app.get('/auth/steam', (req, res) => {
   const params = new URLSearchParams({
     'openid.ns': 'http://specs.openid.net/auth/2.0', // OpenID 2.0 namespace
     'openid.mode': 'checkid_setup', // Start the authentication process
-    'openid.return_to': 'http://localhost:8080/steam', // Must be the url which recieves the open id info (rn it is /steam)
-    'openid.realm': 'http://localhost:8080/steam',
+    'openid.return_to': `${process.env.BACKEND_URL}/steam`, // Must be the url which recieves the open id info (rn it is /steam)
+    'openid.realm': `${process.env.BACKEND_URL}/steam`,
     'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identifier
     'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identity
   })
