@@ -1,0 +1,58 @@
+.gameTableContainer {
+    max-width: 1200px;
+    margin: 50px auto 0 auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.gameTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2c2f36;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+}
+
+.gameTable th, .gameTable td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+
+.gameTable th {
+    background-color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.gameTable tr:nth-child(even) {
+    background-color: #3a3d44;
+}
+
+.gameTable tr:hover {
+    background-color: #4a4d56;
+}
+
+.gameTable td a {
+    color: #1e90ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.gameTable td a:hover {
+    color: #ff6347;
+}
+
+.headerRow {
+    background-color: #292b2f;
+}
+
+.gameTable td {
+    word-wrap: break-word;
+    max-width: 200px;
+}
