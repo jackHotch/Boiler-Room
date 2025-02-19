@@ -114,7 +114,7 @@ export default function Friends() {
                         return (
                           <div className={styles.recent_game} key={key}>
                             <Link
-                              href={`https://store.steampowered.com/app/230410/${game.appid}`}
+                              href={`https://store.steampowered.com/app/${game.appid}`}
                             >
                               <img
                                 className={styles.image}
