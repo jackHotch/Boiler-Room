@@ -10,10 +10,13 @@
 }
 
 .gameContainer {
-    display: flex;
     flex-direction: column;
+    height:auto;
     align-items: center;
     text-align: center;
+    min-height: 50rem;
+    min-width: 30%;
+
 }
 
 .gallery img {
