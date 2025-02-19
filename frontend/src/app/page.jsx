@@ -71,7 +71,7 @@ const LandingPage = () => {
           {games.map((game, index) => (
             <div key={index} className={styles.gameCard}>
               {/* Link to the game's Steam page */}
-              <a href={`https://store.steampowered.com/app/${game.game_id}`}>
+              <a href={`/SingleGame/${game.game_id}`}>
                 <img
                   src={game.header_image}
                   alt={game.name}
