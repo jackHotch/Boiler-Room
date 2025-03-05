@@ -4,25 +4,30 @@ import { useState } from 'react';
 import axios from 'axios';
 
 export default function Test() {
-  const [databaseMessage, setDatabaseMessage] = useState('');
+  const [profileMessage, setProfileMessage] = useState('');
+  const [gamesMessage, setGamesMessage] = useState('');
+  const [isGamesLoading, setIsGamesLoading] = useState(false); // Loading state for handleGames
 
   async function handleProfile() {
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/insertProfile');
-      setDatabaseMessage(response.data);
+      setProfileMessage(response.data);
     } catch (error) {
       console.error('Error fetching data', error);
-      setDatabaseMessage('Failed to insert message');
+      setProfileMessage('Failed to insert message');
     }
   }
 
   async function handleGames() {
+    setIsGamesLoading(true); // Set loading to true when the request starts
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/insertGames');
-      setDatabaseMessage(response.data);
+      setGamesMessage(response.data);
     } catch (error) {
       console.error('Error fetching data', error);
-      setDatabaseMessage('Failed to insert message');
+      setGamesMessage('Failed to insert message');
+    } finally {
+      setIsGamesLoading(false); // Set loading to false when the request completes
     }
   }
 
@@ -30,10 +35,16 @@ export default function Test() {
     <>
       <h1 style={{ color: "white" }}>This is my test page - Chris</h1>
       <button onClick={handleProfile}>click to test writing to profile table</button>
-      {databaseMessage && <p style={{ color: "white" }}>Message from database: {databaseMessage}</p>}
+      {profileMessage && <p style={{ color: "white" }}>Message from database: {profileMessage}</p>}
       <br></br>
-      <button onClick={handleGames}>click to test writing to userbase table</button>
-      {databaseMessage && <p style={{ color: "white" }}>Message from database: {databaseMessage}</p>}
+      <button onClick={handleGames} disabled={isGamesLoading}>
+        {isGamesLoading ? 'Loading...' : 'click to test writing to userbase table'}
+      </button>
+      {isGamesLoading ? (
+        <p style={{ color: "white" }}>Loading...</p>
+      ) : (
+        gamesMessage && <p style={{ color: "white" }}>Message from database: {gamesMessage}</p>
+      )}
     </>
   );
 }
