@@ -24,6 +24,10 @@ const pool = new Pool({
 })
 pool.connect()
 
+// app.closeServer = () => {
+//   app.close()
+// }
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
@@ -46,6 +50,11 @@ app.use(
     credentials: true, // Allows sending cookies/sessions
   })
 )
+
+app.post('/set-session', (req, res) => {
+  req.session.steamid = req.body.steamid;
+  res.send({ message: 'Session set' });
+});
 
 // Go through steams open id process and redirect to steam login, sends back request to our /steam handler route
 app.get('/auth/steam', (req, res) => {
@@ -241,8 +250,8 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
 
 // Get the entrie friends list from steam
 app.get('/steam/friendsList', async (req, res) => {
-  if (req.session.steamId) {
-    const steamId = req.session.steamId
+  const steamId = req.query.steamid || req.session.steamId
+  if (steamId) {
     const API_KEY = process.env.STEAM_API_KEY
     const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
     return res.json(data.data.friendslist.friends)
@@ -250,11 +259,10 @@ app.get('/steam/friendsList', async (req, res) => {
   else {
     console.log('no steam id')
   }
-  res.redirect(process.env.FRONTEND_URL)
 })
 
 // Endpoints
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
@@ -398,6 +406,6 @@ const renderMessagePage = (message) => {
   `;
 }
 
-export default app
+export {app, server}
 
 
