@@ -132,13 +132,14 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
 // Sets session variables for a given steam id
 app.get('/steam/setsession/:steamId', async (req, res) => {
   const id = req.params.steamId
-  const steamId = BigInt(req.params.steamId);
-  const result = await insertProfile(steamId);
+  // Fetch the steamName asynchronously and store it in the session
+  const steamId = BigInt(req.params.steamId); //Set steamid to big Int
+  const result = await insertProfile(steamId); //Toss it to the insert profile function
 
-  if (result) {
-    await insertGames(steamId);
+  if (result) { //if we add a profile, 
+    await insertGames(steamId); //insert games from that profile
   }
-
+  // continue the set session work
   try {
     const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
       params: { steamid: id }, // Send the steamid in the request
@@ -317,42 +318,42 @@ app.get("/games/:gameid", async (req, res) => {
 });
 
 
-async function insertProfile(steamId) {
-  try {
+async function insertProfile(steamId: bigint) {
+  try { //firstly we check to make sure we dont have a profiel already
     const { rows: existingRows } = await pool.query(
       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
     );
 
     if (existingRows.length > 0) {
-      return false; 
+      return false;  //if we do, throw a false and move on
     }
 
-    const response = await axios.get(
+    const response = await axios.get( //otherwise get some information
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
       {
         params: {
-          key: process.env.STEAM_API_KEY,
+          key: process.env.STEAM_API_KEY, //thanks trevor for doing the work for me
           steamids: steamId,
         },
       }
     );
 
-    const avatar = response.data.response.players[0]?.avatarhash;
+    const avatar = response.data.response.players[0]?.avatarhash; //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname;
 
-    await pool.query(
+    await pool.query( //insert those things along with the steamID to our database
       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
     );
 
-    return true;
+    return true; //set true
   } catch (error) {
-    console.error('Error executing query', error);
+    console.error('Error executing query', error); //catch errors that may occur
     throw new Error('Internal Server Error');
   }
 }
 
-async function insertGames(steamId) {
-  try {
+async function insertGames(steamId: bigint) {
+  try { //if we added a profile, lets add games too
     const response = await axios.get(
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
@@ -368,33 +369,33 @@ async function insertGames(steamId) {
 
     const games = response.data.response.games;
 
-    if (!games || games.length === 0) {
+    if (!games || games.length === 0) { //if there are no games say as much
       return { success: false, message: 'No games found for this user.' };
-    }
+    } //honestly this should be caught earlier by other functions
 
-    for (const game of games) {
-      const appId = game.appid;
-      const playtimeForever = game.playtime_forever || 0;
+    for (const game of games) { //for each game
+      const appId = game.appid; //get app id
+      const playtimeForever = game.playtime_forever || 0; //get playtime forever with a default of 0
 
       try {
-        const gameExists = await pool.query(
+        const gameExists = await pool.query( //check to make sure game exists
           'SELECT 1 FROM "Games" WHERE "game_id" = $1',
           [appId]
         );
 
-        if (gameExists.rows.length === 0) {
+        if (gameExists.rows.length === 0) { //for now we skip it if doesnt
           console.warn(`Skipping game ${appId} because it does not exist in the referenced table.`);
-          continue;
+          continue; //this will be ammended later by me
         }
 
-        await pool.query(
+        await pool.query( //SQL Upsert code
           `INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
            VALUES ($1, $2, $3)
            ON CONFLICT ("game_id", "steam_id")
            DO UPDATE SET "total_played" = EXCLUDED."total_played"`,
           [appId, steamId, playtimeForever]
         );
-
+        //then just some logging from here on down
         console.log(`Inserted/Updated row: game = ${appId}, user_id = ${steamId}, total_played = ${playtimeForever}`);
       } catch (error) {
         console.error(`Error processing game ${appId} for user ${steamId}:`, error);
@@ -502,5 +503,3 @@ const renderMessagePage = (message) => {
 }
 
 export default app
-
-
