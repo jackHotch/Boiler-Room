@@ -10,9 +10,6 @@ const DashGameGallery = ({ games, categories }) => {
     setImageErrors((prev) => ({ ...prev, [index]: true }))
   }
 
-  const fallbackImage =
-    'https://cdn2.steamgriddb.com/grid/786d203018e4c2e02516c19095af939e.jpg'
-
   return (
     <div className={styles.gallery}>
       {games.map((game, index) => {
@@ -26,7 +23,9 @@ const DashGameGallery = ({ games, categories }) => {
             <a href={'/SingleGame/' + game.game_id} className={styles.imageWrapper}>
               {imageErrors[index] ? (
                 <div className={styles.placeholder}>
-                  <img src={fallbackImage} />
+                  <img
+                    src={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
+                  />
                 </div>
               ) : (
                 <img

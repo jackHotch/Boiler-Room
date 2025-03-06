@@ -236,7 +236,6 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
       steamPFP: req.session.steamPFP,
     })
   } else {
-    console.log('No Steam INfo')
     return res.json({
       steamId: null,
     })

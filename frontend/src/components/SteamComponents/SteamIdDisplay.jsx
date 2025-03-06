@@ -8,6 +8,7 @@ import styles from './SteamIdDisplay.module.css'
 export default function SteamIdDisplay() {
   const [steamId, setSteamId] = useState(null)
   const [steamName, setSteamName] = useState(null)
+  const [steamPFP, setSteamPFP] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -22,8 +23,12 @@ export default function SteamIdDisplay() {
         if (response.data.steamId) {
           setSteamId(response.data.steamId)
           setSteamName(response.data.steamName)
+          setSteamPFP(response.data.steamPFP)
+
+          // Store the data in local storage to avoid too many requests
           localStorage.setItem('steamId', response.data.steamId)
           localStorage.setItem('steamName', response.data.steamName)
+          localStorage.setItem('steamPFP', response.data.steamPFP)
         } else {
           setError('Not Logged In')
         }

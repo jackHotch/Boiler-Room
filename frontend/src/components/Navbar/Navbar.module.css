@@ -26,6 +26,7 @@
   text-decoration: none;
   text-align: center; /* Ensures text alignment */
   min-width: 120px; /* Ensures enough space for text */
+  height: 40px; /* Adjust based on design */
   line-height: 1;
 }
 
@@ -60,10 +61,11 @@
 }
 
 .pfp{
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   margin-right: 10px;
+  margin-top: 5px;
   border: 2px solid white;
 }
 .input {
