@@ -52,97 +52,6 @@ app.use(
   })
 )
 
-app.get('/insertProfile', async (req, res) => {
-  const testId = 76561199154033472n;
-  try {
-    const { rows: existingRows } = await pool.query(
-      'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [testId]
-    );
-
-    if (existingRows.length > 0) {
-      return res.send(`Profile ${testId} already exists`);
-    }
-
-    const response = await axios.get(
-      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
-      {
-        params: {
-          key: process.env.STEAM_API_KEY,
-          steamids: testId,
-        },
-      }
-    );
-
-    const avatar = response.data.response.players[0]?.avatarhash;
-    const userName = response.data.response.players[0]?.personaname;
-
-    const { rows } = await pool.query(
-      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [testId, userName, avatar]
-    );
-
-    res.send(`Inserted row: ID = ${rows[0].steam_id}, name = ${rows[0].username}, avatar = ${rows[0].avatar_hash}`);
-  } catch (error) {
-    console.error('Error executing query', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-
-app.get('/insertGames', async (req, res) => {
-  const testId = 76561199154033472n;
-
-  try {
-      const response = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`, {
-          params: {
-              key: process.env.STEAM_API_KEY,
-              steamid: testId,
-              format: 'json',
-              include_appinfo: true,
-              include_played_free_games: true
-          }
-      });
-
-      const games = response.data.response.games;
-
-      if (!games || games.length === 0) {
-          return res.status(404).send('No games found for this user.');
-      }
-
-      for (const game of games) {
-          const appId = game.appid;
-          const playtimeForever = game.playtime_forever || 0;
-
-          try {
-              const gameExists = await pool.query(
-                  'SELECT 1 FROM "Games" WHERE "game_id" = $1',
-                  [appId]
-              );
-
-              if (gameExists.rows.length === 0) {
-                  console.warn(`Skipping game ${appId} because it does not exist in the referenced table.`);
-                  continue;
-              }
-
-              const { rows } = await pool.query(
-                  `INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
-                   VALUES ($1, $2, $3)
-                   ON CONFLICT ("game_id", "steam_id")
-                   DO UPDATE SET "total_played" = EXCLUDED."total_played"`,
-                  [appId, testId, playtimeForever]
-              );
-
-              console.log(`Inserted/Updated row: game = ${appId}, user_id = ${testId}, total_played = ${playtimeForever}`);
-          } catch (error) {
-              console.error(`Error processing game ${appId} for user ${testId}:`, error);
-          }
-      }
-      res.send('Games inserted/updated successfully.');
-  } catch (error) {
-      console.error('Error fetching games from Steam API:', error);
-      res.status(500).send('Internal Server Error');
-  }
-});
-
 app.post('/set-session', (req, res) => {
   req.session.steamid = req.body.steamid;
   res.send({ message: 'Session set' });
@@ -223,7 +132,13 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
 // Sets session variables for a given steam id
 app.get('/steam/setsession/:steamId', async (req, res) => {
   const id = req.params.steamId
- // Fetch the steamName asynchronously and store it in the session
+  const steamId = BigInt(req.params.steamId);
+  const result = await insertProfile(steamId);
+
+  if (result) {
+    await insertGames(steamId);
+  }
+
   try {
     const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
       params: { steamid: id }, // Send the steamid in the request
@@ -400,6 +315,98 @@ app.get("/games/:gameid", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+async function insertProfile(steamId) {
+  try {
+    const { rows: existingRows } = await pool.query(
+      'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
+    );
+
+    if (existingRows.length > 0) {
+      return false; 
+    }
+
+    const response = await axios.get(
+      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
+      {
+        params: {
+          key: process.env.STEAM_API_KEY,
+          steamids: steamId,
+        },
+      }
+    );
+
+    const avatar = response.data.response.players[0]?.avatarhash;
+    const userName = response.data.response.players[0]?.personaname;
+
+    await pool.query(
+      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
+    );
+
+    return true;
+  } catch (error) {
+    console.error('Error executing query', error);
+    throw new Error('Internal Server Error');
+  }
+}
+
+async function insertGames(steamId) {
+  try {
+    const response = await axios.get(
+      `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
+      {
+        params: {
+          key: process.env.STEAM_API_KEY,
+          steamid: steamId,
+          format: 'json',
+          include_appinfo: true,
+          include_played_free_games: true,
+        },
+      }
+    );
+
+    const games = response.data.response.games;
+
+    if (!games || games.length === 0) {
+      return { success: false, message: 'No games found for this user.' };
+    }
+
+    for (const game of games) {
+      const appId = game.appid;
+      const playtimeForever = game.playtime_forever || 0;
+
+      try {
+        const gameExists = await pool.query(
+          'SELECT 1 FROM "Games" WHERE "game_id" = $1',
+          [appId]
+        );
+
+        if (gameExists.rows.length === 0) {
+          console.warn(`Skipping game ${appId} because it does not exist in the referenced table.`);
+          continue;
+        }
+
+        await pool.query(
+          `INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
+           VALUES ($1, $2, $3)
+           ON CONFLICT ("game_id", "steam_id")
+           DO UPDATE SET "total_played" = EXCLUDED."total_played"`,
+          [appId, steamId, playtimeForever]
+        );
+
+        console.log(`Inserted/Updated row: game = ${appId}, user_id = ${steamId}, total_played = ${playtimeForever}`);
+      } catch (error) {
+        console.error(`Error processing game ${appId} for user ${steamId}:`, error);
+      }
+    }
+
+    return { success: true, message: 'Games inserted/updated successfully.' };
+  } catch (error) {
+    console.error('Error fetching games from Steam API:', error);
+    throw new Error('Internal Server Error');
+  }
+}
 
 export async function checkAccount(steamId) {
   let retVal = 0;
