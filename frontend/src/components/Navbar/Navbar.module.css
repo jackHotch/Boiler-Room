@@ -7,6 +7,9 @@
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
   text-align: center;
+  position: relative;
+  z-index: 1231321;
+
 }
 .nav_options {
   display: flex;
@@ -14,11 +17,18 @@
 }
 
 .logo, .links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 12px;
   color: white;
   border-radius: 8px;
   text-decoration: none;
+  text-align: center; /* Ensures text alignment */
+  min-width: 120px; /* Ensures enough space for text */
+  line-height: 1;
 }
+
 
 .logo:hover, .links:hover {
   background-color: #273d61;
@@ -49,6 +59,13 @@
   align-items: center;
 }
 
+.pfp{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid white;
+}
 .input {
   border: none;
   width: 300px;
@@ -79,6 +96,6 @@
 .steamComponent {
   position: absolute;
   /* Adjust for spacing */
-  display: none;
+  display: flex;
   padding: 10px;
 }

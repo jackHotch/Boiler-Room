@@ -1,0 +1,101 @@
+.container {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    z-index: 100;
+}
+
+.infoContainer {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: 320px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profileWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Increased gap for better spacing between buttons */
+    align-items: flex-end; /* Align buttons to the right */
+}
+
+.logoutButton {
+    background: #ff4d4d; /* Red for logout warning effect */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Increased padding for better scaling */
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px; /* Slightly larger radius for a more rounded look */
+    cursor: pointer;
+    transition: background 0.3s ease;
+    min-width: 100px; /* Minimum width to ensure consistent size */
+}
+
+.logoutButton:hover {
+    background: #cc0000; /* Darker red on hover */
+}
+
+.profileButton {
+    background: #4d79ff; /* Blue for profile button */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Increased padding for better scaling */
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px; /* Slightly larger radius for a more rounded look */
+    cursor: pointer;
+    transition: background 0.3s ease;
+    min-width: 100px; /* Minimum width to ensure consistent size */
+}
+
+.profileButton:hover {
+    background: #3357cc; /* Darker blue on hover */
+}
+
+.loadingText {
+    font-size: 18px;
+    color: #bbb;
+}
+
+.errorText {
+    font-size: 18px;
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+.steamId {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 8px 0;
+}
+
+.steamName {
+    font-size: 16px;
+    color: #fff;
+    margin: 8px 0;
+}
