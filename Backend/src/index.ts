@@ -350,7 +350,9 @@ async function insertProfile(steamId: bigint) {
 }
 
 async function insertGames(steamId: bigint) {
-  try { //if we added a profile, lets add games too
+  try {
+    console.log(`Starting insertGames for steamId: ${steamId}`);
+    console.log('Fetching games from Steam API...');
     const response = await axios.get(
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
@@ -363,45 +365,75 @@ async function insertGames(steamId: bigint) {
         },
       }
     );
+    console.log('Steam API response:', response.data);
 
     const games = response.data.response.games;
 
-    if (!games || games.length === 0) { //if there are no games say as much
+    if (!games || games.length === 0) {
+      console.log('No games found for this user.');
       return { success: false, message: 'No games found for this user.' };
-    } //honestly this should be caught earlier by other functions
-
-    for (const game of games) { //for each game
-      const appId = game.appid; //get app id
-      const playtimeForever = game.playtime_forever || 0; //get playtime forever with a default of 0
-
-      try {
-        const gameExists = await pool.query( //check to make sure game exists
-          'SELECT 1 FROM "Games" WHERE "game_id" = $1',
-          [appId]
-        );
-
-        if (gameExists.rows.length === 0) { //for now we skip it if doesnt
-          console.warn(`Skipping game ${appId} because it does not exist in the referenced table.`);
-          continue; //this will be ammended later by me
-        }
-
-        await pool.query( //SQL Upsert code
-          `INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
-           VALUES ($1, $2, $3)
-           ON CONFLICT ("game_id", "steam_id")
-           DO UPDATE SET "total_played" = EXCLUDED."total_played"`,
-          [appId, steamId, playtimeForever]
-        );
-        //then just some logging from here on down
-        console.log(`Inserted/Updated row: game = ${appId}, user_id = ${steamId}, total_played = ${playtimeForever}`);
-      } catch (error) {
-        console.error(`Error processing game ${appId} for user ${steamId}:`, error);
-      }
     }
+
+    const gameIds = games.map(game => game.appid);
+    console.log('Game IDs from Steam API:', gameIds);
+    console.log('Data type of game IDs from Steam API:', typeof gameIds[0]);
+
+    console.log('Fetching existing games from the database...');
+    const existingGames = await pool.query(
+      'SELECT "game_id" FROM "Games" WHERE "game_id" = ANY($1)',
+      [gameIds]
+    );
+
+    console.log('Existing games in database:', existingGames.rows);
+    console.log('Data type of game IDs in database:', typeof existingGames.rows[0]?.game_id);
+
+    const existingGameIds = new Set(existingGames.rows.map(row => String(row.game_id)));
+    console.log('Existing game IDs:', existingGameIds);
+
+    const validGames = games.filter(game => existingGameIds.has(String(game.appid)));
+    console.log('Valid games (existing in database):', validGames);
+
+    if (validGames.length === 0) {
+      console.log('No valid games found to insert/update.');
+      console.log('This means none of the games returned by the Steam API exist in the Games table.');
+      return { success: false, message: 'No valid games found to insert/update.' };
+    }
+
+    const values = validGames
+      .map((game, index) => [
+        game.appid,
+        steamId,
+        game.playtime_forever || 0,
+      ])
+      .flat();
+
+    console.log('Batch insert/update values:', values);
+
+    const placeholders = validGames
+      .map((_, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`)
+      .join(',');
+
+    console.log('Placeholders for batch query:', placeholders);
+
+    const query = `
+      INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
+      VALUES ${placeholders}
+      ON CONFLICT ("game_id", "steam_id")
+      DO UPDATE SET "total_played" = EXCLUDED."total_played"
+    `;
+
+    console.log('Constructed batch query:', query);
+
+    console.log('Executing batch query...');
+    const result = await pool.query(query, values);
+
+    console.log('Batch query result:', result);
+
+    console.log(`Inserted/Updated ${validGames.length} rows.`);
 
     return { success: true, message: 'Games inserted/updated successfully.' };
   } catch (error) {
-    console.error('Error fetching games from Steam API:', error);
+    console.error('Error in insertGames:', error);
     throw new Error('Internal Server Error');
   }
 }
