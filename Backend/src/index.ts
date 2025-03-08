@@ -24,11 +24,6 @@ const pool = new Pool({
 })
 pool.connect()
 
-async function closeServer() {
-  server.close()
-  await pool.end()
-}
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
@@ -51,10 +46,6 @@ app.use(
     credentials: true, // Allows sending cookies/sessions
   })
 )
-
-app.closeServer = () => {
-  server.close();
-};
 
 app.post('/set-session', (req, res) => {
   req.session.steamid = req.body.steamid;
@@ -106,29 +97,29 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
   let profile_visibilty = await checkAccount(id)
   console.log("Profile vis: " + profile_visibilty)
   switch (profile_visibilty) {
-case 0:
-  res.status(200).send(renderMessagePage({
-    title: "Don't be a loner...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 0:
+      res.status(200).send(renderMessagePage({
+        title: "Don't be a loner...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
-case 1:
-  res.status(200).send(renderMessagePage({
-    title: "Gatekeeping games...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 1:
+      res.status(200).send(renderMessagePage({
+        title: "Gatekeeping games...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
-case 2:
-  res.status(200).send(renderMessagePage({
-    title: "Wow! Looks like you've got no friends...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 2:
+      res.status(200).send(renderMessagePage({
+        title: "Wow! Looks like you've got no friends...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
     default:
-      res.redirect(`/steam/setsession/${id}`)
+      res.status(200).redirect(`/steam/setsession/${id}`)
       break
   }})
 
@@ -193,10 +184,6 @@ app.get('/steam/playersummary', async (req, res) => {
 
 // Get three most recent games from steam id
 app.get('/steam/recentgames', async (req, res) => {
-  if (!req.session.steamId) {
-    res.status(400).send('Steam ID not found in session');
-  }
-
   const steamId = req.query.steamid || req.session.steamId;
   const key = process.env.STEAM_API_KEY;
 
@@ -210,7 +197,7 @@ app.get('/steam/recentgames', async (req, res) => {
     });
 
     const games = data.response.games?.slice(0, 3) || [];
-    res.send(games);
+    res.status(200).send(games);
   } catch (error) {
     console.error("Error fetching Steam data:", error);
     res.redirect(process.env.FRONTEND_URL);
@@ -267,8 +254,7 @@ app.get('/steam/friendsList', async (req, res) => {
   }
 })
 
-// Endpoints
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
@@ -320,7 +306,7 @@ app.get("/games/:gameid", async (req, res) => {
   }
 });
 
-async function checkAccount(steamId) {
+export async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
 
@@ -412,6 +398,6 @@ const renderMessagePage = (message) => {
   `;
 }
 
-export {app, server, closeServer}
+export default app
 
 

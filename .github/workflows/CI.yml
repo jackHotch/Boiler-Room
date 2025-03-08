@@ -53,6 +53,9 @@ jobs:
       - name: Install Dependencies in Backend
         run: npm install
 
+      - name: Set environment variables
+        run: echo "STEAM_API_KEY=${{ secrets.STEAM_API_KEY }}" >> $GITHUB_ENV
+
       - name: Build the Backend
         run: npm run build
 

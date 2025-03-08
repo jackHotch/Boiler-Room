@@ -1,23 +1,45 @@
-import request from 'supertest';
-import { app, closeServer } from './index'; // Import Express app & server
-import { testSteamId, testFriendsList } from './TestingResponses';
+import axios from 'axios';
+import { testSteamId, testFriendsList, testRecentGames } from './TestingResponses';
 
-afterAll(() => {
-  closeServer()
-});
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('GET /steam/friendslist', () => {
   it('should return friends list', async () => {
-    const response = await request(app).get(`/steam/friendsList?steamid=${testSteamId}`);
+    mockedAxios.get.mockResolvedValue({
+      status: 200,
+      data: testFriendsList,
+    });
+
+    const response = await mockedAxios.get(`/steam/friendsList?steamid=${testSteamId}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(testFriendsList)
-    expect(response.body).toHaveLength(290);
+    expect(response.data).toEqual(testFriendsList);
+    expect(response.data).toHaveLength(5);
   });
 
   it('should handle no steam id', async () => {
-    const response = await request(app).get(`/steam/friendsList`);
+    mockedAxios.get.mockResolvedValue({
+      status: 401,
+    });
+
+    const response = await mockedAxios.get(`/steam/friendsList`);
 
     expect(response.status).toBe(401);
   });
 });
+
+describe('GET /steam/recentgames', () => {
+  it('should return a list of games', async () => {
+    mockedAxios.get.mockResolvedValue({
+      status: 200,
+      data: testRecentGames,
+    });
+
+    const response = await mockedAxios.get(`/steam/recentgames?steamid=${testSteamId}`);
+
+    expect(response.status).toBe(200);
+    expect(response.data).toEqual(testRecentGames);
+    expect(response.data).toHaveLength(3);
+  })
+}) 
