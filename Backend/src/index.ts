@@ -24,9 +24,10 @@ const pool = new Pool({
 })
 pool.connect()
 
-// app.closeServer = () => {
-//   app.close()
-// }
+async function closeServer() {
+  server.close()
+  await pool.end()
+}
 
 app.use(
   session({
@@ -262,6 +263,7 @@ app.get('/steam/friendsList', async (req, res) => {
   }
   else {
     console.log('no steam id')
+    res.sendStatus(401)
   }
 })
 
@@ -410,6 +412,6 @@ const renderMessagePage = (message) => {
   `;
 }
 
-export {app, server}
+export {app, server, closeServer}
 
 
