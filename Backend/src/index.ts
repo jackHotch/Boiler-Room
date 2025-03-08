@@ -51,6 +51,10 @@ app.use(
   })
 )
 
+app.closeServer = () => {
+  server.close();
+};
+
 app.post('/set-session', (req, res) => {
   req.session.steamid = req.body.steamid;
   res.send({ message: 'Session set' });
@@ -254,7 +258,7 @@ app.get('/steam/friendsList', async (req, res) => {
   if (steamId) {
     const API_KEY = process.env.STEAM_API_KEY
     const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
-    return res.json(data.data.friendslist.friends)
+    return res.status(200).json(data.data.friendslist.friends)
   }
   else {
     console.log('no steam id')
