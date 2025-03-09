@@ -51,11 +51,7 @@ const SingleGamePage = () => {
         <div className={styles.gameLeft}>
           <img
             className={styles.cover}
-            src={
-              'https://steamcdn-a.akamaihd.net/steam/apps/' +
-              gameid +
-              '/library_600x900_2x.jpg'
-            }
+            src={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
             alt={game.name}
           />
           <div className={styles.gameInfo}>
