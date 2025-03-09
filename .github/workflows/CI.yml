@@ -54,7 +54,7 @@ jobs:
         run: npm install
 
       - name: Set environment variables
-        run: echo "STEAM_API_KEY=${{ secrets.STEAM_API_KEY }}" >> $GITHUB_ENV
+        run: echo "DB_URL=${{ secrets.DB_URL }}" >> $GITHUB_ENV
 
       - name: Build the Backend
         run: npm run build

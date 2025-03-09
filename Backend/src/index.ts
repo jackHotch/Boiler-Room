@@ -24,6 +24,11 @@ const pool = new Pool({
 })
 pool.connect()
 
+export function closeServer() {
+  server.close()
+  pool.end()
+}
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
@@ -250,11 +255,11 @@ app.get('/steam/friendsList', async (req, res) => {
   }
   else {
     console.log('no steam id')
-    res.sendStatus(401)
+    res.sendStatus(400)
   }
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
@@ -270,7 +275,7 @@ app.get('/games', async(req, res) => {
   try {
     // Uses sql command to grab 3 random game ids from the database and corresponding description, name, and header image id then returning json object.
     const { rows } = await pool.query(`SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching game IDs:", error);
     res.status(500).json({ error: error.message });
@@ -299,7 +304,7 @@ app.get("/games/:gameid", async (req, res) => {
       res.status(404).json({ error: "Game not found" });
     }
 
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (error) {
     console.error("Database error:", error);
     res.status(500).json({ error: "Internal server error" });
