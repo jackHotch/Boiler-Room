@@ -324,6 +324,7 @@ export async function checkAccount(steamId) {
               key: KEY
           }
       });
+      console.log(gameResponse.data.response)
 
       if (Object.keys(gameResponse.data.response).length > 0) {
           retVal += 2;
