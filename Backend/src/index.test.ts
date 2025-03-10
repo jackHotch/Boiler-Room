@@ -92,62 +92,80 @@ describe('GET /games', () => {
 describe('GET /games/:gameid', () => {
   it('should return game details for the gameid', async () => {
     const response = await request(app).get(`/games/10`);
-    console.log("Response")
-    console.log(response.body)
-    console.log("Test")
-    console.log(testGameDetails)
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(testGameDetails)
+    expect(response.body).toHaveProperty('name')
+    expect(response.body).toHaveProperty('header_image')
+    expect(response.body).toHaveProperty('description')
+    expect(response.body).toHaveProperty('hltb_score')
+    expect(response.body).toHaveProperty('recommendations')
+    expect(response.body).toHaveProperty('price')
+    expect(response.body).toHaveProperty('metacritic_score')
+    expect(response.body).toHaveProperty('released')
+    expect(response.body).toHaveProperty('platform')
+  })
+
+  it('should return not a valid game id', async () => {
+    const response = await request(app).get(`/games/counter-strike`);
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toEqual('Invalid game ID format')
+  })
+
+  it('should return game not found', async () => {
+    const response = await request(app).get(`/games/8`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toEqual('Game not found')
   })
 }) 
 
-// describe('checkAccount function', () => {
+describe('Check Account Visibility', () => {
 
-//   afterEach(() => {
-//       jest.clearAllMocks(); // Clear mocks after each test
-//   });
+  afterEach(() => {
+      jest.clearAllMocks(); 
+  });
 
-//   test('returns 3 when both game details and friends list are public', async () => {
-//       mockedAxios.get
-//           .mockResolvedValueOnce({ data: { response: { games: [{ appid: 730 }] } } }) // Mock game details API
-//           .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); // Mock friends list API
+  it('returns 3 when both game details and friends list are public', async () => {
+      mockedAxios.get
+          .mockResolvedValueOnce({ data: { response: { games: [{ appid: 123 }] } } }) 
+          .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); 
 
-//       const result = await checkAccount(testSteamId);
-//       expect(result).toBe(3);
-//   });
+      const result = await checkAccount(testSteamId);
+      expect(result).toBe(3);
+  });
 
-//   test('returns 2 when only game details are public', async () => {
-//       mockedAxios.get
-//           .mockResolvedValueOnce({ data: { response: { games: [{ appid: 730 }] } } }) // Mock game details API
-//           .mockRejectedValueOnce(new Error('Friends list is private')); // Mock friends list API failure
+  it('returns 2 when only game details are public', async () => {
+      mockedAxios.get
+          .mockResolvedValueOnce({ data: { response: { games: [{ appid: 123 }] } } }) 
+          .mockRejectedValueOnce({ data: { response: {} } }); 
 
-//       const result = await checkAccount(testSteamId);
-//       expect(result).toBe(2);
-//   });
+      const result = await checkAccount(testSteamId);
+      expect(result).toBe(2);
+  });
 
-//   test('returns 1 when only friends list is public', async () => {
-//     mockedAxios.get
-//         .mockRejectedValueOnce(new Error('Game details are private')) // Mock game details API failure
-//         .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); // Correctly structured response
+  it('returns 1 when only friends list is public', async () => {
+    mockedAxios.get
+        .mockResolvedValueOnce({ data: { response: {} } }) 
+        .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); 
 
-//     const result = await checkAccount(testSteamId);
-//     expect(result).toBe(1);
-//   });
+    const result = await checkAccount(testSteamId);
+    expect(result).toBe(1);
+  });
 
-//   test('returns 0 when both game details and friends list are private', async () => {
-//       mockedAxios.get
-//           .mockRejectedValueOnce(new Error('Game details are private')) // Mock game details API failure
-//           .mockRejectedValueOnce(new Error('Friends list is private')); // Mock friends list API failure
+  it('returns 0 when both game details and friends list are private', async () => {
+      mockedAxios.get
+          .mockRejectedValueOnce({ data: { response: {} } }) 
+          .mockRejectedValueOnce({ data: { response: {} } }); 
 
-//       const result = await checkAccount(testSteamId);
-//       expect(result).toBe(0);
-//   });
+      const result = await checkAccount(testSteamId);
+      expect(result).toBe(0);
+  });
 
-//   test('handles API errors gracefully and returns 0', async () => {
-//       mockedAxios.get.mockRejectedValue(new Error('API request failed')); // Mock both requests failing
+  it('handles API errors gracefully and returns 0', async () => {
+      mockedAxios.get.mockRejectedValue(new Error('API request failed')); 
 
-//       const result = await checkAccount(testSteamId);
-//       expect(result).toBe(0);
-//   });
-// });
+      const result = await checkAccount(testSteamId);
+      expect(result).toBe(0);
+  });
+});

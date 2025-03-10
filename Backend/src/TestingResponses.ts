@@ -1,4 +1,4 @@
-export const testSteamId = '76561197960435530'
+export const testSteamId = '76561197960434622'
 
 export const testFriendsList = [
   {

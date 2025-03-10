@@ -287,7 +287,7 @@ app.get("/games/:gameid", async (req, res) => {
 
   // Ensure gameid is a valid number
   if (isNaN(Number(gameid))) {
-    res.status(400).json({ error: "Invalid game ID format" });
+    return res.status(400).json({ error: "Invalid game ID format" });
   }
 
   try {
@@ -298,10 +298,8 @@ app.get("/games/:gameid", async (req, res) => {
       [gameid]
     );
 
-    console.log("Query result for gameid:", gameid, rows); // Debugging log
-
     if (rows.length === 0) {
-      res.status(404).json({ error: "Game not found" });
+      return res.status(404).json({ error: "Game not found" });
     }
 
     res.status(200).json(rows[0]);
@@ -324,11 +322,11 @@ export async function checkAccount(steamId) {
               key: KEY
           }
       });
-      console.log(gameResponse.data.response)
 
-      if (Object.keys(gameResponse.data.response).length > 0) {
-          retVal += 2;
-      }
+      if (gameResponse.data.response && Object.keys(gameResponse.data.response).length > 0) {
+        retVal += 2; 
+    }
+    
 
       // Checking friends list access
       const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
@@ -339,11 +337,11 @@ export async function checkAccount(steamId) {
           }
       });
 
-      if (Object.keys(friendsResponse.data).length > 0) {
-          retVal += 1;
-      }
+      if (friendsResponse.data.friendslist) {  
+        retVal += 1; 
+    }
   } catch (error) {
-      console.error("Error fetching Steam API:", error.message);
+      console.error("Error fetching Steam API:", error);
   }
 /*
 retVal:
