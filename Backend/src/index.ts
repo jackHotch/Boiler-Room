@@ -4,6 +4,7 @@ const express = require('express')
 const session = require('express-session')
 import axios from 'axios'
 import dotenv from 'dotenv'
+import puppeteer from 'puppeteer';
 
 const { Pool } = pg
 const port = 8080
@@ -133,13 +134,39 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
     req.session.steamPFP = response.data.userImage
 
     console.log('Steam ID Authenticated: ' + req.session.steamId)
-    res.redirect(process.env.FRONTEND_URL + "/Dashboard")
+    res.redirect(`/steam/hltbupdate/${id}`)
   } catch (error) {
     console.error('Error fetching Steam username:', error)
     // Only send one response, error occurs when redirecting back from login error
     if (!res.headersSent) return res.status(500).send('Error fetching Steam username');
   }
 })
+
+app.get('/steam/hltbupdate/:steamId', async (req, res) => {
+  const id = req.params.steamId;
+  const url = (`https://howlongtobeat.com/steam?userName=${id}`)
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  //Use a custom user agent because default throws a 403 error on HLTB
+  const customUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36';
+
+  await page.setUserAgent(customUA);
+  await page.goto(url);
+  await page.setViewport({width: 1080, height: 1024});
+
+  //Sleep for 5 seconds to wait for table to load on HLTB
+  await new Promise(f => setTimeout(f, 5000));
+
+  const textSelector = await page.content();
+
+  let result = textSelector;
+
+  console.log(result);
+
+  res.redirect(process.env.FRONTEND_URL + "/Dashboard")
+}
+)
 
 app.get('/steam/loggedin', async (req, res) => {
   if (req.session.steamId)
