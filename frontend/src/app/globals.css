@@ -1,5 +1,22 @@
+:root {
+  --bg-primary: #ff0000; /* Light mode background */
+  --text-color: #000; /* Light mode text */
+}
+
+.dark {
+  --bg-primary: #1e2837; /* Dark mode background */
+  --bg-light: #304058;
+  --bg-dark: #0c1016;
+  --bg-content: #91a5c3;
+  --text-primary: #ffffff; /* Dark mode text */
+  --text-secondary: #bbbbbb;
+  --button-primary: #202b3e;
+  --button-secondary: #273d61;
+}
+
 body {
     padding:0;
     margin:0;
-    background-color: #1a202c;
+    background-color: var(--bg-primary);
+    font-family: Arial, sans-serif;
 }

@@ -3,9 +3,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  font-family: Arial, sans-serif;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
   text-align: center;
   position: relative;
   z-index: 1231321;
@@ -22,7 +19,7 @@
   justify-content: center;
   align-items: center;
   padding: 12px;
-  color: white;
+  color: var(--text-primary);
   border-radius: 8px;
   text-decoration: none;
   text-align: center; /* Ensures text alignment */
@@ -33,7 +30,7 @@
 
 
 .logo:hover, .links:hover {
-  background-color: #273d61;
+  background-color: var(--button-secondary);
 }
 
 .logo {
@@ -42,7 +39,7 @@
 }
 
 .links {
-  background-color: #202b3e;
+  background-color: var(--button-primary);
 }
 
 .searchbar {
