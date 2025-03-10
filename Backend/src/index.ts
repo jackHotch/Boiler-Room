@@ -24,6 +24,11 @@ const pool = new Pool({
 })
 pool.connect()
 
+export function closeServer() {
+  server.close()
+  pool.end()
+}
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'your_secret_key', // unsure how important this key name is, look into
@@ -46,6 +51,11 @@ app.use(
     credentials: true, // Allows sending cookies/sessions
   })
 )
+
+app.post('/set-session', (req, res) => {
+  req.session.steamid = req.body.steamid;
+  res.send({ message: 'Session set' });
+});
 
 // Go through steams open id process and redirect to steam login, sends back request to our /steam handler route
 app.get('/auth/steam', (req, res) => {
@@ -92,29 +102,29 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
   let profile_visibilty = await checkAccount(id)
   console.log("Profile vis: " + profile_visibilty)
   switch (profile_visibilty) {
-case 0:
-  res.status(200).send(renderMessagePage({
-    title: "Don't be a loner...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 0:
+      res.status(200).send(renderMessagePage({
+        title: "Don't be a loner...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
-case 1:
-  res.status(200).send(renderMessagePage({
-    title: "Gatekeeping games...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 1:
+      res.status(200).send(renderMessagePage({
+        title: "Gatekeeping games...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
-case 2:
-  res.status(200).send(renderMessagePage({
-    title: "Wow! Looks like you've got no friends...",
-    text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
-  }));
-  break;
+    case 2:
+      res.status(200).send(renderMessagePage({
+        title: "Wow! Looks like you've got no friends...",
+        text: "Please set all of your Steam profile to public so we can help curate your game recommendations."
+      }));
+      break;
 
     default:
-      res.redirect(`/steam/setsession/${id}`)
+      res.status(200).redirect(`/steam/setsession/${id}`)
       break
   }})
 
@@ -179,10 +189,6 @@ app.get('/steam/playersummary', async (req, res) => {
 
 // Get three most recent games from steam id
 app.get('/steam/recentgames', async (req, res) => {
-  if (!req.session.steamId) {
-    res.status(400).send('Steam ID not found in session');
-  }
-
   const steamId = req.query.steamid || req.session.steamId;
   const key = process.env.STEAM_API_KEY;
 
@@ -196,7 +202,7 @@ app.get('/steam/recentgames', async (req, res) => {
     });
 
     const games = data.response.games?.slice(0, 3) || [];
-    res.send(games);
+    res.status(200).send(games);
   } catch (error) {
     console.error("Error fetching Steam data:", error);
     res.redirect(process.env.FRONTEND_URL);
@@ -241,20 +247,19 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
 
 // Get the entrie friends list from steam
 app.get('/steam/friendsList', async (req, res) => {
-  if (req.session.steamId) {
-    const steamId = req.session.steamId
+  const steamId = req.query.steamid || req.session.steamId
+  if (steamId) {
     const API_KEY = process.env.STEAM_API_KEY
     const data = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`)
-    return res.json(data.data.friendslist.friends)
+    return res.status(200).json(data.data.friendslist.friends)
   }
   else {
     console.log('no steam id')
+    res.sendStatus(400)
   }
-  res.redirect(process.env.FRONTEND_URL)
 })
 
-// Endpoints
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
@@ -270,7 +275,7 @@ app.get('/games', async(req, res) => {
   try {
     // Uses sql command to grab 3 random game ids from the database and corresponding description, name, and header image id then returning json object.
     const { rows } = await pool.query(`SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score" FROM "Games" ORDER BY RANDOM() LIMIT 3`);
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching game IDs:", error);
     res.status(500).json({ error: error.message });
@@ -282,7 +287,7 @@ app.get("/games/:gameid", async (req, res) => {
 
   // Ensure gameid is a valid number
   if (isNaN(Number(gameid))) {
-    res.status(400).json({ error: "Invalid game ID format" });
+    return res.status(400).json({ error: "Invalid game ID format" });
   }
 
   try {
@@ -293,20 +298,18 @@ app.get("/games/:gameid", async (req, res) => {
       [gameid]
     );
 
-    console.log("Query result for gameid:", gameid, rows); // Debugging log
-
     if (rows.length === 0) {
-      res.status(404).json({ error: "Game not found" });
+      return res.status(404).json({ error: "Game not found" });
     }
 
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (error) {
     console.error("Database error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-async function checkAccount(steamId) {
+export async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
 
@@ -320,9 +323,10 @@ async function checkAccount(steamId) {
           }
       });
 
-      if (Object.keys(gameResponse.data.response).length > 0) {
-          retVal += 2;
-      }
+      if (gameResponse.data.response && Object.keys(gameResponse.data.response).length > 0) {
+        retVal += 2; 
+    }
+    
 
       // Checking friends list access
       const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
@@ -333,11 +337,11 @@ async function checkAccount(steamId) {
           }
       });
 
-      if (Object.keys(friendsResponse.data).length > 0) {
-          retVal += 1;
-      }
+      if (friendsResponse.data.friendslist) {  
+        retVal += 1; 
+    }
   } catch (error) {
-      console.error("Error fetching Steam API:", error.message);
+      console.error("Error fetching Steam API:", error);
   }
 /*
 retVal:
