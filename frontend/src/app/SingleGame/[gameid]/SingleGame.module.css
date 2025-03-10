@@ -39,7 +39,7 @@
 
 .cover {
   background-color: #2d3748;
-  width: 100%;
+  width: auto;
   min-height: 250px; /* Ensures it doesn’t collapse */
   display: flex;
   align-items: center;

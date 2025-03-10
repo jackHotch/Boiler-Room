@@ -51,9 +51,13 @@ const SingleGamePage = () => {
         <div className={styles.gameLeft}>
           <img
             className={styles.cover}
-            src={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
-            alt={game.name}
+            src={`https://steamcdn-a.akamaihd.net/steam/apps/${gameid}/library_600x900_2x.jpg`}
+            alt={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
+            onError={(e) => {
+              e.target.src = `https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster` // Fallback to placeholder
+            }}
           />
+
           <div className={styles.gameInfo}>
             Number of recommendations: {game.recommendations}
           </div>

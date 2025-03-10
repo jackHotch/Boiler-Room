@@ -27,6 +27,7 @@
     margin: 0%;
 }
 
+
 .gameContainer:hover {
     transition: transform 0.25s ease-in-out, filter 0.25s ease-in-out;
     transform: scale(1.1);
@@ -37,7 +38,10 @@
     transition: transform 0.4s ease-in-out, filter 0.4s ease-in-out;
     filter: brightness(.9);
 }
-
+.gameContainer img:hover {
+    outline: 1px solid #6299f0;
+    filter: brightness(1.1);
+}
 
 .gameCategory {
     margin-top: 15px;
@@ -47,3 +51,5 @@
     z-index: 3;
     position: relative;
 }
+
+  
