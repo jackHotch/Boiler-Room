@@ -9,6 +9,7 @@
   text-align: center;
   position: relative;
   z-index: 1231321;
+  height: 10%;
 
 }
 .nav_options {
@@ -26,7 +27,7 @@
   text-decoration: none;
   text-align: center; /* Ensures text alignment */
   min-width: 120px; /* Ensures enough space for text */
-  height: 40px; /* Adjust based on design */
+  height: 30px; /* Adjust based on design */
   line-height: 1;
 }
 
@@ -44,20 +45,13 @@
   background-color: #202b3e;
 }
 
-.account {
-  width: 18px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .searchbar {
   background-color: white;
   border-radius: 8px;
   padding: 8px;
   display: flex;
   align-items: center;
+  height: 40px;
 }
 
 .pfp{
@@ -65,8 +59,11 @@
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
-  margin-top: 5px;
   border: 2px solid white;
+}
+.pfp:hover {
+  border: 2px solid #6299f0;
+  cursor: pointer;
 }
 .input {
   border: none;
@@ -97,7 +94,7 @@
 
 .steamComponent {
   position: absolute;
-  /* Adjust for spacing */
   display: flex;
   padding: 10px;
+
 }

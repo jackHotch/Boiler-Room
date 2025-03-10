@@ -55,7 +55,7 @@ app.get('/auth/steam', (req, res) => {
     'openid.ns': 'http://specs.openid.net/auth/2.0', // OpenID 2.0 namespace
     'openid.mode': 'checkid_setup', // Start the authentication process
     'openid.return_to': `${process.env.BACKEND_URL}/steam`, // Must be the url which recieves the open id info (rn it is /steam)
-    'openid.realm': `${process.env.BACKEND_URL}/steam`,
+    'openid.realm': `${process.env.BACKEND_URL}`,
     'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identifier
     'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identity
   })
@@ -129,6 +129,10 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
 app.get('/steam/setsession/:steamId', async (req, res) => {
   const id = req.params.steamId
   // Fetch the steamName asynchronously and store it in the session
+  const steamId = BigInt(req.params.steamId) //Set steamid to big Int
+  const result = await insertProfile(steamId) //Toss it to the insert profile function
+
+  // Fetch the steamName asynchronously and store it in the session
   try {
     const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
       params: { steamid: id }, // Send the steamid in the request
@@ -146,6 +150,45 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
     if (!res.headersSent) return res.status(500).send('Error fetching Steam username')
   }
 })
+
+async function insertProfile(steamId: bigint) {
+  try {
+    //firstly we check to make sure we dont have a profiel already
+    const { rows: existingRows } = await pool.query(
+      'SELECT * FROM "Profiles" WHERE "steam_id" = $1',
+      [steamId]
+    )
+
+    if (existingRows.length > 0) {
+      return false //if we do, throw a false and move on
+    }
+
+    const response = await axios.get(
+      //otherwise get some information
+      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
+      {
+        params: {
+          key: process.env.STEAM_API_KEY, //thanks trevor for doing the work for me
+          steamids: steamId,
+        },
+      }
+    )
+
+    const avatar = response.data.response.players[0]?.avatarhash //isolate the 2 things we use
+    const userName = response.data.response.players[0]?.personaname
+
+    await pool.query(
+      //insert those things along with the steamID to our database
+      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *',
+      [steamId, userName, avatar]
+    )
+
+    return true //set true
+  } catch (error) {
+    console.error('Error executing query', error) //catch errors that may occur
+    throw new Error('Internal Server Error')
+  }
+}
 
 app.get('/steam/loggedin', async (req, res) => {
   if (req.session.steamId) res.send(true)
