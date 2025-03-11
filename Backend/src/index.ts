@@ -319,7 +319,7 @@ app.get("/games/:gameid", async (req, res) => {
 });
 
 
-async function insertProfile(steamId: bigint) {
+export async function insertProfile(steamId: bigint) {
   try { //firstly we check to make sure we dont have a profiel already
     const { rows: existingRows } = await pool.query(
       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
@@ -353,7 +353,7 @@ async function insertProfile(steamId: bigint) {
   }
 }
 
-async function insertGames(steamId: bigint) {
+export async function insertGames(steamId: bigint) {
   //Theres going to be a lot of commented out console logs here because I had to hunt stuff down
   try {
     //console.log(`Starting insertGames for steamId: ${steamId}`); 
