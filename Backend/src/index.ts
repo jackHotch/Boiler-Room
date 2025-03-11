@@ -320,7 +320,7 @@ app.get("/games/:gameid", async (req, res) => {
 
 
 export async function insertProfile(steamId: bigint) {
-  try { //firstly we check to make sure we dont have a profiel already
+  try { //firstly we check to make sure we dont have a profile already
     const { rows: existingRows } = await pool.query(
       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
     );
