@@ -299,6 +299,8 @@ app.get("/games/:gameid", async (req, res) => {
     2: ["Mac"],
     3: ["Linux, ", "Mac, "],
     4: ["Windows"],
+    5: ["Linux, ", "Windows"],
+    6: ["Windows, ", "Mac, "],
     7: ["Linux, ", "Mac, ", "Windows"]
   }
 
