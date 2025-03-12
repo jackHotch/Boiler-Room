@@ -28,7 +28,7 @@ test('insertProfile inserts a profile and returns true', async () => {
   const result = await insertProfile(BigInt(testSteamId));
   expect(result).toBe(true);
 
-  const res = await pool.query('SELECT * FROM "Profile" WHERE steam_id = $1', [testSteamId.toString()]);
+  const res = await pool.query('SELECT * FROM "Profiles" WHERE steam_id = $1', [testSteamId.toString()]);
   expect(res.rows[0].steam_id).toEqual(testSteamId.toString());
   expect(res.rows[0].username).toEqual(testProfile.username);
   expect(res.rows[0].avatar_hash).toEqual(testProfile.avatar_hash);
