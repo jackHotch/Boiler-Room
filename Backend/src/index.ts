@@ -354,7 +354,7 @@ export async function insertProfile(steamId: bigint) {
 }
 
 export async function insertGames(steamId: bigint) {
-  //Theres going to be a lot of commented out console logs here because I had to hunt stuff down
+  // Theres going to be a lot of commented out console logs here because I had to hunt stuff down
   try {
     //console.log(`Starting insertGames for steamId: ${steamId}`); 
     //console.log('Fetching games from Steam API...');
