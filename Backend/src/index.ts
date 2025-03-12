@@ -329,7 +329,7 @@ export async function insertProfile(steamId: bigint) {
       return false;  // If we do, throw a false and move on
     }
 
-    const response = await axios.get( //otherwise get some information
+    const response = await axios.get( // Otherwise get some information
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
       {
         params: {
