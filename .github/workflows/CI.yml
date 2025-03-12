@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - Chris-Database-Test-Insertions
+      - main
   pull_request:
 
 jobs:
