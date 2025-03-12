@@ -5,7 +5,7 @@ export const testGameDetails = {
   "name": "Counter-Strike",
   "header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10/header.jpg?t=1729702322",
   "description": "Play the world's number 1 online action game. Engage in an incredibly realistic brand of terrorist warfare in this wildly popular team-based game. Ally with teammates to complete strategic missions. Take out enemy sites. Rescue hostages. Your role affects your team's success. Your team's success affects your role.",
-  "hltb_score": null,
+  "hltb_score": 66.3,
   "recommendations": "depreciated",
   "price": 10,
   "metacritic_score": 88,
