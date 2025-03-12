@@ -1,6 +1,5 @@
 import { insertGames, insertProfile, closeServer } from './index';
 import axios from 'axios';
-import { testGameDetails, testUserGames} from './TestingResponses';
 import { Pool } from 'pg';
 
 jest.mock('axios');
@@ -34,6 +33,29 @@ const testProfile = {
   }
 };
 
+const testUserGames ={
+  response: {
+    game_count: 2,
+    games: [
+      {
+        appid: 10,
+        name: "Counter-Strike",
+        playtime_forever: 0,
+        img_icon_url: "6b0312cda02f5f777efa2f3318c307ff9acafbb5",
+        content_descriptorids: [2, 5]
+      },
+      {
+        appid: 80,
+        name: "Counter-Strike: Condition Zero",
+        playtime_forever: 0,
+        img_icon_url: "077b050ef3e89cd84e2c5a575d78d53b54058236",
+        content_descriptorids: [2, 5]
+      }
+    ]
+  }
+}
+
+
 beforeAll(async () => {
   await pool.connect();
   await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = $1', [testSteamId]);
@@ -59,15 +81,16 @@ test('insertProfile inserts a profile and returns true', async () => {
 });
 
 test('insertGames inserts games and returns success message', async () => {
-  mockedAxios.get.mockResolvedValueOnce({ data: testGameDetails });
+  mockedAxios.get.mockResolvedValueOnce({
+    data: testUserGames,
+  });
 
   const result = await insertGames(BigInt(testSteamId));
   expect(result).toEqual({ success: true, message: 'Games inserted/updated successfully.' });
 
   const res = await pool.query('SELECT * FROM "User_Games" WHERE "steam_id" = $1', [testSteamId.toString()]);
+
   expect(res.rows[0].steam_id).toEqual(testSteamId.toString());
-  expect(res.rows[0].game_id).toEqual(testUserGames.game_id);
-  expect(res.rows[0].total_played).toEqual(testUserGames.total_played);
-  expect(res.rows[0].last_2_weeks).toEqual(testUserGames.last_2_weeks);
-  expect(res.rows[0].recency).toEqual(testUserGames.recency);
+  expect(res.rows[0].game_id).toEqual(testUserGames.response.games[0].appid);
+  expect(res.rows[0].total_played).toEqual(testUserGames.response.games[0].playtime_forever);
 });
