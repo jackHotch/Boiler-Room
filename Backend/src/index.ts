@@ -159,34 +159,32 @@ async function hltbUpdate (id) {
   //Sleep for 5 seconds to wait for table to load on HLTB
   await new Promise(f => setTimeout(f, 5000));
 
-  //function to return 
-  const steamAppData = await page.evaluate(() => {
-    return Array.from(document.querySelectorAll('tr.spreadsheet')).map(row => { //get all table rows and put into an array, run map function
-        const link = row.querySelector('a[href*="store.steampowered.com/app/"]'); //for each get steam store link
-        const playtimeCell = row.querySelectorAll('td.center')[0]; //first "center" cell in row contains HLTB time
-
-        //if one cell is null return null for this row
-        if (!link || !playtimeCell) return null;
-
-        //get the steam id from <a> element via href value
-        const appId = (link as HTMLAnchorElement).href.match(/\/app\/(\d+)\//)?.[1];
-
-        //trim and capture hour and minute values
-        const playtimeText = playtimeCell.textContent.trim();
-        const timeMatch = playtimeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
-
-        //parse hours and minutes into ints or zero if they are not null
-        let hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
-        let minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
-
-        //convert the playtime to decimal format
-        const playtimeDecimal = hours + minutes / 60;
-
-        return appId ? [appId, playtimeDecimal] : null;
-    }).filter(entry => entry !== null); //filter null data out
+  const extractHLTBData = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('tr.spreadsheet')) //get array of table rows
+      .map(row => { //map function to run on each row
+        const steamLink = row.querySelector('a[href^="http://store.steampowered.com/app/"]'); //select store link from href
+        if (!steamLink) return null;
+  
+        const appId = (steamLink as HTMLAnchorElement).href.match(/app\/(\d+)/)?.[1]; //select steamAppId from store link
+        if (!appId) return null;
+  
+        const timeCell = row.querySelector('td.center, td.center.text_red'); //select HLTB time cell
+        if (!timeCell) return null;
+  
+        //extract hltb time 
+        const timeText = timeCell.textContent.trim();
+        const timeMatch = timeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
+  
+        //parse hours and minutes
+        const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
+        const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
+        const timeDecimal: number = +(hours + minutes / 60).toFixed(2); //convert to number rounded to 2 decimal points
+  
+        return [appId, timeDecimal];
+      });
   });
 
-  let result = steamAppData;
+  let result = extractHLTBData;
 
   console.log(result);
 
