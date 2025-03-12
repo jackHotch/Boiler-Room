@@ -64,7 +64,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await pool.end();
   closeServer();
 });
 
