@@ -326,7 +326,7 @@ export async function insertProfile(steamId: bigint) {
     );
 
     if (existingRows.length > 0) {
-      return false;  //if we do, throw a false and move on
+      return false;  // If we do, throw a false and move on
     }
 
     const response = await axios.get( //otherwise get some information
