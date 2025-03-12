@@ -91,6 +91,6 @@ test('insertGames inserts games and returns success message', async () => {
   const res = await pool.query('SELECT * FROM "User_Games" WHERE "steam_id" = $1', [testSteamId.toString()]);
 
   expect(res.rows[0].steam_id).toEqual(testSteamId.toString());
-  expect(res.rows[0].game_id).toEqual(testUserGames.response.games[0].appid);
+  expect(res.rows[0].game_id).toEqual(testUserGames.response.games[0].appid.toString());
   expect(res.rows[0].total_played).toEqual(testUserGames.response.games[0].playtime_forever);
 });
