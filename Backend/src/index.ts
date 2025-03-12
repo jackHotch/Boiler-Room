@@ -416,7 +416,7 @@ export async function insertGames(steamId: bigint) {
 
     //console.log('Batch insert/update values:', values);
 
-    const placeholders = validGames //makes a fun dynamic array to batch query up games
+    const placeholders = validGames // Makes a fun dynamic array to batch query up games
       .map((_, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`)
       .join(',');
 
