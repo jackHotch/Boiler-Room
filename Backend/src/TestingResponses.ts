@@ -1,5 +1,5 @@
 //export const testSteamId = '76561197960434622'
-export const testSteamId = BigInt("76561199154033472");
+export const testSteamId = BigInt(76561199154033472n);
 
 export const testGameDetails = {
   "name": "Counter-Strike",
