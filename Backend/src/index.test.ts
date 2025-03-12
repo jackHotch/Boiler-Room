@@ -61,9 +61,8 @@ beforeAll(async () => {
   await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = $1', [testSteamId]);
 });
 
-afterAll(async () => {
-  await pool.end();
-  closeServer();
+afterAll(() => {
+  closeServer()
 });
 
 test('insertProfile inserts a profile and returns true', async () => {
