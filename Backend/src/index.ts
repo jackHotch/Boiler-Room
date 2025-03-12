@@ -340,7 +340,7 @@ export async function insertProfile(steamId: bigint) {
     );
 
     const avatar = response.data.response.players[0]?.avatarhash; //isolate the 2 things we use
-    const userName = response.data.response.players[0]?.personaname;
+    const userName = response.data.response.players[0]?.personaname; // TODO figure why it breaks here
 
     await pool.query( // Insert those things along with the steamID to our database
       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
@@ -373,6 +373,7 @@ export async function insertGames(steamId: bigint) {
     //console.log('Steam API response:', response.data);
 
     const games = response.data.response.games; // the games we get are saved here
+    // TODO figure why it breaks here
 
     if (!games || games.length === 0) { //if the length is 0, user has no games
       console.log('No games found for this user.');
