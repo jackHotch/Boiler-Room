@@ -68,12 +68,14 @@ const DashGameGallery = ({ games, categories }) => {
               key={index}
               className={`${styles.gameContainer} ${isMiddle ? styles.enlarged : ''}`}
             >
+              <p className={styles.gameCategory}>{categories[index].label}</p>
+
               <a href={'/SingleGame/' + game.game_id} className={styles.imageWrapper}>
                 <div className={styles.imageContainer}>
                   {imageErrors[index] || !imagesLoaded ? (
                     <div className={styles.placeholder}>
                       <img
-                        src={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
+                        src={`https://placehold.co/600x900/3145/white/?text=${game.name}&font=lobster`}
                         alt={`Placeholder for ${game.name}`}
                         className={styles.gameImage}
                       />
@@ -88,7 +90,6 @@ const DashGameGallery = ({ games, categories }) => {
                   )}
                 </div>
               </a>
-              <p className={styles.gameCategory}>{categories[index].label}</p>
               <p className={styles.placeholderText}>{game.name}</p>
             </div>
           )

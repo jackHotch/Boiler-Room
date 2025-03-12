@@ -3,6 +3,8 @@
     background-color: #111;
     color: white;
     font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, rgb(0, 0, 0) 0%, rgb(8, 6, 44) 100%);
+
 }
 
 .header {

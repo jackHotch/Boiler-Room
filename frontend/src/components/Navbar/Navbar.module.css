@@ -10,7 +10,7 @@
   position: relative;
   z-index: 1231321;
   height: 10%;
-
+  border-bottom: 1px solid rgba(255, 255, 255, 0.393);
 }
 .nav_options {
   display: flex;

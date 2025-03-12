@@ -4,6 +4,8 @@
     align-items: center;
     margin-top: 25px;
     padding: 80px;
+    color: #E0E0E0;
+    font-family: Arial, sans-serif;
 }
 
 .gameContainer {
@@ -11,6 +13,11 @@
     height: fit-content;
     align-items: center;
     text-align: center;
+    background-color: rgba(45, 45, 45, 0.8);
+    border-radius: 8px;
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
 }
 
 .gallery img {
@@ -31,7 +38,7 @@
 .gameContainer:hover {
     transition: transform 0.25s ease-in-out, filter 0.25s ease-in-out;
     transform: scale(1.1);
-    filter: brightness(1.1);
+    filter: brightness(1.05);
 }
 
 .gameContainer{

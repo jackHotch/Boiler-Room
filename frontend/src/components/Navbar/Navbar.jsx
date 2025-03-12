@@ -65,7 +65,7 @@ export function Navbar() {
           ) : (
             <img
               className={styles.pfp}
-              src='https://placehold.co/40x40?text=P'
+              src='https://placehold.co/40x40/black/white?text=P'
               alt='Profile'
             />
           )}
