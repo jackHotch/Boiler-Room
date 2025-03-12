@@ -380,7 +380,7 @@ export async function insertGames(steamId: bigint) {
       return { success: false, message: 'No games found for this user.' };
     } //likely redundant since other areas should check for this
 
-    const gameIds = games.map(game => game.appid); //maps all the app.ids to a new array
+    const gameIds = games.map(game => game.appid); // Maps all the app.ids to a new array
     //console.log('Game IDs from Steam API:', gameIds);
     //console.log('Data type of game IDs from Steam API:', typeof gameIds[0]);
 
