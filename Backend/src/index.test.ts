@@ -12,7 +12,7 @@ const pool = new Pool({
 
 beforeAll(async () => {
   await pool.connect();
-  await pool.query('DELETE FROM "Profile" WHERE steam_id = $1', [testSteamId.toString()]);
+  await pool.query('DELETE FROM "Profiles" WHERE steam_id = $1', [testSteamId.toString()]);
 });
 
 afterAll(async () => {
