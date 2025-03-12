@@ -339,7 +339,7 @@ export async function insertProfile(steamId: bigint) {
       }
     );
 
-    const avatar = response.data.response.players[0]?.avatarhash; //isolate the 2 things we use
+    const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname; // TODO figure why it breaks here
 
     await pool.query( // Insert those things along with the steamID to our database
