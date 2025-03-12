@@ -405,7 +405,7 @@ export async function insertGames(steamId: bigint) {
       return { success: false, message: 'No valid games found to insert/update.' };
     }
 
-    const values = validGames //makes a flatmap array of all the valid to enter user games
+    const values = validGames // Makes a flatmap array of all the valid to enter user games
       .map((game, index) => [
         game.appid,
         steamId,
