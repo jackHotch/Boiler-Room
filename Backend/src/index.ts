@@ -333,7 +333,7 @@ export async function insertProfile(steamId: bigint) {
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
       {
         params: {
-          key: process.env.STEAM_API_KEY, //thanks trevor for doing the work for me
+          key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
           steamids: steamId,
         },
       }
