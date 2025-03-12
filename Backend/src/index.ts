@@ -372,7 +372,7 @@ export async function insertGames(steamId: bigint) {
     );
     //console.log('Steam API response:', response.data);
 
-    const games = response.data.response.games; //the games we get are saved here
+    const games = response.data.response.games; // the games we get are saved here
 
     if (!games || games.length === 0) { //if the length is 0, user has no games
       console.log('No games found for this user.');
