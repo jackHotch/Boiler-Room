@@ -1,3 +1,5 @@
+export const testSteamId = '76561197960434622'
+
 export const testFriendsList = [
   {
       "steamid": "76561197960265731",
