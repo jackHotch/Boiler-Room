@@ -134,7 +134,8 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
     req.session.steamPFP = response.data.userImage
 
     console.log('Steam ID Authenticated: ' + req.session.steamId)
-    res.redirect(`/steam/hltbupdate/${id}`)
+    hltbUpdate(req.session.steamId);
+    res.redirect(process.env.FRONTEND_URL + "/Dashboard")
   } catch (error) {
     console.error('Error fetching Steam username:', error)
     // Only send one response, error occurs when redirecting back from login error
@@ -142,8 +143,8 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
   }
 })
 
-app.get('/steam/hltbupdate/:steamId', async (req, res) => {
-  const id = req.params.steamId;
+//function to update hltb scores for games in users library
+async function hltbUpdate (id) {
   const url = (`https://howlongtobeat.com/steam?userName=${id}`)
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -164,9 +165,8 @@ app.get('/steam/hltbupdate/:steamId', async (req, res) => {
 
   console.log(result);
 
-  res.redirect(process.env.FRONTEND_URL + "/Dashboard")
+  
 }
-)
 
 app.get('/steam/loggedin', async (req, res) => {
   if (req.session.steamId)
