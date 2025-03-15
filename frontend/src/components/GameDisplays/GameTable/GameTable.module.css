@@ -1,10 +1,10 @@
 .gameTableContainer {
     max-width: 1200px;
-    margin: 0px auto ;
+    margin: 0 auto;
     padding: 20px;
     background-color: #1e1e1e;
     border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow-x: auto;
     width: calc(100% - 40px);
 }
@@ -16,6 +16,8 @@
     color: #fff;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .gameTable th, .gameTable td {
@@ -29,6 +31,7 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-size: 16px;
 }
 
 .gameTable tr:nth-child(even) {
@@ -36,24 +39,50 @@
 }
 
 .gameTable tr:hover {
-    background-color: #4a4d56;
+    background-color: #565a65;
+    transition: background-color 0.3s ease;
 }
 
 .gameTable td a {
     color: #1e90ff;
     text-decoration: none;
+    font-weight: bold; /* Makes title stand out */
+    font-size: 16px; /* Increases size */
     transition: color 0.3s ease;
 }
 
 .gameTable td a:hover {
     color: #ff6347;
+    text-decoration: underline;
 }
 
+/* Adjust title column for prominence */
+.gameTable td:first-child {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Improve checkbox alignment */
+.gameTable td input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+/* Header row contrast */
 .headerRow {
     background-color: #292b2f;
+    font-size: 16px;
+    padding: 20px;
 }
 
+/* Ensure word wrapping for long titles */
 .gameTable td {
     word-wrap: break-word;
-    max-width: 200px;
+    max-width: 250px;
+}
+
+/* Reduce column width for checkboxes */
+.gameTable td:last-child {
+    text-align: center;
+    width: 50px;
 }

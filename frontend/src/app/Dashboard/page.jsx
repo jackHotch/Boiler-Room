@@ -7,10 +7,6 @@ import GameTable from '@/components/GameDisplays/GameTable/GameTable'
 import axios from 'axios'
 
 export default function Dashboard() {
-  {
-    /*A component for some filters should eventually go here*/
-  }
-
   const [games, setGames] = useState([])
 
   useEffect(() => {
@@ -34,14 +30,7 @@ export default function Dashboard() {
   }, [])
 
   const featuredGames = games.slice(0, 3)
-  {
-    /*use the first 3 games for featured games*/
-  }
 
-  {
-    /*some example/potential default categories for the featured games, 
-        can be changed according to user prefs*/
-  }
   const featuredCategories = [
     { label: 'Quick Pick' },
     { label: 'Acclaimed Classic' },
@@ -53,6 +42,7 @@ export default function Dashboard() {
       <section className={styles.featuredGames}>
         <DashGameGallery games={featuredGames} categories={featuredCategories} />
       </section>
+      <hr />
       <section className={styles.otherGames}>
         <GameTable games={games} /> {/*change value of games when available*/}
       </section>

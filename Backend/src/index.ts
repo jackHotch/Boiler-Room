@@ -287,6 +287,8 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
 
 // Get the entrie friends list from steam
 app.get('/steam/friendsList', async (req, res) => {
+  boil_rating(40)
+
   if (req.session.steamId) {
     const steamId = req.session.steamId
     const API_KEY = process.env.STEAM_API_KEY
@@ -353,6 +355,19 @@ app.get('/games/:gameid', async (req, res) => {
   }
 })
 
+async function boil_rating(quality_weight) {
+  let quality = quality_weight || 40
+  let hltb_score = 66.3 // hours to beat
+  let community_score = 96 // % positive steam reviews
+  let metacritic_score = 88
+  let avg_score = (metacritic_score + community_score) / 2
+
+  let boil_rating = Math.round(
+    Math.log10(avg_score ** quality / (hltb_score / 12) / 10 ** 75) + 86.2
+  )
+  console.log(boil_rating)
+  return boil_rating
+}
 async function checkAccount(steamId) {
   let retVal = 0
   const KEY = process.env.STEAM_API_KEY

@@ -5,12 +5,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import SteamIdDisplay from '../SteamComponents/SteamIdDisplay'
+import dynamic from 'next/dynamic'
+
+// Dynamically load SteamIdDisplay to avoid SSR issues
+const SteamIdDisplay = dynamic(() => import('../SteamComponents/SteamIdDisplay'), {
+  ssr: false,
+})
 
 export function Navbar() {
   const pathname = usePathname()
-  const [showSteam, setShowSteam] = useState(false) // State to track hover
+  const [showSteam, setShowSteam] = useState(false) // Track hover
   const [steamPFP, setPFP] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   if (pathname === '/') return null
 
@@ -27,10 +33,12 @@ export function Navbar() {
           localStorage.setItem('steamId', response.data.steamId)
           localStorage.setItem('steamName', response.data.steamName)
 
-          setPFP(response.data.steamPFP) // Update state directly
+          setPFP(response.data.steamPFP) // Update state
         }
       } catch (error) {
         console.error('Error fetching Steam Info:', error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -60,7 +68,7 @@ export function Navbar() {
           onMouseEnter={() => setShowSteam(true)}
           onMouseLeave={() => setShowSteam(false)}
         >
-          {steamPFP ? (
+          {!loading && steamPFP ? (
             <img className={styles.pfp} src={steamPFP} alt='Profile' />
           ) : (
             <img

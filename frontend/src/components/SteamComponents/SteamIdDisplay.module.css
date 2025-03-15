@@ -2,88 +2,84 @@
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    align-items: stretch;
     position: absolute;
     top: 100%;
-    right: 0%;
+    right: 0;
     z-index: 100;
+    min-width: 200px; /* Matching searchbar width for consistency */
 }
 
 .infoContainer {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    border-radius: 15px;
+    border-radius: 8px; /* Matching navbar border radius */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    text-align: center;
-    width: 320px;
+    padding: 16px;
+    width: 90%;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px; /* Minimum height to accommodate content and buttons */
 }
 
 .profileWrapper {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     width: 100%;
+    gap: 8px; /* Spacing between text sections */
 }
 
 .textContainer {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Separator line */
 }
 
 .buttonContainer {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Increased gap for better spacing between buttons */
-    align-items: flex-end; /* Align buttons to the right */
+    gap: 8px; /* Consistent spacing between buttons */
+    padding-top: 8px;
+    width: 100%;
 }
 
-.logoutButton {
-    background: #ff4d4d; /* Red for logout warning effect */
+.logoutButton,
+.profileButton {
+    background: #273d61; /* Matching navbar link background */
     color: white;
     border: none;
-    padding: 10px 20px; /* Increased padding for better scaling */
+    padding: 8px 14px; /* Matching navbar link padding */
     font-size: 14px;
     font-weight: bold;
-    border-radius: 10px; /* Slightly larger radius for a more rounded look */
+    border-radius: 8px; /* Matching navbar border radius */
     cursor: pointer;
-    transition: background 0.3s ease;
-    min-width: 100px; /* Minimum width to ensure consistent size */
+    transition: all 0.3s ease;
+    width: 100%; /* Full width for consistent layout */
+    text-align: center;
 }
 
 .logoutButton:hover {
-    background: #cc0000; /* Darker red on hover */
-}
-
-.profileButton {
-    background: #4d79ff; /* Blue for profile button */
-    color: white;
-    border: none;
-    padding: 10px 20px; /* Increased padding for better scaling */
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 10px; /* Slightly larger radius for a more rounded look */
-    cursor: pointer;
-    transition: background 0.3s ease;
-    min-width: 100px; /* Minimum width to ensure consistent size */
+    background: #3a4d7d; /* Matching navbar hover color */
 }
 
 .profileButton:hover {
-    background: #3357cc; /* Darker blue on hover */
+    background: #3a4d7d; /* Matching navbar hover color */
+    /* Removed individual color to match navbar hover behavior */
 }
 
 .loadingText {
-    font-size: 18px;
-    color: #bbb;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.6); /* Matching placeholder text color */
 }
 
 .errorText {
-    font-size: 18px;
+    font-size: 16px;
     color: #ff6b6b;
     font-weight: bold;
 }
@@ -91,11 +87,31 @@
 .steamId {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.7);
-    margin: 8px 0;
+    margin: 4px 0;
 }
 
 .steamName {
     font-size: 16px;
     color: #fff;
-    margin: 8px 0;
+    margin: 4px 0;
 }
+
+/* Reuse profileButton styles with different colors */
+.steamLogout {
+    background: #ff4d4d; /* Red color for logout warning effect */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Matching profileButton padding */
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px; /* Matching profileButton border radius */
+    cursor: pointer;
+    transition: background 0.3s ease; /* Matching profileButton transition */
+    min-width: 100px; /* Matching profileButton min-width */
+    width: 100%; /* Full width for dropdown consistency */
+    text-align: center;
+  }
+  
+  .steamLogout:hover {
+    background: #cc0000; /* Darker red on hover, matching your original intent */
+  }

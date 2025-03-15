@@ -1,14 +1,18 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import axios from 'axios'
-import Login from '@/components/SteamComponents/Login'
-import Logout from '@/components/SteamComponents/Logout'
 import styles from './SteamIdDisplay.module.css'
 
-export default function SteamIdDisplay() {
+const handleLogin = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
+}
+const handleLogout = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/steam/logout` // This will trigger the backend to redirect to Steam
+}
+
+function SteamProfile() {
   const [steamId, setSteamId] = useState(null)
   const [steamName, setSteamName] = useState(null)
-  const [steamPFP, setSteamPFP] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -23,9 +27,7 @@ export default function SteamIdDisplay() {
         if (response.data.steamId) {
           setSteamId(response.data.steamId)
           setSteamName(response.data.steamName)
-          setSteamPFP(response.data.steamPFP)
 
-          // Store the data in local storage to avoid too many requests
           localStorage.setItem('steamId', response.data.steamId)
           localStorage.setItem('steamName', response.data.steamName)
           localStorage.setItem('steamPFP', response.data.steamPFP)
@@ -43,34 +45,44 @@ export default function SteamIdDisplay() {
     fetchProfileData()
   }, [])
 
+  if (loading) return <p className={styles.loadingText}>Loading Steam data...</p>
+  if (error)
+    return (
+      <p className={styles.errorText}>
+        {error}{' '}
+        <button className='steamLogin' onClick={handleLogin} style={{}}>
+          Log in with Steam
+        </button>
+      </p>
+    )
+
+  return (
+    <div className={styles.profileWrapper}>
+      <div className={styles.textContainer}>
+        <p className={styles.steamName}>
+          <strong>{steamName}</strong>
+        </p>
+        <p className={styles.steamId}>
+          <strong>Steam ID: {steamId}</strong>
+        </p>
+      </div>
+      <div className={styles.buttonContainer}>
+        <button className={styles.profileButton}>Profile</button>
+        <button className={styles.steamLogout} onClick={handleLogout}>
+          Logout
+        </button>{' '}
+      </div>
+    </div>
+  )
+}
+
+export default function SteamIdDisplay() {
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
-        {loading ? (
-          <p className={styles.loadingText}>Loading Steam data...</p>
-        ) : error ? (
-          <>
-            <p className={styles.errorText}>{error}</p>
-            <Login />
-          </>
-        ) : (
-          <>
-            <div className={styles.profileWrapper}>
-              <div className={styles.textContainer}>
-                <p className={styles.steamName}>
-                  <strong>{steamName}</strong>
-                </p>
-                <p className={styles.steamId}>
-                  <strong>Steam ID: {steamId}</strong>
-                </p>
-              </div>
-              <div className={styles.buttonContainer}>
-                <button className={styles.profileButton}>Profile</button>
-                <Logout />
-              </div>
-            </div>
-          </>
-        )}
+        <Suspense fallback={<p className={styles.loadingText}>Loading Steam data...</p>}>
+          <SteamProfile />
+        </Suspense>
       </div>
     </div>
   )
