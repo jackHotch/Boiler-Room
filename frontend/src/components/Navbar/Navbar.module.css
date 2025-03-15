@@ -8,6 +8,7 @@
   z-index: 1231321;
   height: 10%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.393);
+  background-color: var(--bg-light)
 }
 .nav_options {
   display: flex;
@@ -30,7 +31,7 @@
 
 
 .logo:hover, .links:hover {
-  background-color: var(--button-secondary);
+  background-color: var(--bg-primary);
 }
 
 .logo {
@@ -40,6 +41,14 @@
 
 .links {
   background-color: var(--button-primary);
+}
+
+.account {
+  width: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .searchbar {
@@ -66,6 +75,8 @@
   border: none;
   width: 300px;
   border-radius: 8px;
+  background-color: white;
+  color: black;
 }
 
 .input:focus {
@@ -77,7 +88,7 @@
 }
 
 .searchbar:focus {
-  outline: 1px solid #6299f0;
+  outline: 1px solid var(--bg--accent);
 }
 
 .accountContainer {

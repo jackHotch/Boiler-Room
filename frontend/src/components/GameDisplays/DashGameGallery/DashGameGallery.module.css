@@ -56,6 +56,6 @@
 .gameCategory {
     margin-top: 5px;
     font-size: 1.4rem;
-    color: white;
+    color: var(--text-primary);
     font-weight: bold;
 }

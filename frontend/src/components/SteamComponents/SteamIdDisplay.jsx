@@ -1,18 +1,13 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
-import styles from './SteamIdDisplay.module.css'
+import Login from '@/components/SteamComponents/Login'
+import Logout from '@/components/SteamComponents/Logout'
 
-const handleLogin = () => {
-  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
-}
-const handleLogout = () => {
-  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/steam/logout` // This will trigger the backend to redirect to Steam
-}
-
-function SteamProfile() {
+export default function SteamIdDisplay() {
   const [steamId, setSteamId] = useState(null)
   const [steamName, setSteamName] = useState(null)
+  const [steamPFP, setPFP] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -20,20 +15,18 @@ function SteamProfile() {
     async function fetchProfileData() {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND}/steam/getdisplayinfo`,
-          { withCredentials: true }
+          process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo',
+          {
+            withCredentials: true,
+          }
         )
 
-        if (response.data.steamId) {
-          setSteamId(response.data.steamId)
-          setSteamName(response.data.steamName)
+        console.log('Response Data:', response.data)
+        setSteamId(response.data.steamId)
+        setSteamName(response.data.steamName)
+        setPFP(response.data.steamPFP)
 
-          localStorage.setItem('steamId', response.data.steamId)
-          localStorage.setItem('steamName', response.data.steamName)
-          localStorage.setItem('steamPFP', response.data.steamPFP)
-        } else {
-          setError('Not Logged In')
-        }
+        if (response.data.steamId === null) setError('Not Logged In')
       } catch (error) {
         console.error('Error fetching Steam ID:', error)
         setError('Not Logged In')

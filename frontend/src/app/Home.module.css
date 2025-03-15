@@ -1,8 +1,3 @@
-.container {
-
-
-}
-
 .header {
     padding: 20px;
     display: flex;
@@ -30,7 +25,7 @@
 }
 
 .navLink {
-    color: white;
+    color: var(--text-primary);
     text-decoration: none;
 }
 
@@ -68,8 +63,8 @@
 }
 
 .exploreButton {
-    background-color: var(--button-primary);
-    color: white;
+    background-color: var(--bg-accent);
+    color: var(--text-primary);
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
@@ -77,7 +72,7 @@
 }
 
 .exploreButton:hover {
-  background-color: var(--button-secondary);
+  background-color: var(--bg-accent-secondary);
 }
 
 .featuredGames {

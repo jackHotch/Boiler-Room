@@ -12,6 +12,9 @@
   --text-secondary: #bbbbbb;
   --button-primary: #202b3e;
   --button-secondary: #273d61;
+  --bg-accent: #2d88f0;
+  --bg-accent-secondary: #0f76eb;
+  --danger: #ff6347;
 }
 
 body {
