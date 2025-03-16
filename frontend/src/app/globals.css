@@ -1,6 +1,17 @@
 :root {
-  --bg-primary: #ff0000; /* Light mode background */
-  --text-color: #000; /* Light mode text */
+  --bg-primary: #eaf2fc; /* Light mode background with a hint of blue */
+  --bg-light: #ffffff;
+  --bg-dark: #c8d9f0;
+  --bg-content: #3a4f6e;
+  --text-primary: #1e2837; /* Dark text for contrast */
+  --text-secondary: #4b5c77;
+  --button-primary: #d0e0f7;
+  --button-secondary: #b5cdee;
+  --bg-accent: #2d88f0;
+  --bg-accent-secondary: #0f76eb;
+  --danger: #d9534f;
+
+
 }
 
 .dark {

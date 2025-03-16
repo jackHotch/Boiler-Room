@@ -21,7 +21,6 @@ export default function SteamIdDisplay() {
           }
         )
 
-        console.log('Response Data:', response.data)
         setSteamId(response.data.steamId)
         setSteamName(response.data.steamName)
         setPFP(response.data.steamPFP)

@@ -10,6 +10,11 @@ jest.mock('../../components/GameDisplays/GameTable/GameTable', () => () => (
 ))
 
 describe('Dashboard Component', () => {
+  test('renders Dashboard header', () => {
+    const { baseElement } = render(<Dashboard />)
+    expect(baseElement).toBeTruthy()
+  })
+
   test('renders DashGameGallery and GameTable components', () => {
     render(<Dashboard />)
 
