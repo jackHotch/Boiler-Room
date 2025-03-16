@@ -70,7 +70,6 @@ app.get('/auth/steam', (req, res) => {
 // Receives steam open id data and extracts the steam id of the authed user
 // Stores in express session for 24-hours
 app.get('/steam', async (req, res) => {
-  console.log('Received query params:', req.query)
   const queryParams = req.query
   const steamId = queryParams['openid.claimed_id']
 
@@ -141,6 +140,7 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
     req.session.steamId = id
     req.session.steamName = response.data.username
     req.session.steamPFP = response.data.userImage
+    console.log('First', req.session.steamId)
 
     console.log('Steam ID Authenticated: ' + req.session.steamId)
     res.redirect(process.env.FRONTEND_URL + '/Dashboard')
@@ -352,6 +352,60 @@ app.get('/games/:gameid', async (req, res) => {
   } catch (error) {
     console.error('Database error:', error)
     res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+app.get('/ownedGames', async (req, res) => {
+  console.log('Session Object:', req.session)
+  console.log('Steam ID:', req.session.steamId)
+
+  if (!req.session.steamId) {
+    console.log('No Steam Id Found in Session - /ownedGames')
+    return res.status(401).json({ error: 'No Steam ID found. Please log in.' })
+  }
+
+  const steamId = req.session.steamId
+  const KEY = process.env.STEAM_API_KEY
+  if (!KEY) {
+    console.error('STEAM_API_KEY is not set in environment variables')
+    return res
+      .status(500)
+      .json({ error: 'Server configuration error: Missing Steam API key.' })
+  }
+
+  try {
+    console.log('Making Steam API Request with steamId:', steamId)
+    const gameResponse = await axios.get(
+      'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
+      {
+        params: {
+          steamid: steamId,
+          include_appinfo: true,
+          key: KEY,
+        },
+      }
+    )
+    console.log('Steam API Response:', gameResponse.data)
+    const data = gameResponse.data
+    if (!data.response || !data.response.games) {
+      return res.status(404).json({ error: 'No owned games found for this user.' })
+    }
+
+    const ownedGames = data.response.games.map((game) => ({
+      id: game.appid,
+      title: game.name,
+      header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+      playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
+    }))
+
+    return res.json(ownedGames)
+  } catch (error) {
+    console.error(
+      'Error fetching owned games from Steam API:',
+      error.message,
+      error.response?.data
+    )
+    return res.status(500).json({ error: 'Failed to fetch owned games from Steam API.' })
   }
 })
 

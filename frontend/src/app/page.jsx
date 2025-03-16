@@ -86,7 +86,6 @@ const LandingPage = () => {
       </section>
 
       <footer className={styles.footer}>
-        {' '}
         &copy; 2025 Boiler Room. All rights reserved.
       </footer>
     </div>
