@@ -178,17 +178,28 @@ async function hltbUpdate (id) {
         //parse hours and minutes
         const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
         const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
-        const timeDecimal: number = +(hours + minutes / 60).toFixed(2); //convert to number rounded to 2 decimal points
+        const timeDecimal: number = +(hours + minutes / 60).toFixed(1); //convert to number rounded to 1 decimal point
   
         return [appId, timeDecimal];
-      });
+      }).filter(entry => entry && entry[1] != '0');
   });
 
   let result = extractHLTBData;
 
-  console.log(result);
-
   await browser.close();
+
+  // Update the database with extracted data
+  try {
+    for (const game of extractHLTBData) {
+      await pool.query(
+        `UPDATE "Games" SET hltb_score = $1 WHERE game_id = $2`,
+        [game[1], game[0]]
+      );
+    }
+    console.log('Database updated successfully');
+  } catch (err) {
+    console.error('Error updating database:', err);
+  }
   
 }
 
