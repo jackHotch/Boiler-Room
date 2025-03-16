@@ -14,7 +14,7 @@ export function ThemeProvider({ children }) {
   }, [])
 
   if (!mounted) {
-    return <>{/* Avoid hydration mismatch */}</>
+    return <></>
   }
 
   return (
