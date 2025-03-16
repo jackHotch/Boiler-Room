@@ -327,15 +327,17 @@ app.get("/games/:gameid", async (req, res) => {
 });
 
 //Request to allow for searching for a game by name
-app.get("/games", async (req, res) => {
+app.get("/gamesByName", async (req, res) => {
   try {
     const { name } = req.query; // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT name FROM "Games" WHERE name ILIKE $1`,
+      `SELECT "name", "header_image", "game_id"
+       FROM "Games" 
+       WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
     );
-
+    console.log(rows);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching games:", error);
