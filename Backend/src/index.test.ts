@@ -1,8 +1,10 @@
 import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate} from './index';
 import axios from 'axios';
+
 import { Pool } from 'pg';
 import request from 'supertest';
-import { testFriendsList, testRecentGames, testPlayerSummary} from './TestingResponses';
+import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId } from './TestingResponses';
+
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -11,7 +13,6 @@ const pool = new Pool({
   connectionString: process.env.DB_URL,
 });
 
-const testSteamId = "76561199154033472";
 const testProfile = {
   response: {
     players: [
@@ -258,4 +259,40 @@ describe('Check Account Visibility', () => {
       expect(result).toBe(0);
   });
 });
+
+describe('GET /themepreference', () => {
+  it('should return the users theme preference', async () => {
+    const response = await request(app).get(`/themepreference?steamid=${supabaseTestSteamId}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({preference: 0})
+  })
+
+  it('should handle no steamid', async () => {
+    const response = await request(app).get(`/themepreference`);
+
+    expect(response.status).toBe(401);
+  })
+}) 
+
+describe('PUT /themepreference', () => {
+  it('should update the users theme preference to 1', async () => {
+    const response = await request(app).put(`/themepreference?steamid=${supabaseTestSteamId}`).send({preference: 1});
+
+    expect(response.status).toBe(200);
+  })
+
+  it('should update the users theme preference to 0', async () => {
+    const response = await request(app).put(`/themepreference?steamid=${supabaseTestSteamId}`).send({preference: 0});
+
+    expect(response.status).toBe(200);
+  })
+
+  it('should handle no steamid', async () => {
+    const response = await request(app).put(`/themepreference`);
+
+    expect(response.status).toBe(401);
+  })
+}) 
+
 

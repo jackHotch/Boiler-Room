@@ -735,8 +735,13 @@ export async function insertGames(steamId: bigint) {
 app.get('/themepreference', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamid
   if (steamId) {
-    const { rows } = await pool.query('SELECT preference FROM "Profiles" WHERE steam_id = $1', [steamId])
-    return res.status(200).json(rows[0])
+    try {
+      const { rows } = await pool.query('SELECT preference FROM "Profiles" WHERE steam_id = $1', [steamId])
+      return res.status(200).json(rows[0])
+    } catch (err) {
+      console.error(err)
+      return res.status(500).json({ error: "Internal server error" });
+    }
   } else {
     return res.status(401).json({error: 'No steam id'})
   }
@@ -746,8 +751,13 @@ app.put('/themepreference', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamid
   const preference = req.body.preference
   if (steamId) {
-    await pool.query('UPDATE "Profiles" SET preference = $1 WHERE steam_id = $2', [preference, steamId])
-    return res.sendStatus(200)
+    try {
+      await pool.query('UPDATE "Profiles" SET preference = $1 WHERE steam_id = $2', [preference, steamId])
+      return res.sendStatus(200)
+    } catch (err) {
+      console.error(err)
+      return res.status(500).json({ error: "Internal server error" });
+    }
   } else {
     return res.status(401).json({error: 'No steam id'})
   }
