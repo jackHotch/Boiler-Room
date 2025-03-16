@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styles from './Home.module.css'
 import axios from 'axios'
-import { useTheme } from 'next-themes'
+import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle'
 
 const LandingPage = () => {
   const [games, setGames] = useState([])
@@ -41,7 +41,7 @@ const LandingPage = () => {
           <nav>
             <ul className={styles.navList}>
               <li>
-                <button onClick={toggleTheme}>{theme}</button>
+                <ThemeToggle />
               </li>
               <li>
                 <a
