@@ -734,7 +734,6 @@ export async function insertGames(steamId: bigint) {
 
 app.get('/themepreference', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamId
-  console.log("Theme " + steamId)
   if (steamId) {
     try {
       const { rows } = await pool.query('SELECT preference FROM "Profiles" WHERE steam_id = $1', [steamId])

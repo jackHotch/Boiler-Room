@@ -1,5 +1,5 @@
 export const testSteamId = '76561197960434622'
-export const supabaseTestSteamId = '76561198001364188' // Konix
+export const supabaseTestSteamId = '76561198850310631' // Milk
 
 export const testFriendsList = [
   {
