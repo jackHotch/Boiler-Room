@@ -1,13 +1,18 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import axios from 'axios'
-import Login from '@/components/SteamComponents/Login'
-import Logout from '@/components/SteamComponents/Logout'
+import styles from './SteamIdDisplay.module.css'
 
-export default function SteamIdDisplay() {
+const handleLogin = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
+}
+const handleLogout = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/steam/logout` // This will trigger the backend to redirect to Steam
+}
+
+function SteamProfile() {
   const [steamId, setSteamId] = useState(null)
   const [steamName, setSteamName] = useState(null)
-  const [steamPFP, setPFP] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -15,17 +20,20 @@ export default function SteamIdDisplay() {
     async function fetchProfileData() {
       try {
         const response = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/getdisplayinfo',
-          {
-            withCredentials: true,
-          }
+          `${process.env.NEXT_PUBLIC_BACKEND}/steam/getdisplayinfo`,
+          { withCredentials: true }
         )
 
-        setSteamId(response.data.steamId)
-        setSteamName(response.data.steamName)
-        setPFP(response.data.steamPFP)
+        if (response.data.steamId) {
+          setSteamId(response.data.steamId)
+          setSteamName(response.data.steamName)
 
-        if (response.data.steamId === null) setError('Not Logged In')
+          localStorage.setItem('steamId', response.data.steamId)
+          localStorage.setItem('steamName', response.data.steamName)
+          localStorage.setItem('steamPFP', response.data.steamPFP)
+        } else {
+          setError('Not Logged In')
+        }
       } catch (error) {
         console.error('Error fetching Steam ID:', error)
         setError('Not Logged In')
@@ -62,7 +70,7 @@ export default function SteamIdDisplay() {
         <button className={styles.profileButton}>Profile</button>
         <button className={styles.steamLogout} onClick={handleLogout}>
           Logout
-        </button>{' '}
+        </button>
       </div>
     </div>
   )
