@@ -287,7 +287,6 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
 
 // Get the entrie friends list from steam
 app.get('/steam/friendsList', async (req, res) => {
-  boil_rating(40)
 
   if (req.session.steamId) {
     const steamId = req.session.steamId
@@ -409,17 +408,18 @@ app.get('/ownedGames', async (req, res) => {
   }
 })
 
-async function boil_rating(quality_weight) {
-  let quality = quality_weight || 40
-  let hltb_score = 66.3 // hours to beat
-  let community_score = 96 // % positive steam reviews
-  let metacritic_score = 88
-  let avg_score = (metacritic_score + community_score) / 2
+//Function to return "boil rating" based on 
+async function boil_rating(hltb_score, rating, quality_weight) {
+  if (!hltb_score) return rating //if no length available, return just the rating
 
-  let boil_rating = Math.round(
-    Math.log10(avg_score ** quality / (hltb_score / 12) / 10 ** 75) + 86.2
-  )
-  console.log(boil_rating)
+  quality_weight = quality_weight || .75 //the percentage that rating matters over length, 75% by default if null/falsy
+
+  //calculate a lengthFactor based on the hltb score, ex. 0.1hrs -> ~10LF, 18 hrs (avg game) -> ~5LF, 100hrs -> ~0LF
+  const lengthFactor = 10 * Math.exp((-1) * (Math.log(5) / (18)) * (hltb_score - 0.1));
+
+  //calculate boil rating
+  const boil_rating = (rating * quality_weight) + (lengthFactor * (1 - quality_weight) * 10)
+
   return boil_rating
 }
 async function checkAccount(steamId) {
