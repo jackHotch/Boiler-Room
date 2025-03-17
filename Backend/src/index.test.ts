@@ -1,4 +1,4 @@
-import app, { insertGames, insertProfile, closeServer, checkAccount} from './index';
+import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate} from './index';
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
@@ -55,7 +55,7 @@ const testUserGames ={
       }
     ]
   }
-}
+} 
 
 
 beforeAll(async () => {
@@ -95,6 +95,8 @@ test('insertGames inserts games and returns success message', async () => {
   expect(res.rows[0].game_id).toEqual(testUserGames.response.games[0].appid.toString());
   expect(res.rows[0].total_played).toEqual(testUserGames.response.games[0].playtime_forever.toString());
 });
+
+
 
 
 describe('GET /steam/friendslist', () => {
@@ -256,3 +258,12 @@ describe('Check Account Visibility', () => {
       expect(result).toBe(0);
   });
 });
+
+test('hltb update updates scores for a user', async () => {
+  mockedAxios.get.mockResolvedValueOnce({
+    data: testSteamId,
+  });
+
+  const result = await hltbUpdate(BigInt(testSteamId));
+  expect(result).toEqual({ success: true, message: 'Games hltb updated successfully' });
+}, 100000);

@@ -161,7 +161,7 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
 })
 
 //function to update hltb scores for games in users library
-async function hltbUpdate (id) {
+export async function hltbUpdate (id) {
   const url = (`https://howlongtobeat.com/steam?userName=${id}`)
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -220,8 +220,10 @@ async function hltbUpdate (id) {
       )
     }
     console.log('Database updated successfully');
+    return { success: true, message: 'Games hltb updated successfully' };
   } catch (err) {
     console.error('Error updating database:', err);
+    return { success: false, message: 'Games hltb not updated successfully' };
   }
   
 }
