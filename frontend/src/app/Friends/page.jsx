@@ -12,12 +12,9 @@ export default function Friends() {
 
   async function checkIfUserLoggedIn() {
     try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary',
-        {
-          withCredentials: true,
-        }
-      )
+      await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary', {
+        withCredentials: true,
+      })
       return true
     } catch (err) {
       return false
@@ -36,7 +33,6 @@ export default function Friends() {
       return response.data
     } catch (error) {
       console.error('Error fetching Steam ID:', error)
-      // setLoggedIn(false)
     }
   }
 
