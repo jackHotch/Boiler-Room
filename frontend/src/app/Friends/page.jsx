@@ -66,7 +66,6 @@ export default function Friends() {
         })
       } catch (error) {
         console.error('Error Fetching Friends Info:', error)
-        // setLoggedIn(false)
       } finally {
         setLoading(false)
       }
@@ -111,9 +110,7 @@ export default function Friends() {
                       friend.recentGames?.map((game, key) => {
                         return (
                           <div className={styles.recent_game} key={key}>
-                            <Link
-                              href={`https://store.steampowered.com/app/${game.appid}`}
-                            >
+                            <Link href={`SingleGame/${game.appid}`}>
                               <img
                                 className={styles.image}
                                 src={

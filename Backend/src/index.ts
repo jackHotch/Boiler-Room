@@ -714,6 +714,7 @@ app.get('/themepreference', async (req, res) => {
 
 app.put('/themepreference', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamId
+  console.log('ThemeSteamId:' + steamId)
   const preference = req.body.preference
   if (steamId) {
     try {

@@ -56,7 +56,7 @@
     top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Adjust for the element's own size to truly center */
-    color: var(--text-primary);
+    color: white;
     font-family: Arial, sans-serif;
     font-size: 18px;
     font-weight: bold;

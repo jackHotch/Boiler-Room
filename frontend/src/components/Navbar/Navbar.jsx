@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import dynamic from 'next/dynamic'
+import { ThemeToggle } from '../ThemeToggle/ThemeToggle'
 
 // Dynamically load SteamIdDisplay to avoid SSR issues
 const SteamIdDisplay = dynamic(() => import('../SteamComponents/SteamIdDisplay'), {
@@ -62,11 +63,12 @@ export function Navbar() {
           <img src='/search.png' className={styles.search_icon} width={16} />
         </div>
 
+        <ThemeToggle />
+
         {/* Steam Display Container for hovering */}
         <div
           className={styles.accountContainer}
           onMouseEnter={() => setShowSteam(true)}
-
           onMouseLeave={() => setShowSteam(false)}
         >
           <Link href='/Account'>
@@ -81,7 +83,6 @@ export function Navbar() {
             )}
           </Link>
           {showSteam && <SteamIdDisplay />}
-
         </div>
       </div>
     </div>

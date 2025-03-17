@@ -38,9 +38,10 @@
   background-color: var(--bg-primary);
 }
 
-.gameTable tr:hover {
-  background-color: var(--bg-dark);
+.gameTable tr:not(.headerRow):hover {
+  background-color: var(--bg-content);
   transition: background-color 0.3s ease;
+  color: white;
 }
 
 .gameTable td a {
@@ -52,7 +53,7 @@
 }
 
 .gameTable td a:hover {
-    color: var(--danger);
+    color: var(--bg-accent-secondary);
 }
 
 .gameTable tr {
