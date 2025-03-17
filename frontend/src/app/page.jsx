@@ -1,10 +1,13 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styles from './Home.module.css'
 import axios from 'axios'
 
+
+
 const LandingPage = () => {
   const [games, setGames] = useState([])
+    const footerRef = useRef(null);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -24,7 +27,15 @@ const LandingPage = () => {
       }
     }
     fetchGames()
+    setTimeout(() => {
+      if (footerRef.current) {
+          footerRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+  }, 2000); // Delays scrolling by 2 seconds
+
+  
   }, [])
+
 
   return (
     <div className={styles.container}>
@@ -38,12 +49,7 @@ const LandingPage = () => {
                   href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}
                   className={styles.navLink}
                 >
-                  Sign In
-                </a>
-              </li>
-              <li>
-                <a href='#' className={styles.navLink}>
-                  Sign Up
+                  Sign In With Steam
                 </a>
               </li>
             </ul>
@@ -85,7 +91,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <footer className={styles.footer}>
+      <footer ref={footerRef} className={styles.footer}>
+        {' '}
         &copy; 2025 Boiler Room. All rights reserved.
       </footer>
     </div>

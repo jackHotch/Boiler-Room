@@ -53,6 +53,9 @@ jobs:
       - name: Install Dependencies in Backend
         run: npm install
 
+      - name: Set environment variables
+        run: echo "DB_URL=${{ secrets.DB_URL }}" >> $GITHUB_ENV
+
       - name: Build the Backend
         run: npm run build
 

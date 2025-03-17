@@ -68,16 +68,19 @@ export function Navbar() {
           onMouseEnter={() => setShowSteam(true)}
           onMouseLeave={() => setShowSteam(false)}
         >
-          {!loading && steamPFP ? (
-            <img className={styles.pfp} src={steamPFP} alt='Profile' />
-          ) : (
-            <img
-              className={styles.pfp}
-              src='https://placehold.co/40x40/black/white?text=P'
-              alt='Profile'
-            />
-          )}
+          <Link href='/Account'>
+            {!loading && steamPFP ? (
+              <img className={styles.pfp} src={steamPFP} alt='Profile' />
+            ) : (
+              <img
+                className={styles.pfp}
+                src='https://placehold.co/40x40/black/white?text=P'
+                alt='Profile'
+              />
+            )}
+          </Link>
           {showSteam && <SteamIdDisplay />}
+
         </div>
       </div>
     </div>
