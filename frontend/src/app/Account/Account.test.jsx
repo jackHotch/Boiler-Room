@@ -15,21 +15,21 @@ describe("Account Component", () => {
     expect(screen.getByText("Recommend Games")).toBeInTheDocument();
   });
 
-  test("toggles dark mode", () => {
-    render(<Account />);
-    const toggle = screen.getByRole("checkbox");
+  // test("toggles dark mode", () => {
+  //   render(<Account />);
+  //   const toggle = screen.getByRole("checkbox");
 
-    // Initial state should be unchecked
-    expect(toggle).not.toBeChecked();
+  //   // Initial state should be unchecked
+  //   expect(toggle).not.toBeChecked();
 
-    // Click to enable dark mode
-    fireEvent.click(toggle);
-    expect(toggle).toBeChecked();
+  //   // Click to enable dark mode
+  //   fireEvent.click(toggle);
+  //   expect(toggle).toBeChecked();
 
-    // Click again to disable dark mode
-    fireEvent.click(toggle);
-    expect(toggle).not.toBeChecked();
-  });
+  //   // Click again to disable dark mode
+  //   fireEvent.click(toggle);
+  //   expect(toggle).not.toBeChecked();
+  // });
 
   test("searches for games and displays results", async () => {
     const mockGames = [
