@@ -1,7 +1,10 @@
 .container {
+    margin-top: -70px;
     background-color: #111;
     color: white;
     font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, rgb(0, 0, 0) 0%, rgb(8, 6, 44) 100%);
+
 }
 
 .header {
@@ -79,48 +82,24 @@
 }
 
 .featuredGames {
-    padding: 50px 20px;
+    
+    padding: 50px 50px;
     text-align: center;
 }
 
 .otherGames {
-    padding: 50px 20px;
+    padding: 50px 50px;
     text-align: center;
-    margin-bottom: 0px;
 }
 
 .sectionTitle {
     font-size: 30px;
-    margin-bottom: 20px;
 }
 
 .gamesGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-}
-
-.gameCard {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.gameImage {
-    width: 100%;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.gameTitle {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.gameDescription {
-    font-size: 16px;
-    color: #bbb;
 }
 
 .footer {

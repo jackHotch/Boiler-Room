@@ -1,50 +1,102 @@
 'use client'
 
-import { useState } from "react";
-import styles from './DashGameGallery.module.css';
-
+import { useState, useEffect } from 'react'
+import styles from './DashGameGallery.module.css'
 
 const DashGameGallery = ({ games, categories }) => {
+  const [imageErrors, setImageErrors] = useState({})
+  const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [loadingImages, setLoadingImages] = useState(true)
 
-    const [enlargedId, setEnlargedId] = useState(1);
-    const [imageErrors, setImageErrors] = useState({});
+  useEffect(() => {
+    // Preload images before rendering
+    const preloadImages = () => {
+      const imageUrls = games.map(
+        (game) =>
+          `https://steamcdn-a.akamaihd.net/steam/apps/${game.game_id}/library_600x900_2x.jpg`
+      )
 
-    const handleImageError = (index) => {
-        setImageErrors((prev) => ({ ...prev, [index]: true }));
-    };
+      const loadPromises = imageUrls.map((url, index) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image()
+          img.src = url
+          img.onload = () => resolve(index)
+          img.onerror = () => reject(index)
+        })
+      })
 
-    const fallbackImage = "https://cdn2.steamgriddb.com/grid/786d203018e4c2e02516c19095af939e.jpg";
+      Promise.allSettled(loadPromises)
+        .then((results) => {
+          const failedImages = results.filter((result) => result.status === 'rejected')
+          if (failedImages.length > 0) {
+            // Handle failed image loading if necessary
+            console.warn(`${failedImages.length} images failed to load.`)
+          }
 
-    return (
-        <div className={styles.gallery}>
-            {games.map((game, index) => (
-                <div
-                    key={index}
-                    className={styles.gameContainer}
-                    onMouseEnter={() => setEnlargedId(index)}
-                >
-                    <a href={'/SingleGame/' + game.game_id} className={styles.imageWrapper}>
-                        {imageErrors[index] ? (
-                            <div className={`${styles.placeholder} ${index === enlargedId ? styles.enlarged : ""}`}>
-                                <img
-                                    src={fallbackImage}
-                                    className={index === enlargedId ? styles.enlarged : ""}
-                                />
-                                <p className={styles.placeholderText}>{game.name}</p>
-                            </div>
-                        ) : (
-                            <img
-                                src={"https://steamcdn-a.akamaihd.net/steam/apps/" + game.game_id + "/library_600x900_2x.jpg"}
-                                alt={game.name}
-                                className={`${styles.gameImage} ${index === enlargedId ? styles.enlarged : ""}`}
-                                onError={() => handleImageError(index)}
-                            />
-                        )}
-                    </a>
-                    <p className={styles.gameTitle}>{categories[index].label}</p>
+          // Introduce a small delay before showing the images
+          setTimeout(() => {
+            setImagesLoaded(true) // Once all images are loaded, show them
+            setLoadingImages(false) // Stop showing loading state
+          }, 500) // Delay of 500ms before showing content
+        })
+        .catch((error) => {
+          console.error('Error loading images:', error)
+          setImagesLoaded(true) // Proceed even if some images fail
+          setLoadingImages(false)
+        })
+    }
+
+    if (games.length > 0) {
+      preloadImages()
+    }
+  }, [games])
+
+  const handleImageError = (index) => {
+    setImageErrors((prev) => ({ ...prev, [index]: true }))
+  }
+
+  return (
+    <div className={styles.gallery}>
+      {loadingImages ? (
+        <p>Loading gallery...</p>
+      ) : (
+        games.map((game, index) => {
+          const isMiddle = games.length === 3 && index === 1 // Check if it's the middle game
+
+          return (
+            <div
+              key={index}
+              className={`${styles.gameContainer} ${isMiddle ? styles.enlarged : ''}`}
+            >
+              <p className={styles.gameCategory}>{categories[index].label}</p>
+
+              <a href={'/SingleGame/' + game.game_id} className={styles.imageWrapper}>
+                <div className={styles.imageContainer}>
+                  {imageErrors[index] || !imagesLoaded ? (
+                    <div className={styles.placeholder}>
+                      <img
+                        src={`https://placehold.co/600x900/3145/white/?text=${game.name}&font=lobster`}
+                        alt={`Placeholder for ${game.name}`}
+                        className={styles.gameImage}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={`https://steamcdn-a.akamaihd.net/steam/apps/${game.game_id}/library_600x900_2x.jpg`}
+                      alt={game.name}
+                      className={styles.gameImage}
+                      onError={() => handleImageError(index)}
+                    />
+                  )}
                 </div>
-            ))}
-        </div>
-    )
+              </a>
+              <p className={styles.placeholderText}>{game.name}</p>
+            </div>
+          )
+        })
+      )}
+    </div>
+  )
 }
-export default DashGameGallery;
+
+export default DashGameGallery

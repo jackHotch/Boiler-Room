@@ -1,9 +1,10 @@
-import pg from "pg";
-import cors from "cors";
-const express = require("express");
-const session = require("express-session");
-import axios from "axios";
-import dotenv from "dotenv";
+import pg from 'pg'
+import cors from 'cors'
+const express = require('express')
+const session = require('express-session')
+import axios from 'axios'
+import dotenv from 'dotenv'
+import puppeteer from 'puppeteer'
 
 const { Pool } = pg;
 const port = 8080;
@@ -14,9 +15,9 @@ dotenv.config();
 // Determine true/false from USE_HTTPS .env variable
 var useHTTPS = process.env.USE_HTTPS?.toLowerCase?.() === "true";
 
-app.use(express.json()); // Support for JSON bodies
-app.use(express.urlencoded({ extended: true })); // Support URL-encoded bodies
-app.set("trust proxy", 1);
+app.use(express.json()) // Support for JSON bodies
+app.use(express.urlencoded({ extended: true })) // Support URL-encoded bodies
+app.set('trust proxy', 1)
 
 // Connect to the database
 const pool = new Pool({
@@ -62,16 +63,13 @@ app.get("/auth/steam", (req, res) => {
   const steamOpenIDUrl = "https://steamcommunity.com/openid/login";
 
   const params = new URLSearchParams({
-    "openid.ns": "http://specs.openid.net/auth/2.0", // OpenID 2.0 namespace
-    "openid.mode": "checkid_setup", // Start the authentication process
-    "openid.return_to": `${process.env.BACKEND_URL}/steam`, // Must be the url which recieves the open id info (rn it is /steam)
-
-    //************************Potentially breaks everything! This is the old line:
-    //  "openid.realm": `${process.env.BACKEND_URL}/steam`, */
-    "openid.realm": `${process.env.BACKEND_URL}`,
-    "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select", // Steam OpenID identifier
-    "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select", // Steam OpenID identity
-  });
+    'openid.ns': 'http://specs.openid.net/auth/2.0', // OpenID 2.0 namespace
+    'openid.mode': 'checkid_setup', // Start the authentication process
+    'openid.return_to': `${process.env.BACKEND_URL}/steam`, // Must be the url which recieves the open id info (rn it is /steam)
+    'openid.realm': `${process.env.BACKEND_URL}`,
+    'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identifier
+    'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select', // Steam OpenID identity
+  })
 
   // Construct the full URL
   const authUrl = `${steamOpenIDUrl}?${params.toString()}`;
@@ -82,10 +80,9 @@ app.get("/auth/steam", (req, res) => {
 
 // Receives steam open id data and extracts the steam id of the authed user
 // Stores in express session for 24-hours
-app.get("/steam", async (req, res) => {
-  console.log("Received query params:", req.query);
-  const queryParams = req.query;
-  const steamId = queryParams["openid.claimed_id"];
+app.get('/steam', async (req, res) => {
+  const queryParams = req.query
+  const steamId = queryParams['openid.claimed_id']
 
   // Handle id not being found
   if (!steamId) return res.status(400).send("Steam ID not found");
@@ -100,43 +97,43 @@ app.get("/steam", async (req, res) => {
 });
 
 // Checks visibiltiy of a given steam id
-app.get("/steam/validvisibility/:steamId", async (req, res) => {
-  const id = req.params.steamId; // Capture the 'id' parameter from the URL
-  let profile_visibilty = await checkAccount(id);
-  console.log("Profile vis: " + profile_visibilty);
+app.get('/steam/validvisibility/:steamId', async (req, res) => {
+  const id = req.params.steamId // Capture the 'id' parameter from the URL
+  let profile_visibilty = await checkAccount(id)
+  console.log('Profile vis: ' + profile_visibilty)
   switch (profile_visibilty) {
     case 0:
       res.status(200).send(
         renderMessagePage({
           title: "Don't be a loner...",
-          text: "Please set all of your Steam profile to public so we can help curate your game recommendations.",
+          text: 'Please set all of your Steam profile to public so we can help curate your game recommendations.',
         })
-      );
-      break;
+      )
+      break
 
     case 1:
       res.status(200).send(
         renderMessagePage({
-          title: "Gatekeeping games...",
-          text: "Please set all of your Steam profile to public so we can help curate your game recommendations.",
+          title: 'Gatekeeping games...',
+          text: 'Please set all of your Steam profile to public so we can help curate your game recommendations.',
         })
-      );
-      break;
+      )
+      break
 
     case 2:
       res.status(200).send(
         renderMessagePage({
           title: "Wow! Looks like you've got no friends...",
-          text: "Please set all of your Steam profile to public so we can help curate your game recommendations.",
+          text: 'Please set all of your Steam profile to public so we can help curate your game recommendations.',
         })
-      );
-      break;
+      )
+      break
 
     default:
-      res.status(200).redirect(`/steam/setsession/${id}`);
-      break;
+      res.redirect(`/steam/setsession/${id}`)
+      break
   }
-});
+})
 
 // Sets session variables for a given steam id
 app.get('/steam/setsession/:steamId', async (req, res) => {
@@ -158,23 +155,134 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
       }
     );
 
-    req.session.steamId = id;
-    req.session.steamName = response.data.username;
-    req.session.steamPFP = response.data.userImage;
+    req.session.steamId = id
+    req.session.steamName = response.data.username
+    req.session.steamPFP = response.data.userImage
 
-    console.log("Steam ID Authenticated: " + req.session.steamId);
-    res.redirect(process.env.FRONTEND_URL + "/Dashboard");
+    console.log('Steam ID Authenticated: ' + req.session.steamId)
+    hltbUpdate(req.session.steamId)
+    res.redirect(process.env.FRONTEND_URL + '/Dashboard')
   } catch (error) {
     console.error("Error fetching Steam username:", error);
     // Only send one response, error occurs when redirecting back from login error
-    if (!res.headersSent)
-      return res.status(500).send("Error fetching Steam username");
+    if (!res.headersSent) return res.status(500).send('Error fetching Steam username')
   }
 });
 
-app.get("/steam/loggedin", async (req, res) => {
-  if (req.session.steamId) res.send(true);
-});
+//function to update hltb scores for games in users library
+async function hltbUpdate(id) {
+  const url = `https://howlongtobeat.com/steam?userName=${id}`
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+
+  //Use a custom user agent because default throws a 403 error on HLTB
+  const customUA =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
+
+  await page.setUserAgent(customUA)
+  await page.goto(url)
+  await page.setViewport({ width: 1080, height: 1024 })
+
+  //Sleep for 5 seconds to wait for table to load on HLTB
+  await new Promise((f) => setTimeout(f, 5000))
+
+  const extractHLTBData = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('tr.spreadsheet')) //get array of table rows
+      .map((row) => {
+        //map function to run on each row
+        const steamLink = row.querySelector(
+          'a[href^="http://store.steampowered.com/app/"]'
+        ) //select store link from href
+        if (!steamLink) return null
+
+        const appId = (steamLink as HTMLAnchorElement).href.match(/app\/(\d+)/)?.[1] //select steamAppId from store link
+        if (!appId) return null
+
+        const timeCell = row.querySelector('td.center, td.center.text_red') //select HLTB time cell
+        if (!timeCell) return null
+
+        //extract hltb time
+        const timeText = timeCell.textContent.trim()
+        const timeMatch = timeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/)
+
+        //parse hours and minutes
+        const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0
+        const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0
+        const timeDecimal: number = +(hours + minutes / 60).toFixed(1) //convert to number rounded to 1 decimal point
+
+        return [appId, timeDecimal]
+      })
+      .filter((entry) => entry && entry[1] != '0')
+  })
+
+  let result = extractHLTBData
+
+  await browser.close()
+
+  // Update the database with extracted data
+  try {
+    for (const game of extractHLTBData) {
+      const { rows } = await pool.query(
+        `SELECT "metacritic_score"  
+         FROM "Games" WHERE "game_id" = $1`,
+        [game[0]]
+      )
+      const boil_score = rows[0]?.metacritic_score
+        ? await boil_rating(game[1], rows[0]?.metacritic_score, 0.75)
+        : null
+      await pool.query(
+        `UPDATE "Games" SET hltb_score = $1, boil_score = $2 WHERE game_id = $3`,
+        [game[1], boil_score, game[0]]
+      )
+    }
+    console.log('Database updated successfully')
+  } catch (err) {
+    console.error('Error updating database:', err)
+  }
+}
+
+export async function insertProfile(steamId: bigint) {
+  try {
+    //firstly we check to make sure we dont have a profiel already
+    const { rows: existingRows } = await pool.query(
+      'SELECT * FROM "Profiles" WHERE "steam_id" = $1',
+      [steamId]
+    )
+
+    if (existingRows.length > 0) {
+      return false //if we do, throw a false and move on
+    }
+
+    const response = await axios.get(
+      //otherwise get some information
+      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
+      {
+        params: {
+          key: process.env.STEAM_API_KEY, //thanks trevor for doing the work for me
+          steamids: steamId,
+        },
+      }
+    )
+
+    const avatar = response.data.response.players[0]?.avatarhash //isolate the 2 things we use
+    const userName = response.data.response.players[0]?.personaname
+
+    await pool.query(
+      //insert those things along with the steamID to our database
+      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *',
+      [steamId, userName, avatar]
+    )
+
+    return true //set true
+  } catch (error) {
+    console.error('Error executing query', error) //catch errors that may occur
+    throw new Error('Internal Server Error')
+  }
+}
+
+app.get('/steam/loggedin', async (req, res) => {
+  if (req.session.steamId) res.send(true)
+})
 
 // Gets username and profile picture from steam api using session steam ID
 
@@ -195,9 +303,9 @@ app.get("/steam/playersummary", async (req, res) => {
       }
     );
 
-    const username = response.data.response.players[0]?.personaname;
-    const userImage = response.data.response.players[0]?.avatarfull;
-    console.log(userImage);
+    const username = response.data.response.players[0]?.personaname
+    const userImage = response.data.response.players[0]?.avatarfull
+
     if (username) {
       res.status(200).json({ username: username, userImage: userImage });
     } else {
@@ -229,10 +337,10 @@ app.get("/steam/recentgames", async (req, res) => {
     const games = data.response.games?.slice(0, 3) || [];
     res.status(200).send(games);
   } catch (error) {
-    console.error("Error fetching Steam data:", error);
-    res.redirect(process.env.FRONTEND_URL);
+    console.error('Error fetching Steam data:', error)
+    res.redirect(process.env.FRONTEND_URL)
   }
-});
+})
 
 // "Logout" i.e. remove steam id and name from session storage
 app.get("/steam/logout", (req, res) => {
@@ -253,20 +361,15 @@ app.get("/steam/logout", (req, res) => {
 app.get("/steam/getdisplayinfo", async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId && req.session.steamName) {
-    console.log("ID: " + req.session.steamId);
-    console.log("Steam Name: " + req.session.steamName);
-    console.log("Steam PFP URL: " + req.session.steamPFP);
-
     return res.json({
       steamId: req.session.steamId,
       steamName: req.session.steamName,
       steamPFP: req.session.steamPFP,
-    });
+    })
   } else {
-    console.log("no");
     return res.json({
       steamId: null,
-    });
+    })
   }
 });
 
@@ -289,14 +392,14 @@ const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-app.get("/", (req, res) => {
-  if (req.session.steamid != null)
-    res.redirect(process.env.FRONTEND_URL + "/Dashboard");
-  else res.redirect(process.env.FRONTEND_URL);
-});
+
+app.get('/', (req, res) => {
+  if (req.session.steamid != null) res.redirect(process.env.FRONTEND_URL + '/Dashboard')
+  else res.redirect(process.env.FRONTEND_URL)
+})
 
 // Created Backend route to access the games table from database
-app.get("/games", async (req, res) => {
+app.get('/games', async (req, res) => {
   try {
     // Uses sql command to grab 3 random game ids from the database and corresponding description, name, and header image id then returning json object.
     const { rows } = await pool.query(
@@ -304,18 +407,17 @@ app.get("/games", async (req, res) => {
     );
     res.status(200).json(rows);
   } catch (error) {
-    console.error("Error fetching game IDs:", error);
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching game IDs:', error)
+    res.status(500).json({ error: error.message })
   }
-});
+})
 
-
-app.get("/games/:gameid", async (req, res) => {
-  const { gameid } = req.params;
+app.get('/games/:gameid', async (req, res) => {
+  const { gameid } = req.params
 
   // Ensure gameid is a valid number
   if (isNaN(Number(gameid))) {
-    return res.status(400).json({ error: "Invalid game ID format" });
+    return res.status(400).json({ error: 'Invalid game ID format' })
   }
 
   try {
@@ -324,7 +426,11 @@ app.get("/games/:gameid", async (req, res) => {
               "price", "metacritic_score", "released", "platform"  
        FROM "Games" WHERE "game_id" = $1`,
       [gameid]
-    );
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Game not found" });
+    }
 
 
 
@@ -353,15 +459,103 @@ app.get("/games/:gameid", async (req, res) => {
           : rows[0].released.toISOString().split("T")[0]; // Convert Date to string, then split
   }
   
-  rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
-
-    res.status(200).json(rows[0]);
+    rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
+    return res.status(200).json(rows[0]);
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Database error:', error)
+    return res.status(500).json({ error: 'Internal server error' })
   }
-});
+})
 
+// Created Backend route to access the games table from database
+app.get('/usergames', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT ug."steam_id", g."game_id", ug."total_played", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
+      FROM "Games" g 
+      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
+      WHERE ug."steam_id" = $1 
+      ORDER BY g."boil_score" DESC NULLS LAST`,
+      [req.session.steamId]
+    )
+
+    res.json(rows)
+  } catch (error) {
+    console.error('Error fetching game IDs:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+app.get('/ownedGames', async (req, res) => {
+  console.log('Session Object:', req.session)
+  console.log('Steam ID:', req.session.steamId)
+
+  if (!req.session.steamId) {
+    console.log('No Steam Id Found in Session - /ownedGames')
+    return res.status(401).json({ error: 'No Steam ID found. Please log in.' })
+  }
+
+  const steamId = req.session.steamId
+  const KEY = process.env.STEAM_API_KEY
+  if (!KEY) {
+    console.error('STEAM_API_KEY is not set in environment variables')
+    return res
+      .status(500)
+      .json({ error: 'Server configuration error: Missing Steam API key.' })
+  }
+
+  try {
+    console.log('Making Steam API Request with steamId:', steamId)
+    const gameResponse = await axios.get(
+      'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
+      {
+        params: {
+          steamid: steamId,
+          include_appinfo: true,
+          key: KEY,
+        },
+      }
+    )
+    console.log('Steam API Response:', gameResponse.data)
+    const data = gameResponse.data
+    if (!data.response || !data.response.games) {
+      return res.status(404).json({ error: 'No owned games found for this user.' })
+    }
+
+    const ownedGames = data.response.games.map((game) => ({
+      id: game.appid,
+      title: game.name,
+      header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+      playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
+    }))
+
+    return res.json(ownedGames)
+  } catch (error) {
+    console.error(
+      'Error fetching owned games from Steam API:',
+      error.message,
+      error.response?.data
+    )
+    return res.status(500).json({ error: 'Failed to fetch owned games from Steam API.' })
+  }
+})
+
+//Function to return "boil rating" based on
+async function boil_rating(hltb_score, rating, quality_weight) {
+  if (!hltb_score) return null //if no length available, return null
+  quality_weight = quality_weight || 0.75 //the percentage that rating matters over length, 75% by default if null/falsy
+
+  //calculate a lengthFactor based on the hltb score, ex. 0.1hrs -> ~10LF, 18 hrs (avg game) -> ~5LF, 100hrs -> ~0LF
+  const lengthFactor = 10 * Math.exp(-1 * (Math.log(5) / 18) * (hltb_score - 0.1))
+
+  //calculate boil rating
+  const boil_rating: number = +(
+    rating * quality_weight +
+    lengthFactor * (1 - quality_weight) * 10
+  ).toFixed(1)
+
+  return boil_rating
+}
 
 //Request to allow for searching for a game by name
 app.get("/gamesByName", async (req, res) => {
@@ -383,39 +577,39 @@ app.get("/gamesByName", async (req, res) => {
 });
 
 
-export async function insertProfile(steamId: bigint) {
-  try { // Firstly we check to make sure we dont have a profile already
-    const { rows: existingRows } = await pool.query(
-      'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
-    );
+// export async function insertProfile(steamId: bigint) {
+//   try { // Firstly we check to make sure we dont have a profile already
+//     const { rows: existingRows } = await pool.query(
+//       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
+//     );
 
-    if (existingRows.length > 0) {
-      return false;  // If we do, throw a false and move on
-    }
+//     if (existingRows.length > 0) {
+//       return false;  // If we do, throw a false and move on
+//     }
 
-    const response = await axios.get( // Otherwise get some information
-      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
-      {
-        params: {
-          key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
-          steamids: steamId,
-        },
-      }
-    );
+//     const response = await axios.get( // Otherwise get some information
+//       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
+//       {
+//         params: {
+//           key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
+//           steamids: steamId,
+//         },
+//       }
+//     );
 
-    const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
-    const userName = response.data.response.players[0]?.personaname;
+//     const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
+//     const userName = response.data.response.players[0]?.personaname;
 
-    await pool.query( // Insert those things along with the steamID to our database
-      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
-    );
+//     await pool.query( // Insert those things along with the steamID to our database
+//       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
+//     );
 
-    return true; //set true
-  } catch (error) {
-    console.error('Error executing query', error); //catch errors that may occur
-    throw new Error('Internal Server Error');
-  }
-}
+//     return true; //set true
+//   } catch (error) {
+//     console.error('Error executing query', error); //catch errors that may occur
+//     throw new Error('Internal Server Error');
+//   }
+// }
 
 export async function insertGames(steamId: bigint) {
   // Theres going to be a lot of commented out console logs here because I had to hunt stuff down
@@ -526,33 +720,29 @@ export async function checkAccount(steamId) {
           key: KEY,
         },
       }
-    );
+    )
 
-
-    if (
-      gameResponse.data.response &&
-      Object.keys(gameResponse.data.response).length > 0
-    ) {
-      retVal += 2;
+    if (Object.keys(gameResponse.data.response).length > 0) {
+      retVal += 2
     }
 
     // Checking friends list access
     const friendsResponse = await axios.get(
-      "http://api.steampowered.com/ISteamUser/GetFriendList/v0001/",
+      'http://api.steampowered.com/ISteamUser/GetFriendList/v0001/',
       {
         params: {
           steamid: steamId,
-          relationship: "friend",
+          relationship: 'friend',
           key: KEY,
         },
       }
-    );
+    )
 
-    if (friendsResponse.data.friendslist) {
-      retVal += 1;
+    if (Object.keys(friendsResponse.data).length > 0) {
+      retVal += 1
     }
   } catch (error) {
-    console.error("Error fetching Steam API:", error);
+    console.error('Error fetching Steam API:', error.message)
   }
   /*
 retVal:
@@ -561,7 +751,7 @@ retVal:
  = 1 - friends list public, not game details
  = 0 - nothing public
 */
-  return retVal;
+  return retVal
 }
 
 // For profile visibilty errors
@@ -608,13 +798,11 @@ const renderMessagePage = (message) => {
         <h1>${message.title}</h1>
         <p>${message.text}</p>
         <button onclick="window.location.href='${
-          process.env.BACKEND_URL + "/auth/steam"
+          process.env.BACKEND_URL + '/auth/steam'
         }'"><strong>Try Again</strong></button>
       </body>
     </html>
-  `;
-
+  `
 }
 
 export default app
-
