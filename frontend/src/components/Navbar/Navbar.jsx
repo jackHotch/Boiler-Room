@@ -66,7 +66,7 @@ export function Navbar() {
         <div
           className={styles.accountContainer}
           onMouseEnter={() => setShowSteam(true)}
-          onMouseLeave={() => setShowSteam(false)}
+          onMouseLeave={() => setShowSteam(false)}>
 
           <Link className={`${styles.links} ${styles.account}`} href='/Account'>
             P
