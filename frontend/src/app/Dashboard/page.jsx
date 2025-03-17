@@ -5,6 +5,7 @@ import styles from './Dashboard.module.css'
 import DashGameGallery from '@/components/GameDisplays/DashGameGallery/DashGameGallery'
 import GameTable from '@/components/GameDisplays/GameTable/GameTable'
 import OwnedGamesGallery from '@/components/GameDisplays/OwnedGamesGallery/OwnedGamesGallery'
+import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames'
 import axios, { getAdapter } from 'axios'
 
 export default function Dashboard() {
@@ -13,7 +14,9 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {withCredentials: true,}) // Use the backend port
+        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {
+          withCredentials: true,
+        }) // Use the backend port
         const games = response.data
         setGames(games)
       } catch (error) {
@@ -36,12 +39,15 @@ export default function Dashboard() {
       <section className={styles.featuredGames}>
         <DashGameGallery games={featuredGames} categories={featuredCategories} />
       </section>
-      <section className={styles.otherGames}>
-        <GameTable games={games} /> {/*change value of games when available*/}
-      </section>
       <hr />
       <section className={styles.otherGames}>
         <OwnedGamesGallery />
+      </section>
+      <section className={styles.otherGames}>
+        <TopRatedGames />
+      </section>
+      <section className={styles.otherGames}>
+        <GameTable games={games} /> {/*change value of games when available*/}
       </section>
     </div>
   )
