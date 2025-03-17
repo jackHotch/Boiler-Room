@@ -16,7 +16,6 @@
   bottom: 20px;
   right: 30px;
   z-index: 99;
-  color: black;
 }
 
 .button-container {
@@ -51,7 +50,7 @@
   position: absolute;
   bottom: 17px;
   content: "Back to Top";
-  color: rgb(22, 17, 17);
+  color: var(--text-primary);
   font-size: 0px;
 }
 

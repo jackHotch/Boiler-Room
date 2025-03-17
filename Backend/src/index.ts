@@ -544,7 +544,7 @@ app.get('/ownedGames', async (req, res) => {
         },
       }
     )
-    console.log('Steam API Response:', gameResponse.data)
+    
     const data = gameResponse.data
     if (!data.response || !data.response.games) {
       return res.status(404).json({ error: 'No owned games found for this user.' })

@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     padding: 80px;
-    color: #E0E0E0;
+    color: var(--text-primary);
     font-family: Arial, sans-serif;
 }
     
@@ -47,7 +47,7 @@
 }
     
 .gameContainer img:hover {
-    outline: 1px solid #6299f0;
+    outline: 1px solid var(--bg-accent);
     filter: brightness(1.1);
     scale: 1.025;
     transition: scale 0.25s ease-in-out, filter 0.25s ease-in-out;

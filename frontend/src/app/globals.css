@@ -6,8 +6,9 @@
   --text-primary: #1e2837; 
   --text-secondary: #4b5c77;
   --bg-accent: #2d88f0;
-  --bg-accent-secondary: #0f76eb;
-  --danger: #d9534f;
+  --bg-accent-secondary: #0e69d1;
+  --danger: #ff4d4d;
+  --danger-secondary: #cc0000;
   --text-bw: #000000;
 }
 
@@ -19,8 +20,9 @@
   --text-primary: #ffffff; 
   --text-secondary: #bbbbbb;
   --bg-accent: #2d88f0;
-  --bg-accent-secondary: #0f76eb;
-  --danger: #ff6347;
+  --bg-accent-secondary: #0e69d1;
+  --danger: #ff4d4d;
+  --danger-secondary: #cc0000;
   --text-bw: #ffffff;
 }
 
