@@ -234,8 +234,10 @@ export async function hltbUpdate (id) {
     }
 
     console.log('Database updated successfully')
+    return { success: true, message: 'Games hltb updated successfully' };
   } catch (err) {
-    console.error('Error updating database:', err)
+    console.error('Error updating database:', err);
+    return { success: false, message: 'Games hltb not updated successfully' };
   }
 }
 
