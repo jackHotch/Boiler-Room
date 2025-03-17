@@ -4,6 +4,7 @@ const express = require('express')
 const session = require('express-session')
 import axios from 'axios'
 import dotenv from 'dotenv'
+import puppeteer from 'puppeteer';
 
 const { Pool } = pg
 const port = 8080
@@ -143,13 +144,74 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
     console.log('First', req.session.steamId)
 
     console.log('Steam ID Authenticated: ' + req.session.steamId)
-    res.redirect(process.env.FRONTEND_URL + '/Dashboard')
+    hltbUpdate(req.session.steamId);
+    res.redirect(process.env.FRONTEND_URL + "/Dashboard")
   } catch (error) {
     console.error('Error fetching Steam username:', error)
     // Only send one response, error occurs when redirecting back from login error
     if (!res.headersSent) return res.status(500).send('Error fetching Steam username')
   }
 })
+
+//function to update hltb scores for games in users library
+async function hltbUpdate (id) {
+  const url = (`https://howlongtobeat.com/steam?userName=${id}`)
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  //Use a custom user agent because default throws a 403 error on HLTB
+  const customUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36';
+
+  await page.setUserAgent(customUA);
+  await page.goto(url);
+  await page.setViewport({width: 1080, height: 1024});
+
+  //Sleep for 5 seconds to wait for table to load on HLTB
+  await new Promise(f => setTimeout(f, 5000));
+
+  const extractHLTBData = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('tr.spreadsheet')) //get array of table rows
+      .map(row => { //map function to run on each row
+        const steamLink = row.querySelector('a[href^="http://store.steampowered.com/app/"]'); //select store link from href
+        if (!steamLink) return null;
+  
+        const appId = (steamLink as HTMLAnchorElement).href.match(/app\/(\d+)/)?.[1]; //select steamAppId from store link
+        if (!appId) return null;
+  
+        const timeCell = row.querySelector('td.center, td.center.text_red'); //select HLTB time cell
+        if (!timeCell) return null;
+  
+        //extract hltb time 
+        const timeText = timeCell.textContent.trim();
+        const timeMatch = timeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
+  
+        //parse hours and minutes
+        const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
+        const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
+        const timeDecimal: number = +(hours + minutes / 60).toFixed(1); //convert to number rounded to 1 decimal point
+  
+        return [appId, timeDecimal];
+      }).filter(entry => entry && entry[1] != '0');
+  });
+
+  let result = extractHLTBData;
+
+  await browser.close();
+
+  // Update the database with extracted data
+  try {
+    for (const game of extractHLTBData) {
+      await pool.query(
+        `UPDATE "Games" SET hltb_score = $1 WHERE game_id = $2`,
+        [game[1], game[0]]
+      );
+    }
+    console.log('Database updated successfully');
+  } catch (err) {
+    console.error('Error updating database:', err);
+  }
+  
+}
 
 async function insertProfile(steamId: bigint) {
   try {
