@@ -59,13 +59,13 @@
     border-radius: 8px; /* Matching navbar border radius */
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%; /* Full width for consistent layout */
+    width: calc(100% - 28px); /* Full width for consistent layout */
     text-align: center;
+    text-decoration: none;
 }
 
 .profileButton:hover {
     background: var(--bg-accent-secondary); /* Matching navbar hover color */
-    /* Removed individual color to match navbar hover behavior */
 }
 
 .loadingText {
