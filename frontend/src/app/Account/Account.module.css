@@ -1,0 +1,144 @@
+/* Account.module.css */
+
+.container {
+  color: white;
+  display: block;
+  gap: 20px;
+  justify-content: space-between;
+  position: relative;
+}
+
+.gameDisplaySection {
+  display: block;
+  width:100%;
+  flex: 1;
+  flex-direction: row;
+}
+
+.gameDropdown {
+  margin-top: 10px;
+  padding: 5px;
+}
+
+.gameImageBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto; /* Let it grow naturally */
+  height: auto; /* Let it grow naturally */
+  max-width: 100%; /* Prevents overflow */
+}
+
+
+.gameImagePlaceholder {
+  width: 100%;
+  height: auto; /* Allow the image to scale properly */
+  object-fit: contain; /* Ensures the whole image fits */
+}
+
+.gameImageSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.gameList {
+  display: flex;  /* Makes items appear side-by-side */
+  flex-wrap: wrap; /* Allows images to wrap if there isn't enough space */
+  gap: 10px; /* Optional: Adds space between images */
+  justify-content: center;
+}
+
+.gameItem {
+  width: auto;  /* Keeps the original width */
+  height: auto; /* Keeps the original height */
+  max-width: 100%; /* Ensures it doesn’t overflow its container */
+  max-height: 100%; /* Ensures it scales properly */
+  object-fit: contain; /* Ensures the whole image is visible without cropping */
+}
+
+
+.searchResultItem:hover, .highlighted {
+  background-color: #3498db !important; /* Blue highlight */
+  color: white !important;
+}
+
+.recommendedGames{
+  display: block;
+  width: 100%;
+}
+
+.replaceButton {
+  margin-left: 10px;
+}
+
+.searchRecs {
+  flex: 1;
+}
+
+.searchResultItem {
+  background-color:aliceblue;
+  color: black;
+  padding: 5px;
+  cursor:pointer;
+  margin:1;
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+
+.title {
+  color: white;
+}
+
+/* Dark/Light Mode Slider Positioned to the Right */
+.toggleContainer {
+  position: absolute;
+  right: 20px; /* Add space between slider and right edge */
+  top: 20px;
+}
+
+.toggleSlider {
+  height: 25px;
+  position: relative;
+  width: 50px;
+}
+
+.toggleSliderInput {
+  height: 0;
+  opacity: 0; /* Hide the checkbox */
+  width: 0;
+}
+
+.toggleSlider .slider {
+  background-color: #ccc;
+  border-radius: 25px;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+}
+
+.toggleSlider .slider:before {
+  background-color: white;
+  border-radius: 50%;
+  bottom: 5px;
+  content: "";
+  height: 15px;
+  left: 5px;
+  position: absolute;
+  transition: 0.4s;
+  width: 15px;
+}
+
+.toggleSlider input:checked + .slider {
+  background-color: #4caf50;
+}
+
+.toggleSlider input:checked + .slider:before {
+  transform: translateX(25px);
+}
