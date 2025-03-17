@@ -38,7 +38,7 @@
 .hero {
     position: relative;
     background: url('https://via.placeholder.com/1500x800') center/cover;
-    height: 100vh;
+    height: 70vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,6 +119,7 @@
 
 .footer {
     background-color: #222;
+    justify-content: space-between;
     text-align: center;
     padding: 20px;
     margin-top: 50px;
