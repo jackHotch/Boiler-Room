@@ -13,7 +13,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/games') // Use the backend port
+        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {withCredentials: true,}) // Use the backend port
         const games = response.data
         setGames(games)
       } catch (error) {

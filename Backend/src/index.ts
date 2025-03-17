@@ -422,6 +422,29 @@ app.get('/games/:gameid', async (req, res) => {
   }
 })
 
+// Created Backend route to access the games table from database
+app.get('/usergames', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT ug."steam_id", g."game_id", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
+      FROM "Games" g 
+      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
+      WHERE ug."steam_id" = $1 
+      ORDER BY g."boil_score" DESC NULLS LAST`,
+      [req.session.steamId]
+    )
+    
+    console.log("test usergames")
+    console.log(req.session.steamId)
+    console.log(rows[0]?.steam_id)
+    console.log(rows)
+    res.json(rows)
+  } catch (error) {
+    console.error('Error fetching game IDs:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
 app.get('/ownedGames', async (req, res) => {
   console.log('Session Object:', req.session)
   console.log('Steam ID:', req.session.steamId)

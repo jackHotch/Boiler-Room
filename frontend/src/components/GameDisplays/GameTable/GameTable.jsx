@@ -30,7 +30,9 @@ const GameTable = ({ games }) => {
                   ? `${game.hltb_score} Hrs`
                   : 'Unknown'}
               </td>
-              <td>100{/* Put Boil rating here when possible */}</td>
+              <td>{game.boil_score !== null && game.boil_score !== undefined
+                  ? game.boil_score
+                  : 'N/A'}</td>
               <td>
                 <a href={'https://store.steampowered.com/app/' + game.game_id}>Steam</a>
               </td>
