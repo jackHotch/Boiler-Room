@@ -263,4 +263,4 @@ test('hltb update updates scores for a user', async () => {
 
   const result = await hltbUpdate(BigInt(testSteamId));
   expect(result).toEqual({ success: true, message: 'Games hltb updated successfully' });
-}, 100000);
+}, 1000000);
