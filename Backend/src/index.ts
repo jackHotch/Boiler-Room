@@ -201,10 +201,16 @@ async function hltbUpdate (id) {
   // Update the database with extracted data
   try {
     for (const game of extractHLTBData) {
+      const { rows } = await pool.query(
+        `SELECT "metacritic_score"  
+         FROM "Games" WHERE "game_id" = $1`,
+        [game[0]]
+      )
+      const boil_score = rows[0]?.metacritic_score ? await boil_rating(game[1],rows[0]?.metacritic_score,0.75) : null
       await pool.query(
-        `UPDATE "Games" SET hltb_score = $1 WHERE game_id = $2`,
-        [game[1], game[0]]
-      );
+        `UPDATE "Games" SET hltb_score = $1, boil_score = $2 WHERE game_id = $3`,
+        [game[1], boil_score, game[0]]
+      )
     }
     console.log('Database updated successfully');
   } catch (err) {
@@ -472,15 +478,14 @@ app.get('/ownedGames', async (req, res) => {
 
 //Function to return "boil rating" based on 
 async function boil_rating(hltb_score, rating, quality_weight) {
-  if (!hltb_score) return rating //if no length available, return just the rating
-
+  if (!hltb_score) return null //if no length available, return null
   quality_weight = quality_weight || .75 //the percentage that rating matters over length, 75% by default if null/falsy
 
   //calculate a lengthFactor based on the hltb score, ex. 0.1hrs -> ~10LF, 18 hrs (avg game) -> ~5LF, 100hrs -> ~0LF
   const lengthFactor = 10 * Math.exp((-1) * (Math.log(5) / (18)) * (hltb_score - 0.1));
 
   //calculate boil rating
-  const boil_rating = (rating * quality_weight) + (lengthFactor * (1 - quality_weight) * 10)
+  const boil_rating: number = +((rating * quality_weight) + (lengthFactor * (1 - quality_weight) * 10)).toFixed(1)
 
   return boil_rating
 }
