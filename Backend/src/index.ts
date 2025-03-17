@@ -733,7 +733,6 @@ retVal:
  = 1 - friends list public, not game details
  = 0 - nothing public
 */
-<
   return retVal;
 }
 
