@@ -241,7 +241,7 @@ async function hltbUpdate(id) {
   }
 }
 
-async function insertProfile(steamId: bigint) {
+export async function insertProfile(steamId: bigint) {
   try {
     //firstly we check to make sure we dont have a profiel already
     const { rows: existingRows } = await pool.query(
@@ -573,39 +573,39 @@ app.get("/gamesByName", async (req, res) => {
 });
 
 
-export async function insertProfile(steamId: bigint) {
-  try { // Firstly we check to make sure we dont have a profile already
-    const { rows: existingRows } = await pool.query(
-      'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
-    );
+// export async function insertProfile(steamId: bigint) {
+//   try { // Firstly we check to make sure we dont have a profile already
+//     const { rows: existingRows } = await pool.query(
+//       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
+//     );
 
-    if (existingRows.length > 0) {
-      return false;  // If we do, throw a false and move on
-    }
+//     if (existingRows.length > 0) {
+//       return false;  // If we do, throw a false and move on
+//     }
 
-    const response = await axios.get( // Otherwise get some information
-      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
-      {
-        params: {
-          key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
-          steamids: steamId,
-        },
-      }
-    );
+//     const response = await axios.get( // Otherwise get some information
+//       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
+//       {
+//         params: {
+//           key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
+//           steamids: steamId,
+//         },
+//       }
+//     );
 
-    const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
-    const userName = response.data.response.players[0]?.personaname;
+//     const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
+//     const userName = response.data.response.players[0]?.personaname;
 
-    await pool.query( // Insert those things along with the steamID to our database
-      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
-    );
+//     await pool.query( // Insert those things along with the steamID to our database
+//       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
+//     );
 
-    return true; //set true
-  } catch (error) {
-    console.error('Error executing query', error); //catch errors that may occur
-    throw new Error('Internal Server Error');
-  }
-}
+//     return true; //set true
+//   } catch (error) {
+//     console.error('Error executing query', error); //catch errors that may occur
+//     throw new Error('Internal Server Error');
+//   }
+// }
 
 export async function insertGames(steamId: bigint) {
   // Theres going to be a lot of commented out console logs here because I had to hunt stuff down

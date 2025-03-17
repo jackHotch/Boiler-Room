@@ -55,9 +55,9 @@ const TopRatedGames = () => {
       <div className={styles.scrollContainer}>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
-            ownedGames.map((game) => (
+            ownedGames.map((game, key) => (
               <a
-                key={game.id}
+                key={key}
                 href={`/SingleGame/${game.id}`}
                 className={styles.imageWrapper}
               >
