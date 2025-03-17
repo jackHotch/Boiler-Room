@@ -417,7 +417,7 @@ app.get('/games/:gameid', async (req, res) => {
 
   // Ensure gameid is a valid number
   if (isNaN(Number(gameid))) {
-    res.status(400).json({ error: 'Invalid game ID format' })
+    return res.status(400).json({ error: 'Invalid game ID format' })
   }
 
   try {
@@ -427,6 +427,10 @@ app.get('/games/:gameid', async (req, res) => {
        FROM "Games" WHERE "game_id" = $1`,
       [gameid]
     )
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Game not found" });
+    }
 
 
 
@@ -456,10 +460,10 @@ app.get('/games/:gameid', async (req, res) => {
   }
   
     rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
-    res.status(200).json(rows[0]);
+    return res.status(200).json(rows[0]);
   } catch (error) {
     console.error('Database error:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    return res.status(500).json({ error: 'Internal server error' })
   }
 })
 
