@@ -66,13 +66,22 @@ export function Navbar() {
         <div
           className={styles.accountContainer}
           onMouseEnter={() => setShowSteam(true)}
-          onMouseLeave={() => setShowSteam(false)}>
 
-          <Link className={`${styles.links} ${styles.account}`} href='/Account'>
-            P
+          onMouseLeave={() => setShowSteam(false)}
+        >
+          <Link href='/Account'>
+            {!loading && steamPFP ? (
+              <img className={styles.pfp} src={steamPFP} alt='Profile' />
+            ) : (
+              <img
+                className={styles.pfp}
+                src='https://placehold.co/40x40/black/white?text=P'
+                alt='Profile'
+              />
+            )}
           </Link>
-          {/* Show Steam component on hover */}
-          {showSteam && <SteamIdDisplay />} 
+          {showSteam && <SteamIdDisplay />}
+
         </div>
       </div>
     </div>
