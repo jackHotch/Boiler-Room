@@ -34,7 +34,7 @@ const GameTable = ({ games }) => {
                   ? game.boil_score
                   : 'N/A'}</td>
               <td>
-                <a href={'https://store.steampowered.com/app/' + game.game_id}>Steam</a>
+                <a href={'https://store.steampowered.com/app/' + game.game_id}><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png" className={styles.steamImg}/></a>
               </td>
               <td>
                 <input type='checkbox' />
