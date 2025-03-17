@@ -91,6 +91,7 @@ const LandingPage = () => {
         </div>
       </section>
 
+
       <footer ref={footerRef} className={styles.footer}>
         {' '}
         &copy; 2025 Boiler Room. All rights reserved.

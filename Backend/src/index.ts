@@ -170,54 +170,50 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
 });
 
 //function to update hltb scores for games in users library
-async function hltbUpdate(id) {
-  const url = `https://howlongtobeat.com/steam?userName=${id}`
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
+export async function hltbUpdate (id) {
+  const url = (`https://howlongtobeat.com/steam?userName=${id}`)
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
 
   //Use a custom user agent because default throws a 403 error on HLTB
-  const customUA =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
+  const customUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36';
 
-  await page.setUserAgent(customUA)
-  await page.goto(url)
-  await page.setViewport({ width: 1080, height: 1024 })
+  await page.setUserAgent(customUA);
+  await page.goto(url);
+  await page.setViewport({width: 1080, height: 1024});
 
   //Sleep for 5 seconds to wait for table to load on HLTB
-  await new Promise((f) => setTimeout(f, 5000))
+  await new Promise(f => setTimeout(f, 5000));
 
   const extractHLTBData = await page.evaluate(() => {
     return Array.from(document.querySelectorAll('tr.spreadsheet')) //get array of table rows
-      .map((row) => {
-        //map function to run on each row
-        const steamLink = row.querySelector(
-          'a[href^="http://store.steampowered.com/app/"]'
-        ) //select store link from href
-        if (!steamLink) return null
-
-        const appId = (steamLink as HTMLAnchorElement).href.match(/app\/(\d+)/)?.[1] //select steamAppId from store link
-        if (!appId) return null
-
-        const timeCell = row.querySelector('td.center, td.center.text_red') //select HLTB time cell
-        if (!timeCell) return null
-
-        //extract hltb time
-        const timeText = timeCell.textContent.trim()
-        const timeMatch = timeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/)
-
+      .map(row => { //map function to run on each row
+        const steamLink = row.querySelector('a[href^="http://store.steampowered.com/app/"]'); //select store link from href
+        if (!steamLink) return null;
+  
+        const appId = (steamLink as HTMLAnchorElement).href.match(/app\/(\d+)/)?.[1]; //select steamAppId from store link
+        if (!appId) return null;
+  
+        const timeCell = row.querySelector('td.center, td.center.text_red'); //select HLTB time cell
+        if (!timeCell) return null;
+  
+        //extract hltb time 
+        const timeText = timeCell.textContent.trim();
+        const timeMatch = timeText.match(/(?:(\d+)h)?\s*(?:(\d+)m)?/);
+  
         //parse hours and minutes
-        const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0
-        const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0
-        const timeDecimal: number = +(hours + minutes / 60).toFixed(1) //convert to number rounded to 1 decimal point
+        const hours = timeMatch?.[1] ? parseInt(timeMatch[1]) : 0;
+        const minutes = timeMatch?.[2] ? parseInt(timeMatch[2]) : 0;
+        const timeDecimal: number = +(hours + minutes / 60).toFixed(1); //convert to number rounded to 1 decimal point
+  
+        return [appId, timeDecimal];
+      }).filter(entry => entry && entry[1] != '0');
+  });
 
-        return [appId, timeDecimal]
-      })
-      .filter((entry) => entry && entry[1] != '0')
-  })
+  let result = extractHLTBData;
 
-  let result = extractHLTBData
+  await browser.close();
 
-  await browser.close()
 
   // Update the database with extracted data
   try {
@@ -227,6 +223,7 @@ async function hltbUpdate(id) {
          FROM "Games" WHERE "game_id" = $1`,
         [game[0]]
       )
+
       const boil_score = rows[0]?.metacritic_score
         ? await boil_rating(game[1], rows[0]?.metacritic_score, 0.75)
         : null
@@ -235,9 +232,12 @@ async function hltbUpdate(id) {
         [game[1], boil_score, game[0]]
       )
     }
+
     console.log('Database updated successfully')
+    return { success: true, message: 'Games hltb updated successfully' };
   } catch (err) {
-    console.error('Error updating database:', err)
+    console.error('Error updating database:', err);
+    return { success: false, message: 'Games hltb not updated successfully' };
   }
 }
 
@@ -303,6 +303,7 @@ app.get("/steam/playersummary", async (req, res) => {
       }
     );
 
+
     const username = response.data.response.players[0]?.personaname
     const userImage = response.data.response.players[0]?.avatarfull
 
@@ -329,6 +330,7 @@ app.get("/steam/recentgames", async (req, res) => {
         params: {
           key: key,
           steamid: steamId,
+
           format: "json",
         },
       }
@@ -361,10 +363,12 @@ app.get("/steam/logout", (req, res) => {
 app.get("/steam/getdisplayinfo", async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId && req.session.steamName) {
+
     return res.json({
       steamId: req.session.steamId,
       steamName: req.session.steamName,
       steamPFP: req.session.steamPFP,
+
     })
   } else {
     return res.json({
@@ -391,6 +395,7 @@ app.get("/steam/friendsList", async (req, res) => {
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
 
 
 app.get('/', (req, res) => {
@@ -481,6 +486,29 @@ app.get('/usergames', async (req, res) => {
 
     res.json(rows)
   } catch (error) {
+    console.error('Database error:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+// Created Backend route to access the games table from database
+app.get('/usergames', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT ug."steam_id", g."game_id", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
+      FROM "Games" g 
+      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
+      WHERE ug."steam_id" = $1 
+      ORDER BY g."boil_score" DESC NULLS LAST`,
+      [req.session.steamId]
+    )
+    
+    console.log("test usergames")
+    console.log(req.session.steamId)
+    console.log(rows[0]?.steam_id)
+    console.log(rows)
+    res.json(rows)
+  } catch (error) {
     console.error('Error fetching game IDs:', error)
     res.status(500).json({ error: error.message })
   }
@@ -539,6 +567,7 @@ app.get('/ownedGames', async (req, res) => {
     return res.status(500).json({ error: 'Failed to fetch owned games from Steam API.' })
   }
 })
+
 
 //Function to return "boil rating" based on
 async function boil_rating(hltb_score, rating, quality_weight) {
@@ -705,8 +734,8 @@ export async function insertGames(steamId: bigint) {
 
 
 export async function checkAccount(steamId) {
-  let retVal = 0;
-  const KEY = process.env.STEAM_API_KEY;
+  let retVal = 0
+  const KEY = process.env.STEAM_API_KEY
 
   try {
 
@@ -728,6 +757,7 @@ export async function checkAccount(steamId) {
 
     // Checking friends list access
     const friendsResponse = await axios.get(
+
       'http://api.steampowered.com/ISteamUser/GetFriendList/v0001/',
       {
         params: {
@@ -798,6 +828,7 @@ const renderMessagePage = (message) => {
         <h1>${message.title}</h1>
         <p>${message.text}</p>
         <button onclick="window.location.href='${
+
           process.env.BACKEND_URL + '/auth/steam'
         }'"><strong>Try Again</strong></button>
       </body>

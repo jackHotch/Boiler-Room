@@ -66,6 +66,7 @@ export function Navbar() {
         <div
           className={styles.accountContainer}
           onMouseEnter={() => setShowSteam(true)}
+
           onMouseLeave={() => setShowSteam(false)}
         >
           <Link href='/Account'>

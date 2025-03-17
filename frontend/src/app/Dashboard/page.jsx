@@ -39,10 +39,12 @@ export default function Dashboard() {
       <section className={styles.featuredGames}>
         <DashGameGallery games={featuredGames} categories={featuredCategories} />
       </section>
+
       <hr />
       <section className={styles.otherGames}>
         <OwnedGamesGallery />
       </section>
+
       <section className={styles.otherGames}>
         <TopRatedGames />
       </section>
