@@ -35,7 +35,7 @@ export function Navbar() {
           onMouseEnter={() => setShowSteam(true)} 
           onMouseLeave={() => setShowSteam(false)}
         >
-          <Link className={`${styles.links} ${styles.account}`} href='/Accounts'>
+          <Link className={`${styles.links} ${styles.account}`} href='/Account'>
             P
           </Link>
           {/* Show Steam component on hover */}
