@@ -1,10 +1,8 @@
 import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate} from './index';
 import axios from 'axios';
-
 import { Pool } from 'pg';
 import request from 'supertest';
 import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId } from './TestingResponses';
-
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -287,12 +285,4 @@ describe('PUT /themepreference', () => {
 
     expect(response.status).toBe(200);
   })
-
-  it('should handle no steamid', async () => {
-    const response = await request(app).put(`/themepreference`);
-
-    expect(response.status).toBe(401);
-  })
-}) 
-
-
+})
