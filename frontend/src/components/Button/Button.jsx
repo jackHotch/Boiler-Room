@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from "react";
-import styles from "./Button.module.css"; // Import CSS Module
+import styles from "./Button.module.css";
 
 const Button = () => {
   const [isVisible, setIsVisible] = useState(false);
-
+  // Handle Button Visibility on Scroll
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -18,7 +18,7 @@ const Button = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+// Handle Button Scroll to top Functionality
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
