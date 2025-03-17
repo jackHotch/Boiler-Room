@@ -8,6 +8,7 @@
   --bg-accent: #2d88f0;
   --bg-accent-secondary: #0f76eb;
   --danger: #d9534f;
+  --text-bw: #000000;
 }
 
 .dark {
@@ -20,6 +21,7 @@
   --bg-accent: #2d88f0;
   --bg-accent-secondary: #0f76eb;
   --danger: #ff6347;
+  --text-bw: #ffffff;
 }
 
 body {
