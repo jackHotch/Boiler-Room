@@ -86,59 +86,12 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-
-
 .title {
   color: white;
 }
 
-/* Dark/Light Mode Slider Positioned to the Right */
-.toggleContainer {
-  position: absolute;
-  right: 20px; /* Add space between slider and right edge */
-  top: 20px;
-}
-
-.toggleSlider {
-  height: 25px;
-  position: relative;
-  width: 50px;
-}
-
-.toggleSliderInput {
-  height: 0;
-  opacity: 0; /* Hide the checkbox */
-  width: 0;
-}
-
-.toggleSlider .slider {
-  background-color: #ccc;
-  border-radius: 25px;
-  bottom: 0;
-  cursor: pointer;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: 0.4s;
-}
-
-.toggleSlider .slider:before {
-  background-color: white;
-  border-radius: 50%;
-  bottom: 5px;
-  content: "";
-  height: 15px;
-  left: 5px;
-  position: absolute;
-  transition: 0.4s;
-  width: 15px;
-}
-
-.toggleSlider input:checked + .slider {
-  background-color: #4caf50;
-}
-
-.toggleSlider input:checked + .slider:before {
-  transform: translateX(25px);
+.buttonContainer {
+  justify-content: right;
+  display: flex;
+  justify-content: flex-end;
 }

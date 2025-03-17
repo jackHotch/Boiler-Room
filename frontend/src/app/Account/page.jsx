@@ -86,15 +86,8 @@ const Account = () => {
       <h1 className={styles.title}>Account Settings</h1>
 
       {/* Dark/Light Mode Slider, not functional */}
-      <div className={styles.toggleContainer}>
-        <label className={styles.toggleSlider}>
-          <input
-            type="checkbox"
-            checked={isDarkMode}
-            onChange={handleToggleDarkMode}
-          />
-          <span className={styles.slider}></span>
-        </label>
+      <div className={styles.buttonContainer}>
+          <button className={styles.removeButton}>Re-Sync</button> {/* CHRIS PUT IT H */}
       </div>
 
       {/* This div contains the search bar and the list of options that follow */}
