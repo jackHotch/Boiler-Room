@@ -307,9 +307,34 @@ app.get("/games/:gameid", async (req, res) => {
       [gameid]
     );
 
+
+
+  const platformMap = {
+    1: ["Linux"],
+    2: ["Mac"],
+    3: ["Linux, ", "Mac, "],
+    4: ["Windows"],
+    5: ["Linux, ", "Windows"],
+    6: ["Windows, ", "Mac, "],
+    7: ["Linux, ", "Mac, ", "Windows"]
+  }
+
+  
+    console.log("Query result for gameid:", gameid, rows); // Debugging log
+
+
     if (rows.length === 0) {
       return res.status(404).json({ error: "Game not found" });
     }
+    
+    if (rows.length > 0 && rows[0].released) {
+      // If 'released' is a Date object, convert it to ISO string before splitting
+      rows[0].released = typeof rows[0].released === "string"
+          ? rows[0].released.split("T")[0] // Already a string, just split
+          : rows[0].released.toISOString().split("T")[0]; // Convert Date to string, then split
+  }
+  
+  rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
 
     res.status(200).json(rows[0]);
   } catch (error) {
@@ -451,7 +476,7 @@ export async function checkAccount(steamId) {
 
   try {
       // Checking game details
-      const gameResponse = await axios.get('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
+      const gameResponse = await axios.get('http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',{
           params: {
               steamid: steamId,
               include_appinfo: true,
