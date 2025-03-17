@@ -260,9 +260,6 @@ describe('Check Account Visibility', () => {
 });
 
 test('hltb update updates scores for a user', async () => {
-  mockedAxios.get.mockResolvedValueOnce({
-    data: testSteamId,
-  });
 
   const result = await hltbUpdate(BigInt(testSteamId));
   expect(result).toEqual({ success: true, message: 'Games hltb updated successfully' });
