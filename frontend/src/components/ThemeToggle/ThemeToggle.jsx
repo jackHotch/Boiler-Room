@@ -36,9 +36,9 @@ export function ThemeToggle() {
   return (
     <button onClick={toggleTheme} className={styles.button}>
       {theme == 'dark' ? (
-        <img src='dark-mode.png' width={24} />
+        <img src='/dark-mode.png' width={24} />
       ) : (
-        <img src='light-mode.png' width={24} />
+        <img src='/light-mode.png' width={24} />
       )}
     </button>
   )
