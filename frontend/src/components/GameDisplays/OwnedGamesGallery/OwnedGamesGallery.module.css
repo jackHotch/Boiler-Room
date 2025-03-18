@@ -2,7 +2,7 @@
     width: 100%;
     padding: 20px 0;
     background-color: rgba(0, 0, 0, 0.25);
-border-radius: 15px;
+    border-radius: 15px;
   }
   
   .gridContainer {
@@ -29,7 +29,7 @@ border-radius: 15px;
   }
   
   .gameImage {
-    width: 100%; /* Full width of grid cell */
+    width: calc(100% - 4px); /* Full width of grid cell */
     border: rgba(255, 255, 255, 0.5) 2px solid;
     border-radius: 8px;
     transition: filter 0.3s ease-in-out; /* Smooth brightness transition */
@@ -77,7 +77,7 @@ border-radius: 15px;
   }
  
   .errorText {
-    color: #ff6b6b;
+    color: var(--danger);
     font-size: 16px;
     font-weight: bold;
     text-align: center;
@@ -85,7 +85,7 @@ border-radius: 15px;
   }
   
   .loadingText {
-    color: #bbb;
+    color: var(--text-secondary);
     font-size: 16px;
     text-align: center;
     padding: 10px;

@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     padding: 80px;
-    color: #E0E0E0;
+    color: white;
     font-family: Arial, sans-serif;
 }
     
@@ -20,19 +20,19 @@
     transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     filter: brightness(0.9);
     position: relative;
-    }
+}
     
-    .gameContainer:nth-child(even) {
-    background-color: rgba(72, 72, 72, 0.6);
-    transform: scale(1.05);
-    }
-    
-    .gameContainer:hover {
-    transform: scale(1.075) translateY(-5px);
-    filter: brightness(1.03);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(98, 153, 240, 0.3);
-    animation: subtleRotate 0.5s ease-in-out;
-    }
+.gameContainer:nth-child(even) {
+  background-color: rgba(72, 72, 72, 0.6);
+  transform: scale(1.05);
+}
+
+.gameContainer:hover {
+  transform: scale(1.075) translateY(-5px);
+  filter: brightness(1.03);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(98, 153, 240, 0.3);
+  animation: subtleRotate 0.5s ease-in-out;
+}
     
 .gallery img {
     border: 1px solid white;
@@ -47,7 +47,7 @@
 }
     
 .gameContainer img:hover {
-    outline: 1px solid #6299f0;
+    outline: 1px solid var(--bg-accent);
     filter: brightness(1.1);
     scale: 1.025;
     transition: scale 0.25s ease-in-out, filter 0.25s ease-in-out;
@@ -56,6 +56,5 @@
 .gameCategory {
     margin-top: 5px;
     font-size: 1.4rem;
-    color: white;
     font-weight: bold;
 }

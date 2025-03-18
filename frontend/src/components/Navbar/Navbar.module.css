@@ -3,17 +3,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  font-family: Arial, sans-serif;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
   text-align: center;
   position: relative;
   z-index: 1231321;
   height: 10%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.393);
+  background-color: var(--bg-light)
 }
 .nav_options {
   display: flex;
+  align-items: center;
   gap: 16px;
 }
 
@@ -22,7 +21,7 @@
   justify-content: center;
   align-items: center;
   padding: 12px;
-  color: white;
+  color: var(--text-primary);
   border-radius: 8px;
   text-decoration: none;
   text-align: center; /* Ensures text alignment */
@@ -31,9 +30,8 @@
   line-height: 1;
 }
 
-
 .logo:hover, .links:hover {
-  background-color: #273d61;
+  background-color: var(--bg-primary);
 }
 
 .logo {
@@ -42,16 +40,24 @@
 }
 
 .links {
-  background-color: #202b3e;
+  background-color: var(--button-primary);
+}
+
+.account {
+  width: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .searchbar {
   background-color: white;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  height: 40px;
+  border: 1px solid black;
 }
 
 .pfp{
@@ -61,14 +67,18 @@
   margin-right: 10px;
   border: 2px solid white;
 }
+
 .pfp:hover {
-  border: 2px solid #6299f0;
+  border: 2px solid var(--bg-accent);
   cursor: pointer;
 }
+
 .input {
   border: none;
   width: 300px;
   border-radius: 8px;
+  background-color: white;
+  color: black;
 }
 
 .input:focus {
@@ -80,7 +90,7 @@
 }
 
 .searchbar:focus {
-  outline: 1px solid #6299f0;
+  outline: 1px solid var(--bg--accent);
 }
 
 .accountContainer {

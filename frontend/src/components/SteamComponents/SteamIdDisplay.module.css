@@ -49,10 +49,9 @@
     width: 100%;
 }
 
-.logoutButton,
 .profileButton {
-    background: #273d61; /* Matching navbar link background */
-    color: white;
+    background: var(--bg-accent); /* Matching navbar link background */
+    color: var(--text-primary);
     border: none;
     padding: 8px 14px; /* Matching navbar link padding */
     font-size: 14px;
@@ -60,17 +59,13 @@
     border-radius: 8px; /* Matching navbar border radius */
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%; /* Full width for consistent layout */
+    width: calc(100% - 28px); /* Full width for consistent layout */
     text-align: center;
-}
-
-.logoutButton:hover {
-    background: #3a4d7d; /* Matching navbar hover color */
+    text-decoration: none;
 }
 
 .profileButton:hover {
-    background: #3a4d7d; /* Matching navbar hover color */
-    /* Removed individual color to match navbar hover behavior */
+    background: var(--bg-accent-secondary); /* Matching navbar hover color */
 }
 
 .loadingText {
@@ -80,7 +75,7 @@
 
 .errorText {
     font-size: 16px;
-    color: #ff6b6b;
+    color: var(--danger);
     font-weight: bold;
 }
 
@@ -92,14 +87,14 @@
 
 .steamName {
     font-size: 16px;
-    color: #fff;
+    color: white;
     margin: 4px 0;
 }
 
 /* Reuse profileButton styles with different colors */
 .steamLogout {
-    background: #ff4d4d; /* Red color for logout warning effect */
-    color: white;
+    background: var(--danger); /* Red color for logout warning effect */
+    color: var(--text-primary);
     border: none;
     padding: 10px 20px; /* Matching profileButton padding */
     font-size: 14px;
@@ -113,5 +108,5 @@
   }
   
   .steamLogout:hover {
-    background: #cc0000; /* Darker red on hover, matching your original intent */
+    background: var(--danger-secondary); /* Darker red on hover, matching your original intent */
   }

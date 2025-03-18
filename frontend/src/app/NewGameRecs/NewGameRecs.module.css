@@ -1,75 +1,43 @@
-.newGameRecContainer {
-    background-color: #1b2838;
-    color: white;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-left: 22.5%;
-    padding: 20px;
-  }
-  
-  .newGameRecTitle {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    background-color: #30475e;
-    border-radius: 8px;
-    padding: 15px;
-  }
-  
-  .newGameRecContent {
-    display: flex;
-    max-width: 900px;
-    width: 100%;
-    gap: 20px;
-  }
+.container {
+  color: var(--text-primary);
+  padding: 20px;
+}
 
-  .container {
-    background-color: #111;
-    color: white;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-  
-  .recommendedGames {
-    padding: 50px 20px;
-    text-align: center;
-  }
-  
-  .sectionTitle {
-    font-size: 30px;
-    margin-bottom: 20px;
-  }
-  
-  .gamesGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 250px; /* Three equal-sized game boxes and filter box */
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px; /* Prevent grid from stretching too wide */
-    margin: 0 auto; /* Center the grid */
-  }
-  
-  .gameCard {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #444;
-  }
-  
-  .filters {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #444;
-  }
+.recommendedGames {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.gamesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 250px; /* Three equal-sized game boxes and filter box */
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px; /* Prevent grid from stretching too wide */
+  margin: 0 auto; /* Center the grid */
+}
+
+.gameCard {
+  background-color: var(--bg-light);
+  padding: 20px;
+  border-radius: 10px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filters {
+  background-color: var(--bg-content);
+  padding: 20px;
+  border-radius: 10px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

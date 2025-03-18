@@ -1,7 +1,7 @@
 /* Account.module.css */
 
 .container {
-  color: white;
+  color: var(--text-primary);
   display: block;
   gap: 20px;
   justify-content: space-between;
@@ -60,8 +60,8 @@
 
 
 .searchResultItem:hover, .highlighted {
-  background-color: #3498db !important; /* Blue highlight */
-  color: white !important;
+  background-color: var(--bg-accent) !important; /* Blue highlight */
+  color: var(--text-primary) !important;
 }
 
 .recommendedGames{
@@ -78,8 +78,8 @@
 }
 
 .searchResultItem {
-  background-color:aliceblue;
-  color: black;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
   padding: 5px;
   cursor:pointer;
   margin:1;
@@ -87,7 +87,7 @@
 }
 
 .title {
-  color: white;
+  color: var(--text-primary);
 }
 
 .buttonContainer {

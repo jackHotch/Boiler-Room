@@ -544,7 +544,7 @@ app.get('/ownedGames', async (req, res) => {
         },
       }
     )
-    console.log('Steam API Response:', gameResponse.data)
+    
     const data = gameResponse.data
     if (!data.response || !data.response.games) {
       return res.status(404).json({ error: 'No owned games found for this user.' })
@@ -604,41 +604,6 @@ app.get("/gamesByName", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-// export async function insertProfile(steamId: bigint) {
-//   try { // Firstly we check to make sure we dont have a profile already
-//     const { rows: existingRows } = await pool.query(
-//       'SELECT * FROM "Profiles" WHERE "steam_id" = $1', [steamId]
-//     );
-
-//     if (existingRows.length > 0) {
-//       return false;  // If we do, throw a false and move on
-//     }
-
-//     const response = await axios.get( // Otherwise get some information
-//       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`,
-//       {
-//         params: {
-//           key: process.env.STEAM_API_KEY, // Thanks trevor for doing the work for me
-//           steamids: steamId,
-//         },
-//       }
-//     );
-
-//     const avatar = response.data.response.players[0]?.avatarhash; // Isolate the 2 things we use
-//     const userName = response.data.response.players[0]?.personaname;
-
-//     await pool.query( // Insert those things along with the steamID to our database
-//       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *', [steamId, userName, avatar]
-//     );
-
-//     return true; //set true
-//   } catch (error) {
-//     console.error('Error executing query', error); //catch errors that may occur
-//     throw new Error('Internal Server Error');
-//   }
-// }
 
 export async function insertGames(steamId: bigint) {
   // Theres going to be a lot of commented out console logs here because I had to hunt stuff down
@@ -732,6 +697,37 @@ export async function insertGames(steamId: bigint) {
   }
 }
 
+app.get('/themepreference', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  if (steamId) {
+    try {
+      const { rows } = await pool.query('SELECT preference FROM "Profiles" WHERE steam_id = $1', [steamId])
+      return res.status(200).json(rows[0])
+    } catch (err) {
+      console.error(err)
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  } else {
+    return res.status(401).json({error: 'No steam id'})
+  }
+})
+
+app.put('/themepreference', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  console.log('ThemeSteamId:' + steamId)
+  const preference = req.body.preference
+  if (steamId) {
+    try {
+      await pool.query('UPDATE "Profiles" SET preference = $1 WHERE steam_id = $2', [preference, steamId])
+      return res.sendStatus(200)
+    } catch (err) {
+      console.error(err)
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  } else {
+    return res.status(401).json({error: 'No steam id'})
+  }
+})
 
 export async function checkAccount(steamId) {
   let retVal = 0

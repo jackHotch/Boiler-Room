@@ -2,12 +2,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styles from './Home.module.css'
 import axios from 'axios'
-
-
+import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle'
 
 const LandingPage = () => {
   const [games, setGames] = useState([])
-    const footerRef = useRef(null);
+  const footerRef = useRef(null)
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -29,13 +28,10 @@ const LandingPage = () => {
     fetchGames()
     setTimeout(() => {
       if (footerRef.current) {
-          footerRef.current.scrollIntoView({ behavior: "smooth" });
+        footerRef.current.scrollIntoView({ behavior: 'smooth' })
       }
-  }, 2000); // Delays scrolling by 2 seconds
-
-  
+    }, 2000) // Delays scrolling by 2 seconds
   }, [])
-
 
   return (
     <div className={styles.container}>
@@ -44,6 +40,9 @@ const LandingPage = () => {
           <h1 className={styles.logo}>Boiler Room</h1>
           <nav>
             <ul className={styles.navList}>
+              <li>
+                <ThemeToggle />
+              </li>
               <li>
                 <a
                   href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}

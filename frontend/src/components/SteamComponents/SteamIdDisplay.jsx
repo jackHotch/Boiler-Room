@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import axios from 'axios'
 import styles from './SteamIdDisplay.module.css'
+import Link from 'next/link'
 
 const handleLogin = () => {
   window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
@@ -49,7 +50,7 @@ function SteamProfile() {
   if (error)
     return (
       <p className={styles.errorText}>
-        {error}{' '}
+        {error}
         <button className='steamLogin' onClick={handleLogin} style={{}}>
           Log in with Steam
         </button>
@@ -67,10 +68,12 @@ function SteamProfile() {
         </p>
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.profileButton}>Profile</button>
+        <Link className={styles.profileButton} href='/Account'>
+          Profile
+        </Link>
         <button className={styles.steamLogout} onClick={handleLogout}>
           Logout
-        </button>{' '}
+        </button>
       </div>
     </div>
   )

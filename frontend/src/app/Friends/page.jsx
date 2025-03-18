@@ -66,7 +66,6 @@ export default function Friends() {
         })
       } catch (error) {
         console.error('Error Fetching Friends Info:', error)
-        // setLoggedIn(false)
       } finally {
         setLoading(false)
       }
@@ -103,15 +102,15 @@ export default function Friends() {
                 <div className={styles.friend_info} key={key}>
                   <h4 className={styles.username}>{friend.username}</h4>
 
-                  <span>Recently Played Games</span>
+                  <span className={styles.recently_played_label}>
+                    Recently Played Games
+                  </span>
                   <div className={styles.recent_game_list}>
                     {friendsInfo.recentGames?.length != 0 ? (
                       friend.recentGames?.map((game, key) => {
                         return (
                           <div className={styles.recent_game} key={key}>
-                            <Link
-                              href={`https://store.steampowered.com/app/${game.appid}`}
-                            >
+                            <Link href={`SingleGame/${game.appid}`}>
                               <img
                                 className={styles.image}
                                 src={

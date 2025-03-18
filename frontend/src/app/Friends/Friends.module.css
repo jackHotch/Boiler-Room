@@ -4,11 +4,9 @@
  align-items: center;
  width: 100vw;
  min-height: calc(100vh - 83.5px);
- background-color: #1a202c;
- color: white;
+ color: var(--text-primary);
  padding-bottom: 16px;
  gap: 8px;
- font-family: Arial, sans-serif;
 }
 
 .list_of_friends {
@@ -20,7 +18,7 @@
 }
 
 .friend_info {
-  background-color: #2d3748;
+  background-color: var(--bg-light);
   padding: 16px;
   border-radius: 12px;
   width: 50%;
@@ -29,7 +27,7 @@
 .username {
   font-size: 1.4rem;
   font-weight: bold;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .recent_game_list {
@@ -50,19 +48,13 @@
   flex-direction: column;
 }
 
-.recent_game span {
-  color: #ddd;
-  font-size: 1rem;
+.recently_played_label {
+  color: var(--text-secondary);
 }
 
 .image {
   width: 100%;
   max-width: 200px;
   margin-bottom: 8px;
-}
-
-.title {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  color: white;
+  border-radius: 10px;
 }
