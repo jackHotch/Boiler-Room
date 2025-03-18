@@ -174,6 +174,7 @@ export async function hltbUpdate (id) {
   const url = (`https://howlongtobeat.com/steam?userName=${id}`)
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(10 * 60 * 1000)
 
   //Use a custom user agent because default throws a 403 error on HLTB
   const customUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36';
