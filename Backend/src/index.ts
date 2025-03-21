@@ -717,6 +717,229 @@ export async function insertGames(steamId: bigint) {
     throw new Error('Internal Server Error')
   }
 }
+app.get('/testFriends', async (req, res) => {
+  try {
+    const steamId = BigInt("76561199154033472"); //me
+    const result = await loadFriends(steamId);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error in /testFriends:', error);
+    res.status(500).json({ error: 'Failed to load friends' });
+  }
+});
+
+export async function delay() {
+  return new Promise( resolve => setTimeout(resolve, 2000) );
+}
+
+export async function loadFriends(steamId: bigint) {
+  let forced: boolean = false;
+
+  const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
+    params: {
+      steamid: steamId,
+      relationship: "friend",
+      key: process.env.STEAM_API_KEY
+    }
+  });
+
+  const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString());
+
+  let userIdsToCheck: string[];
+
+  if (forced) {
+    //TODO remove accounts that have a relationship with user
+    userIdsToCheck = steamIds;
+  } else {
+    const relationsQuery = `
+      SELECT "user1", "user2" 
+      FROM "User_Relations" 
+      WHERE ("user1" = $1 AND "user2" = ANY($2)) 
+         OR ("user2" = $1 AND "user1" = ANY($2))
+    `;
+    const { rows: existingRelations } = await pool.query(relationsQuery, [steamId.toString(), steamIds]);
+
+    const existingRelatedIds = existingRelations.map(row => 
+      row.user1 === steamId.toString() ? row.user2 : row.user1
+    );
+
+    userIdsToCheck = steamIds.filter(id => !existingRelatedIds.includes(id));
+
+    //console.log('Non-forced mode: Filtering out steamIds with existing relationships');
+    //console.log('Existing Related IDs:', existingRelatedIds);
+    //console.log('User IDs to Check:', userIdsToCheck);
+  }
+
+  const newUserProfiles = [];
+
+  for (const steamId of userIdsToCheck) {
+    try {
+      const response = await axios.get(
+        `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`, {
+          params: {
+            key: process.env.STEAM_API_KEY,
+            steamids: steamId,
+          },
+        }
+      );
+
+      const avatar = response.data.response.players[0]?.avatarhash;
+      const userName = response.data.response.players[0]?.personaname;
+    
+      newUserProfiles.push({
+        steamId,
+        userName,
+        avatar
+      });
+    
+    } catch (error) {
+      console.error(`Error processing Steam ID ${steamId}:`, error.message);
+    }
+  }
+    
+    if (newUserProfiles.length > 0) {
+      await pool.query(
+        `INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash")
+        SELECT * FROM UNNEST($1::bigint[], $2::text[], $3::text[])`,
+        [
+          newUserProfiles.map(profile => BigInt(profile.steamId)),
+          newUserProfiles.map(profile => profile.userName),
+          newUserProfiles.map(profile => profile.avatar),
+        ]
+      );
+    }
+
+    const ourSteamId = steamId.toString();
+    const relationsData = steamIds.map(currentSteamId => {
+      const user1 = BigInt(currentSteamId) < BigInt(ourSteamId) ? currentSteamId : ourSteamId;
+      const user2 = BigInt(currentSteamId) > BigInt(ourSteamId) ? currentSteamId : ourSteamId;
+      const status = 3;
+      return [user1, user2, status];
+    });
+    
+    if (relationsData.length > 0) {
+      await pool.query(
+        `INSERT INTO "User_Relations" ("user1", "user2", "status")
+        SELECT * FROM UNNEST($1::bigint[], $2::bigint[], $3::int[])
+        ON CONFLICT DO NOTHING`,
+        [
+          relationsData.map(row => BigInt(row[0])),
+          relationsData.map(row => BigInt(row[1])),
+          relationsData.map(row => row[2]),
+        ]
+      );
+    }
+
+    userIdsToCheck.forEach(steamId => {
+      const steamIdBigInt = BigInt(steamId);
+      insertGames(steamIdBigInt);
+    });
+
+  for (const steamId of userIdsToCheck) {
+    const steamIdBigInt = BigInt(steamId);
+    console.log(`Processing Steam ID: ${steamIdBigInt}`);
+
+      const { data } = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`, {
+        params: {
+          key: process.env.STEAM_API_KEY,
+          steamid: steamIdBigInt,
+          format: 'json',
+        },
+      });
+
+      await delay();
+
+      if (!data.response || !data.response.games || !Array.isArray(data.response.games)) {
+        console.log(`No recently played games found for Steam ID ${steamId}`);
+        continue;
+      }
+
+      const recentlyPlayedGames = data.response.games.map(game => ({
+        steamId: steamIdBigInt.toString(),
+        gameId: game.appid.toString(),
+        playtime2Weeks: game.playtime_2weeks || 0,
+        playtimeForever: game.playtime_forever || 0,
+      }));
+
+      const recentlyPlayedGameIds = recentlyPlayedGames.map(game => game.gameId.toString());
+
+      const existingUserGames = await pool.query(
+        'SELECT "game_id"::text FROM "User_Games" WHERE "steam_id" = $1 AND "game_id"::text = ANY($2::text[])',
+        [steamIdBigInt.toString(), recentlyPlayedGameIds]
+      );
+
+      const existingGameIds = existingUserGames.rows.map(row => row.game_id.toString());
+      const gamesToKeep = recentlyPlayedGames.filter(game => existingGameIds.includes(game.gameId));
+    
+    if (gamesToKeep.length === 0) {
+      console.log('No games to update. Skipping query execution.');
+      return;
+    }
+    
+    const valuesPlaceholders = gamesToKeep
+      .map((_, index) => `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`)
+      .join(', ');
+    
+    const values = gamesToKeep.flatMap(game => [
+      game.gameId,
+      game.steamId,
+      game.playtimeForever,
+      game.playtime2Weeks,
+      1,
+    ]);
+    
+    const query = `
+      INSERT INTO "User_Games" ("game_id", "steam_id", "total_played", "last_2_weeks", "recency")
+      VALUES ${valuesPlaceholders}
+      ON CONFLICT ("game_id", "steam_id")
+      DO UPDATE SET
+        "total_played" = EXCLUDED."total_played",
+        "last_2_weeks" = EXCLUDED."last_2_weeks",
+        "recency" = EXCLUDED."recency";
+    `;
+    
+    try {
+      const result = await pool.query(query, values);
+    }catch (err) {
+      console.error('Error updating User_Games:', err);
+    }
+  }
+
+  const finalQuery = `
+    WITH Friends AS (
+      SELECT 
+        CASE 
+            WHEN user1 = $1 THEN user2
+            ELSE user1
+            END AS friend_steam_id
+        FROM "User_Relations"
+        WHERE user1 = $1 OR user2 = $1
+    ),
+    RecentGames AS (
+        SELECT 
+          ug.steam_id,
+          ug.game_id,
+          ug.last_2_weeks,
+          ROW_NUMBER() OVER (PARTITION BY ug.steam_id ORDER BY ug.last_2_weeks DESC) AS game_rank
+        FROM "User_Games" ug
+        JOIN Friends f ON ug.steam_id = f.friend_steam_id
+        WHERE ug.recency = 1
+    )
+    SELECT 
+      p.username,
+      rg.game_id,
+      rg.last_2_weeks
+    FROM RecentGames rg
+    JOIN "Profiles" p ON rg.steam_id = p.steam_id
+    WHERE rg.game_rank <= 3
+    ORDER BY rg.steam_id, rg.game_rank;
+  `;
+
+  const finalResult = await pool.query(finalQuery, [steamId]);
+  console.log('Final query result:', finalResult.rows);
+
+  return finalResult.rows;
+}
 
 app.get('/themepreference', async (req, res) => {
   const steamId = req.query.steamid || req.session.steamId
