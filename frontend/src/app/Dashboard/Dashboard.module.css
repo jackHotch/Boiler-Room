@@ -1,5 +1,5 @@
 .container {
-    color: var(--text-primary);
+    background: linear-gradient(230deg, var(--bg-dark), var(--bg-light));
 }
 
 .featuredGames {

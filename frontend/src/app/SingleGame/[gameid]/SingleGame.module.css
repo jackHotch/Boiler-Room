@@ -1,115 +1,230 @@
+/* Main Container */
 .singleGameContainer {
   color: var(--text-primary);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-left: 22.5%;
-  padding: 20px;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+  padding-top: 1.5%;
+  padding-bottom: 10%;
+  scale: 1;
+  background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
 }
 
-.gameTitle {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  background-color: var(--bg-light);
-  border-radius: 8px;
-  padding: 15px;
-}
-
+/* Game Content */
 .gameContent {
   display: flex;
-  max-width: 900px;
-  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
+  width: 100%;
+  max-width: 1000px;
 }
 
 /* Left Side */
 .gameLeft {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: auto; /* Remove fixed width */
-  min-width: 200px; /* Ensures it has at least some width */
-  max-width: 100%; /* Allows it to expand */
+  gap: 5px;
+  width: 100%;
+  max-width: 320px;
+  align-items: center;
 }
 
-.cover {
-  background-color: var(--bg-light);
-  width: 100%;
-  min-height: 250px; /* Ensures it doesn’t collapse */
+/* Game Title */
+.gameTitle {
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  margin-top: 0;
+  font-size: 30px;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  width: fit-content;
+}
+
+/* Cover Image */
+.imageContainer {
+  background-color: var(--bg-dark);
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  overflow: hidden; /* Ensures images don’t break the layout */
-}
-
-.cover img {
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
-  height: auto; /* Maintains aspect ratio */
-  max-height: 100%; /* Prevents it from growing too large */
-  object-fit: contain; /* Ensures the whole image fits without distortion */
-  display: block;
+  max-width: 280px;
 }
 
-.gameInfo {
-  background-color: var(--bg-light);
-  padding: 10px;
+.imageContainer:hover {
+  cursor: pointer;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.imageContainer img {
+  width: 100%;
+  max-height: auto;
+  object-fit: fill;
+  border-radius: 12px;
+}
+
+/* Release Date */
+.releaseDate {
+  border: none;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  padding: 12px;
   text-align: center;
   font-weight: bold;
-  border-radius: 8px;
-  
+  font-size: 18px;
+  width: 100%;
+  max-width: 280px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Right Side */
 .gameRight {
-  flex-grow: 1;
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  max-width: 600px;
+  width: 100%;
 }
 
+/* Shared Styles for Right Side Elements */
 .gameSummary,
-.ratings,
+.hltb_score,
 .reviews,
-.playStatus,
-.writeReview {
-  background-color: var(--bg-light);
-  padding: 15px;
-  font-weight: normal;
+.platforms,
+.metacritic_score {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: var(--bg-dark);
   border-radius: 8px;
+  padding: 15px;
   text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
+.gameSummary:hover,
+.hltb_score:hover,
+.reviews:hover,
+.platforms:hover,
+.metacritic_score:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Game Summary */
 .gameSummary {
-  grid-column: 1 / 2;
-  background-color: var(--bg-light);
-  padding: 15px;
-  font-weight: normal;
-  border-radius: 8px;
-  text-align: center;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  
-  /* Fixed height and scroll */
-  height: 150px; /* Adjust this as needed */
-  overflow-y: auto; /* Enables scrolling if text overflows */
-}
-
-.ratings {
-  grid-column: 2 / 3;
-}
-
-.reviews {
-  grid-column: 1 / 2;
-}
-
-.playStatus {
-  grid-column: 2 / 3;
-}
-
-.writeReview {
   grid-column: 1 / 3;
+  text-align:justify;
+  min-height: 200px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-bottom: 20px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.button{
+  background-color: var(--bg-dark);
+  padding: 15px;
+  border-radius: 15px;
+  border: rgba(0, 0, 0, 0.2) solid ;
+  font-size: large;
+  transition: transform .25s;
+}
+
+.button:hover{
+  cursor: pointer;
+  background-color: var(--bg-light);
+  transform: scale(1.05);
+  transition: transform .25s;
+}
+
+.button:active{
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Right Side Grid Elements */
+.reviews { grid-column: 1 / 2; }
+.metacritic_score { grid-column: 2 / 3; }
+.platforms { grid-column: 1 / 2; }
+.hltb_score { grid-column: 2 / 3; }
+
+.hltb_score .tooltipText{
+  visibility: hidden;
+  width: 100%;
+  bottom: 100%;
+  left: -2.5%;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  position: absolute;
+  z-index: 1;}
+
+.hltb_score:hover .tooltipText{
+  visibility: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gameContent {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gameRight {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .gameSummary {
+    grid-column: 1 / 2;
+  }
+}
+.circleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: auto; /* Center within parent */
+}
+
+.progressRing {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.progressRingBg,
+.progressRingCircle {
+  fill: none;
+  stroke-width: 15;
+  stroke-linecap: butt;
+}
+
+.progressRingBg {
+  stroke: #ddd;
+}
+
+.progressRingCircle {
+  stroke: #4caf50; /* Default color */
+  stroke-dasharray: 314; /* 2 * PI * r (r=50) */
+}
+
+.progressText {
+  position: absolute;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text-primary);
 }
