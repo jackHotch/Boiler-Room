@@ -717,6 +717,35 @@ export async function insertGames(steamId: bigint) {
     throw new Error('Internal Server Error')
   }
 }
+
+app.get('/testLockout', async (req, res) => {
+  const result = await lockoutCheck();
+  res.json({ message: result });
+});
+
+export async function lockoutCheck() {
+  const selectResult = await pool.query('SELECT "code" FROM "Lockout"');
+  const row = selectResult.rows[0];
+  const currentStatus = row.code;
+
+  let newStatus;
+  let message = "";
+
+  if (currentStatus === 0) {
+    newStatus = 1;
+    message = "You weren't locked out but now you are";
+  } else if (currentStatus === 1) {
+    newStatus = 0;
+    message = "You were locked out but now you aren't";
+  } else {
+    return "We have no idea what your status is";
+  }
+
+  await pool.query('UPDATE "Lockout" SET "code" = $1', [newStatus]);
+
+  return message;
+}
+
 app.get('/testFriends', async (req, res) => {
   try {
     const steamId = BigInt("76561199154033472"); //me
