@@ -4,8 +4,8 @@
   border-radius: 8px;
   color: var(--text-primary);
   position: fixed;
-  bottom: 12px;
-  left: 12px;
+  bottom: 16px;
+  left: 16px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   max-width: 300px;
   display: flex;

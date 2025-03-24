@@ -11,13 +11,13 @@ export function CookieMessage() {
 
     const hideTimer = setTimeout(() => {
       setShowToast(false)
-    }, 6000)
+    }, 8000)
 
     return () => {
       clearTimeout(showTimer)
       clearTimeout(hideTimer)
     }
-  })
+  }, [])
 
   if (showToast == false) {
     return null

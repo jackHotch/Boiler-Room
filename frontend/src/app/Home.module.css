@@ -32,7 +32,6 @@
 
 .hero {
     position: relative;
-    background: url('https://via.placeholder.com/1500x800') center/cover;
     height: 70vh;
     display: flex;
     align-items: center;
