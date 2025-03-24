@@ -46,6 +46,13 @@ app.use(
   })
 );
 
+app.use(function(req, res, next) {
+  res.set('credentials', 'include');
+  res.set('Access-Control-Allow-Credentials', true);
+  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  next();
+});
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
