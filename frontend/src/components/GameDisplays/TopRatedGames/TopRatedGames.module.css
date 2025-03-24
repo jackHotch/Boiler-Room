@@ -34,11 +34,9 @@
 }
 
 .boil_score{
-  left: 60%;
-  position : absolute;
+  position : relative;
   font-family: Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 12px;
   padding: 8px 12px;
   border-radius: 4px;
   opacity: 1;
@@ -110,6 +108,13 @@
   z-index: 1;
   text-align: bottom;
   max-width: 80%;
+}
+.redirectImage{
+  padding-left: 8px;
+  top: 30%;
+  position: absolute;
+  height: 16px;
+  filter: invert(1);
 }
 .gameTitle {
   position: absolute;

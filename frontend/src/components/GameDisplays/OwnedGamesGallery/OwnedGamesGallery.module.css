@@ -111,6 +111,13 @@
   text-align: bottom;
   max-width: 80%;
 }
+.redirectImage{
+  padding-left: 8px;
+  top: 30%;
+  position: absolute;
+  height: 16px;
+  filter: invert(1);
+}
 .gameTitle {
   position: absolute;
   top: 35%; /* Center vertically */

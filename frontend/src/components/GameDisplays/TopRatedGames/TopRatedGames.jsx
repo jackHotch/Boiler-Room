@@ -70,13 +70,25 @@ const TopRatedGames = () => {
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
-                  <small>Go To Game Page</small>
+                  <small>
+                    Go To Game Page
+                    <img src='/redirect.png' className={styles.redirectImage}></img>
+                  </small>{' '}
                 </div>
+
                 <div className={styles.gameCardInfo}>
                   {game.name}
-                  <small className={styles.boil_score}>Boil: {game.boil_score}</small>
+
                   <br />
-                  <small>{(game.total_played / 60).toFixed(2)} Hours Played</small>
+                  <small>
+                    {game.total_played > 0
+                      ? (game.total_played / 60).toFixed(2) + ' Hours Played'
+                      : "Looks like you haven't played this game"}
+                  </small>
+                  <a className={styles.boil_score}>
+                    <br></br>
+                    {'Boil Rating:\t' + Math.round(game.boil_score) + ' / 100'}
+                  </a>
                 </div>
               </a>
             ))

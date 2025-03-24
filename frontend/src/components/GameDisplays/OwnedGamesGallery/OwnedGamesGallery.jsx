@@ -73,12 +73,19 @@ const OwnedGamesGallery = () => {
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
-                  <small>Go To Game Page</small>
+                  <small>
+                    Go To Game Page
+                    <img src='/redirect.png' className={styles.redirectImage}></img>
+                  </small>
                 </div>
                 <div className={styles.gameCardInfo}>
                   {game.title}
                   <br />
-                  <small>{(game.playtime_2weeks / 60).toFixed(2)} hours played</small>
+                  <small>
+                    {game.playtime_2weeks > 0
+                      ? (game.playtime_2weeks / 60).toFixed(2) + ' Hours Played'
+                      : "Huh? You haven't played this recently"}
+                  </small>{' '}
                 </div>
               </a>
             ))
