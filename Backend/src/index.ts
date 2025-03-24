@@ -743,7 +743,7 @@ export async function loadFriends(steamId: bigint) {
   let message = "";
 
   if (currentStatus === 1) {
-    message = "You are presently locked out, please try again later
+    message = "You are presently locked out, please try again later"
     return message
   }else if (currentStatus === 0) {
     console.log("Beginning friends querying")
