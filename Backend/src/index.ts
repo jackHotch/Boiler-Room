@@ -546,6 +546,7 @@ app.get('/ownedGames', async (req, res) => {
       title: game.name,
       header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
       playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
+      playtime_2weeks: game.playtime_2weeks || 0,
     }))
 
     return res.json(ownedGames)

@@ -8,7 +8,7 @@
 }
     
 .gameContainer {
-    border: rgba(255,255,255,0.3) .5px solid;
+    border: var(--text-bw) .5px solid;
     flex-direction: column;
     text-align: center;
     background-color: rgba(45, 45, 45, 0.8);
@@ -35,7 +35,7 @@
 }
     
 .gallery img {
-    border: 1px solid white;
+    border: 1px solid var(--text-bw);
     border-radius: 10px;
     width: 70%;
     aspect-ratio: 2/3;

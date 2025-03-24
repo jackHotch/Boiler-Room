@@ -21,8 +21,8 @@ const OwnedGamesGallery = () => {
         const games = response.data
 
         // Sort games by playtime_forever in descending order (most played first)
-        let sortedGames = games.sort((a, b) => b.playtime_forever - a.playtime_forever)
-        sortedGames = sortedGames.slice(0, 12)
+        let sortedGames = games.sort((a, b) => b.playtime_2weeks - a.playtime_2weeks)
+        sortedGames = sortedGames.slice(0, 4)
         setOwnedGames(sortedGames)
       } catch (error) {
         console.error('Error fetching owned games:', error.message, error.response?.data)
@@ -37,7 +37,7 @@ const OwnedGamesGallery = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Jump Back In</h1>
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -46,7 +46,7 @@ const OwnedGamesGallery = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Jump Back In</h1>
         <p className={styles.errorText}>{error}</p>
       </div>
     )
@@ -54,7 +54,7 @@ const OwnedGamesGallery = () => {
 
   return (
     <div>
-      <h1>Your Top Played Games</h1>
+      <h1 className={styles.sectionHeader}>Jump Back In</h1>
       <div className={styles.scrollContainer}>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
@@ -73,9 +73,12 @@ const OwnedGamesGallery = () => {
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
+                  <small>Go To Game Page</small>
+                </div>
+                <div className={styles.gameCardInfo}>
                   {game.title}
                   <br />
-                  <small>{Math.floor(game.playtime_forever / 60)} hours played</small>
+                  <small>{(game.playtime_2weeks / 60).toFixed(2)} hours played</small>
                 </div>
               </a>
             ))

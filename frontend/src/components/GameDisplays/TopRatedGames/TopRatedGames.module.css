@@ -3,6 +3,7 @@
   padding: 20px 0;
   background-color: rgba(0, 0, 0, 0.25);
   border-radius: 15px;
+  border: 1px solid var(--text-bw); 
 }
 
 .gridContainer {
@@ -15,6 +16,10 @@
 
 .imageWrapper {
   position: relative;
+  width: fit-content;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--text-bw);
+  border-radius: 8px;
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
   overflow: hidden; /* Ensure the overlay stays within bounds */
@@ -25,33 +30,41 @@
 }
 
 .imageWrapper:hover .gameImage {
-  filter: brightness(0.5) blur(2px); /* Darken the image on hover for better contrast */
+  filter: brightness(0.5) blur(1px); /* Darken the image on hover for better contrast */
 }
 
 .boil_score{
+  left: 60%;
   position : absolute;
-  top: 5%;
-  right: 65%;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
   font-family: Arial, sans-serif;
   font-size: 18px;
   font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
   padding: 8px 12px;
   border-radius: 4px;
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
   z-index: 1;
-  text-align: center;
-  max-width: 80%;
+  text-align: right;
 }
 .gameImage {
   width: 100%; /* Full width of grid cell */
-  border: rgba(255, 255, 255, 0.5) 2px solid;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   transition: filter 0.3s ease-in-out; /* Smooth brightness transition */
+}
+
+.gameCardInfo{
+  text-align: left;
+  padding: 15px;
+  color: var(--text-bw);
+  width: inherit;
+  background-color: var(--bg-primary);
+  opacity: .6;
+}
+
+.imageWrapper:active{
+  filter: brightness(2);
 }
 
 /* Overlay effect */
@@ -68,6 +81,15 @@
 
 .imageWrapper:hover::after {
   opacity: 1; /* Show overlay on hover */
+}
+
+.sectionHeader{
+  font-size: 35px;
+  text-align: left;
+  padding: 15px;
+  border-radius: 15px;
+  color: var(--text-bw);
+  width: fit-content;
 }
 
 .hoursPlayed{
@@ -91,7 +113,7 @@
 }
 .gameTitle {
   position: absolute;
-  top: 50%; /* Center vertically */
+  top: 35%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%); /* Adjust for the element's own size to truly center */
   color: white;
@@ -106,9 +128,8 @@
   line-height: 1.2;
   z-index: 1; /* Ensure title is above the overlay */
   text-align: center; /* Center the text within the gameTitle */
-  max-width: 80%; /* Prevent text from overflowing the image */
+  max-width: fit-content; /* Prevent text from overflowing the image */
 }
-
 .imageWrapper:hover .gameTitle {
   opacity: 1;
   background: transparent; /* Remove background since the overlay handles it */

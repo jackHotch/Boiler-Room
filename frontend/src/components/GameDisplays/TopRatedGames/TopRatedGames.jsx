@@ -34,7 +34,7 @@ const TopRatedGames = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Try These Next</h1>
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -43,7 +43,7 @@ const TopRatedGames = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Try These Next</h1>
         <p className={styles.errorText}>{error}</p>
       </div>
     )
@@ -51,7 +51,7 @@ const TopRatedGames = () => {
 
   return (
     <div>
-      <h1>Your Top Rated Games</h1>
+      <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
       <div className={styles.scrollContainer}>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
@@ -70,11 +70,14 @@ const TopRatedGames = () => {
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
+                  <small>Go To Game Page</small>
+                </div>
+                <div className={styles.gameCardInfo}>
                   {game.name}
+                  <small className={styles.boil_score}>Boil: {game.boil_score}</small>
                   <br />
                   <small>{Math.floor(game.total_played / 60)} Hours Played</small>
                 </div>
-                <small className={styles.boil_score}>Boil: {game.boil_score}</small>
               </a>
             ))
           ) : (
