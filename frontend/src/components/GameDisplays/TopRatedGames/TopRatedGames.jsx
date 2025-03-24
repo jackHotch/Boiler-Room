@@ -76,7 +76,7 @@ const TopRatedGames = () => {
                   {game.name}
                   <small className={styles.boil_score}>Boil: {game.boil_score}</small>
                   <br />
-                  <small>{Math.floor(game.total_played / 60)} Hours Played</small>
+                  <small>{(game.total_played / 60).toFixed(2)} Hours Played</small>
                 </div>
               </a>
             ))
