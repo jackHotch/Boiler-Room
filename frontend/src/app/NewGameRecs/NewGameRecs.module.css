@@ -41,3 +41,29 @@
   justify-content: center;
   align-items: center;
 }
+
+.tf {
+  margin-bottom: 10px;
+  width: 20%;
+}
+
+.tfYear {
+  margin-bottom: 10px;
+  width: 30%;
+}
+.tfPlatform {
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.checkbox {
+  font-size: small;
+}
+
+.checkboxGroup {
+  margin-bottom: 10px;
+}
+
+.genreDropdown {
+  margin-bottom: 10px;
+}
