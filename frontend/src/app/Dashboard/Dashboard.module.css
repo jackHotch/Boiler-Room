@@ -3,12 +3,13 @@
 }
 
 .featuredGames {
-    
-    padding: 50px 50px;
     text-align: center;
 }
 
-.otherGames {
-    padding: 50px 50px;
+.TopRatedGames {
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 25px;
+    width: 100%-padding;
 }

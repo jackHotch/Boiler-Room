@@ -45,7 +45,7 @@ export default function Dashboard() {
         <OwnedGamesGallery />
       </section>
 
-      <section className={styles.otherGames}>
+      <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
       <section className={styles.otherGames}>
