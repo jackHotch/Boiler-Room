@@ -2,6 +2,8 @@
 import React, { useRef } from 'react'
 import styles from './LoginRedirect.module.css'
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle'
+import axios from 'axios'
+
 
 const LoginRedirect = () => {
   const footerRef = useRef(null)

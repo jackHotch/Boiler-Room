@@ -9,6 +9,7 @@ import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames
 import axios, { getAdapter } from 'axios'
 
 export default function Dashboard() {
+
   const [games, setGames] = useState([])
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function Dashboard() {
         <TopRatedGames />
       </section>
       <section className={styles.otherGames}>
-        <GameTable games={games} /> {/*change value of games when available*/}
+        <GameTable games={games} />
       </section>
     </div>
   )
