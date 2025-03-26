@@ -49,7 +49,7 @@ export function Navbar() {
   return (
     <div className={styles.container}>
       <Link className={styles.logo} href='/Dashboard'>
-        Boiler Room
+        <img src='BRLogo.png' width={250} />
       </Link>
       <div className={styles.nav_options}>
         <Link className={styles.links} href='/Friends'>
