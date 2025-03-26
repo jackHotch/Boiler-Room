@@ -15,8 +15,6 @@ export function ThemeInitializer() {
           { withCredentials: true }
         )
 
-        console.log(res.data)
-
         setTheme(res.data.preference == 0 ? 'dark' : 'light')
       } catch (err) {
         console.error(err)
