@@ -58,15 +58,15 @@ const TopRatedGames = () => {
             ownedGames.map((game, key) => (
               <a
                 key={key}
-                href={`/SingleGame/${game.id}`}
+                href={`/SingleGame/${game.game_id}`}
                 className={styles.imageWrapper}
               >
                 <img
                   src={
                     game.header_image ||
-                    `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
+                    `https://steamcdn-a.akamaihd.net/steam/apps/${game.game_id}/header.jpg`
                   }
-                  alt={game.title || `Game ${game.id}`}
+                  alt={game.title || `Game ${game.game_id}`}
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
@@ -85,10 +85,10 @@ const TopRatedGames = () => {
                       ? (game.total_played / 60).toFixed(2) + ' Hours Played'
                       : "Looks like you haven't played this game"}
                   </small>
-                  <a className={styles.boil_score}>
+                  <span className={styles.boil_score}>
                     <br></br>
                     {'Boil Rating:\t' + Math.round(game.boil_score) + ' / 100'}
-                  </a>
+                  </span>
                 </div>
               </a>
             ))

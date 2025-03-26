@@ -20,7 +20,7 @@ const SingleGamePage = () => {
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Server did not return JSON')
         }
-
+        response.data.description = response.data.description.replaceAll('&quot;', '"')
         setGame(response.data)
       } catch (error) {
         console.error('Error fetching game details:', error)
@@ -46,7 +46,20 @@ const SingleGamePage = () => {
     <div className={styles.loading}>Loading...</div>
   ) : (
     <div className={styles.singleGameContainer}>
-      <h1 className={styles.gameTitle}>{game.name}</h1>
+      <div className={styles.titlePrice}>
+        <a href={'https://store.steampowered.com/app/' + gameid}>
+          <img
+            src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
+            className={styles.redirectImage}
+            alt='Redirect'
+          />
+        </a>
+        <h1 className={styles.gameTitle}>{game.name} |</h1>
+
+        <div className={styles.price}>
+          {game.price ? '$' + game.price : 'Not Available'}
+        </div>
+      </div>
       <div className={styles.gameContent}>
         {/* Left Column */}
         <div className={styles.gameLeft}>
@@ -59,10 +72,10 @@ const SingleGamePage = () => {
               }}
             />
           </div>
+
           <div className={styles.releaseDate}>
             Release Date: {game.released ? game.released : 'Not Available'}
           </div>
-          <button className={styles.button}>Recommend this Game</button>
         </div>
 
         {/* Right Column */}
