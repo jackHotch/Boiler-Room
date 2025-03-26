@@ -56,11 +56,11 @@ const SingleGamePage = () => {
             onError={(e) => {
               e.target.src = `https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster` // Fallback to placeholder
             }}
-          />
+          />  
 
           <div className={styles.gameInfo}>
-            Number of recommendations: {game.recommendations}
-          </div>
+            Number of recommendations: {(game.recommendation_description) + ` (${Math.round((game.positive / game.total) * 100)}%)`}
+          </div>  
         </div>
 
         {/* Right Column */}

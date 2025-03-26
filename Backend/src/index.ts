@@ -46,13 +46,6 @@ app.use(
   })
 );
 
-app.use(function(req, res, next) {
-  res.set('credentials', 'include');
-  res.set('Access-Control-Allow-Credentials', true);
-  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  next();
-});
-
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
@@ -435,9 +428,12 @@ app.get('/games/:gameid', async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
-              "price", "metacritic_score", "released", "platform"  
-       FROM "Games" WHERE "game_id" = $1`,
+      `SELECT g."name", g."header_image", g."description", g."hltb_score", 
+       r."total", r."positive", r."negative", r."description" AS recommendation_description,
+       g."price", g."metacritic_score", g."released", g."platform"  
+      FROM "Games" g
+      LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
+      WHERE g."game_id" = $1`,
       [gameid]
     )
 
