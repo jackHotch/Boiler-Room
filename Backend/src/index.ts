@@ -707,7 +707,7 @@ export async function insertGames(steamId: bigint) {
     //console.log('Executing batch query...');
     const result = await pool.query(query, values)
 
-    console.log('Batch query result:', result)
+    //console.log('Batch query result:', result);
 
     //console.log(`Inserted/Updated ${validGames.length} rows.`);
 
@@ -748,7 +748,6 @@ async function manageLockout(): Promise<string | null> {
 }
 
 async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) {
-  //TODO add a check for existing profiles... somewhere?
   const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
     params: {
       steamid: steamId,
@@ -780,9 +779,21 @@ async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) 
 }
 
 async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
-  const newUserProfiles = [];
+  const existingProfilesQuery = `
+    SELECT steam_id::text 
+    FROM "Profiles" 
+    WHERE steam_id = ANY($1::bigint[])
+  `;
+  
+  const userIdsAsBigints = userIdsToCheck.map(id => BigInt(id));
+  
+  const { rows: existingProfiles } = await pool.query(existingProfilesQuery, [userIdsAsBigints]);
+  
+  const existingProfileIds = existingProfiles.map(row => row.steam_id);
+  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id));
 
-  for (const steamId of userIdsToCheck) {
+  const newUserProfiles = [];
+  for (const steamId of idsToFetch) {
     try {
       const response = await axios.get(
         `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`, {
@@ -796,6 +807,7 @@ async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
       const avatar = response.data.response.players[0]?.avatarhash;
       const userName = response.data.response.players[0]?.personaname;
     
+      
       newUserProfiles.push({
         steamId,
         userName,
@@ -961,14 +973,20 @@ async function getFinalResults(steamId: bigint) {
 }
 
 export async function loadFriends(steamId: bigint) {
+  console.log("Checking lockout status")
   const lockoutMessage = await manageLockout();
   if (lockoutMessage) return lockoutMessage;
 
   try {
+    console.log("Getting your friends list")
     const userIdsToCheck = await fetchAndProcessFriends(steamId);
+    console.log("Checking your friends out")
     await fetchAndStoreProfiles(userIdsToCheck);
+    console.log("Creating relations")
     await updateUserRelations(steamId.toString(), userIdsToCheck);
+    console.log("Looking at their games")
     await processAndStoreGames(userIdsToCheck);
+    console.log("Cleaning up")
     return await getFinalResults(steamId);
   } catch (error) {
     console.error('Error in loadFriends:', error);
