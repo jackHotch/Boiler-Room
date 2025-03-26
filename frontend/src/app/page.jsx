@@ -39,7 +39,7 @@ const LandingPage = () => {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.navContainer}>
-            <h1 className={styles.logo}>Boiler Room</h1>
+            <img src='BRLogo.png' width={250} />
             <nav>
               <ul className={styles.navList}>
                 <li>
