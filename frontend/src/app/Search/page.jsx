@@ -3,15 +3,21 @@
 import React, { useEffect, useState } from 'react'
 import styles from './Search.module.css'
 import GameTable from '@/components/GameDisplays/GameTable/GameTable'
-import axios from 'axios'
+import axios, { all } from 'axios'
 import { useSearchParams } from 'next/navigation'
 
 export default function Search() {
-  const [games, setGames] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [allGames, setAllGames] = useState([])
+  const [visibleGames, setVisibleGames] = useState([])
+  const [pageNumber, setPageNumber] = useState(1)
+  const pageSize = 20
+
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('query')
 
   useEffect(() => {
+    setLoading(true)
     const fetchGames = async () => {
       try {
         const response = await axios.get(
@@ -20,18 +26,30 @@ export default function Search() {
           )}`
         )
 
-        setGames(response.data.slice(0, 10))
+        setAllGames(response.data)
+        setVisibleGames(response.data.slice(0, pageSize))
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching games:', error)
       }
     }
     fetchGames()
-  }, [])
+  }, [searchQuery])
+
+  function handleLoadMore() {
+    const nextPage = pageNumber + 1
+    setVisibleGames(allGames.slice(0, pageSize * nextPage))
+    setPageNumber(nextPage)
+  }
 
   return (
     <div className={styles.container}>
       <section className={styles.otherGames}>
-        <GameTable games={games} />
+        <GameTable games={visibleGames} />
+        <span>
+          Showing {visibleGames.length} of {allGames.length} results
+        </span>
+        <button onClick={handleLoadMore}>Load More Games</button>
       </section>
     </div>
   )
