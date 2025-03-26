@@ -15,29 +15,112 @@
 
 .gamesGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 250px; /* Three equal-sized game boxes and filter box */
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
-  max-width: 1200px; /* Prevent grid from stretching too wide */
-  margin: 0 auto; /* Center the grid */
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
 }
 
 .gameCard {
   background-color: var(--bg-light);
   padding: 20px;
   border-radius: 10px;
-  height: 200px;
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .filters {
-  background-color: var(--bg-content);
+  background-color: var(--bg-light);
   padding: 20px;
-  border-radius: 10px;
-  height: 200px;
+  border-radius: 12px;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 97%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.filters label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: var(--text-secondary);
+}
+
+.filters form {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.tf,
+.tfYear {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: #5e5e5e;
+  color: var(--text-primary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.tfYear {
+  width: 60px;
+}
+
+.checkboxGroup {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.checkboxGroup label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.checkboxGroup input[type="checkbox"] {
+  accent-color: var(--primary-color);
+  transform: scale(1.2);
+}
+
+.genreDropdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.genreDropdown select {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: #5e5e5e;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.submitBtn {
+  padding: 10px 20px;
+  background-color: var(--bg-accent);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submitBtn:hover {
+  background-color: var(--primary-hover);
 }
