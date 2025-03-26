@@ -87,7 +87,7 @@ const SingleGamePage = () => {
             <strong>Steam Reviews</strong>
             <br />
             <br />
-            {game.recommendations ? game.recommendations : 'N/A'}
+            {(game.recommendation_description) + ` (${Math.round((game.positive / game.total) * 100)}%)`}
           </div>
           <div className={styles.hltb_score}>
             <strong>How Long to Beat</strong>
