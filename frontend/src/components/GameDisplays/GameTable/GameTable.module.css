@@ -21,15 +21,13 @@
 
 .gameTable th, .gameTable td {
     padding: 15px 20px;
-    text-align: left;
-    border-bottom: 1px solid #444;
 }
 
 .gameTable th {
     background-color: var(--bg-dark);
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 3px;
     font-size: 16px;
     text-align: center;
 }
@@ -60,17 +58,12 @@
   border-bottom: 1px solid var(--bg-content);
 }
 
-/* Adjust title column for prominence */
 .gameTable td:first-child {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: Left;
-}
-
-/* Improve checkbox alignment */
-.gameTable td input[type="checkbox"] {
-    transform: scale(1.2);
-    cursor: pointer;
+    position: relative; /* Remove absolute positioning */
+    display: flex; /* Allows proper alignment */
+    align-items: center; /* Centers title and image vertically */
+    gap: 10px; /* Adds space between image and text */
+    padding: 10px;
 }
 
 /* Header row contrast */
@@ -93,7 +86,74 @@
 }
 
 .steamImg {
-    width: 15%;
-    height: 15%;
+    width: 50%;
+    height: auto;
+}
+.title_container {
+    display: flex;
+    align-items: center; /* Align image and text vertically */
+    gap: 10px; /* Add spacing between image and title */
+    width: 100%;
+    text-align: left;
+}
+
+.header_image {
+    width: 100px; /* Adjust as needed */
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+.title_text {
+    position: static; /* Remove absolute positioning */
+    transform: none; /* Remove centering transform */
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    padding: 0;
+    background: none; /* Remove background overlay */
+}
+
+  
+
+.circleContainer {
+transform: scale(1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: auto; /* Center within parent */
+}
+
+.progressRing {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.progressRingBg,
+.progressRingCircle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: butt;
+}
+
+.progressRingBg {
+  stroke: #ddd;
+}
+
+.progressRingCircle {
+  stroke: #4caf50; /* Default color */
+  stroke-dasharray: 471; /* 2 * PI * r (r=50) */
+}
+
+.progressText {
+  position: absolute;
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--text-primary);
 }
 
