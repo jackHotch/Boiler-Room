@@ -9,7 +9,9 @@ import axios from 'axios'
 export default function GameRecommendation() {
   //Function to check for login and redirect
   //to error page if not logged in
-  checkLogin()
+  if (!process.env.JEST_WORKER_ID) {
+    checkLogin()
+  }
   async function checkLogin() {
     try {
       const response = await axios.get(

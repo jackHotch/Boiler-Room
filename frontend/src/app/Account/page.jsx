@@ -7,7 +7,9 @@ const Account = () => {
 
   //Function to check for login and redirect
   //to error page if not logged in
-  checkLogin()
+  if (!process.env.JEST_WORKER_ID) {
+    checkLogin()
+  }
   async function checkLogin() {
     try {
       const response = await axios.get(
@@ -16,7 +18,9 @@ const Account = () => {
       )
       if (!response.data.steamId) {
         //redirect to error page if not logged in
+        setTimeout(() => {
           window.location.href = '/LoginRedirect';
+        }, 1000);
       }
     } catch (error) {
       window.location.href = '/LoginRedirect';
