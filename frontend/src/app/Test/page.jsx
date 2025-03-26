@@ -29,8 +29,8 @@ export default function Test() {
   return (
     <>
       <h1 style={{ color: "white" }}>This is my test page - Chris</h1>
-      {/*<button onClick={handleFriends}>click to test what its like to have friends</button>*/} 
-      <button onClick={handleLockout}>click to test global lockout</button>
+      <button onClick={handleFriends}>click to test what its like to have friends</button> 
+      {/*<button onClick={handleLockout}>click to test global lockout</button>*/}
       <p style={{ color: "white" }}>{databaseMessage}</p>
     </>
   );
