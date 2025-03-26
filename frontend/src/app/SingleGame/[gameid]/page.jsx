@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import axios from 'axios'
 
 const SingleGamePage = () => {
-  const { gameid } = useParams() // Get game ID from dynamic route
+  const { gameid } = useParams()
   const [game, setGame] = useState(null)
   const [error, setError] = useState(null)
 
@@ -14,16 +14,14 @@ const SingleGamePage = () => {
       try {
         const response = await axios.get(
           process.env.NEXT_PUBLIC_BACKEND + `/games/${gameid}`
-        ) // Backend route
+        )
 
-        // Ensure the response is JSON
-        const contentType = response.headers.get('content-type')
+        const contentType = response.headers['content-type']
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Server did not return JSON')
         }
-
-        const data = response.data
-        setGame(data)
+        response.data.description = response.data.description.replaceAll('&quot;', '"')
+        setGame(response.data)
       } catch (error) {
         console.error('Error fetching game details:', error)
         setError('Failed to load game details.')
@@ -35,45 +33,104 @@ const SingleGamePage = () => {
     }
   }, [gameid])
 
-  if (error) {
-    return <div className={styles.error}>{error}</div>
+  // Circular Progress Function
+  const getStrokeDashOffset = (score) => {
+    const radius = 50
+    const circumference = 2 * Math.PI * radius
+    return circumference - (score / 100) * circumference
   }
 
-  if (!game) {
-    return <div className={styles.loading}>Loading...</div>
-  }
-
-  return (
+  return error ? (
+    <div className={styles.error}>{error}</div>
+  ) : !game ? (
+    <div className={styles.loading}>Loading...</div>
+  ) : (
     <div className={styles.singleGameContainer}>
-      <h1 className={styles.gameTitle}>{game.name}</h1>
+      <div className={styles.titlePrice}>
+        <a href={'https://store.steampowered.com/app/' + gameid}>
+          <img
+            src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
+            className={styles.redirectImage}
+            alt='Redirect'
+          />
+        </a>
+        <h1 className={styles.gameTitle}>{game.name} |</h1>
+
+        <div className={styles.price}>
+          {game.price ? '$' + game.price : 'Not Available'}
+        </div>
+      </div>
       <div className={styles.gameContent}>
         {/* Left Column */}
         <div className={styles.gameLeft}>
-          <img
-            className={styles.cover}
-            src={`https://steamcdn-a.akamaihd.net/steam/apps/${gameid}/library_600x900_2x.jpg`}
-            alt={`https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`}
-            onError={(e) => {
-              e.target.src = `https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster` // Fallback to placeholder
-            }}
-          />
+          <div className={styles.imageContainer}>
+            <img
+              src={`https://steamcdn-a.akamaihd.net/steam/apps/${gameid}/library_600x900_2x.jpg`}
+              alt={game.name}
+              onError={(e) => {
+                e.target.src = `https://placehold.co/600x900/black/white/?text=${game.name}&font=lobster`
+              }}
+            />
+          </div>
 
-          <div className={styles.gameInfo}>
-            Number of recommendations: {game.recommendations}
+          <div className={styles.releaseDate}>
+            Release Date: {game.released ? game.released : 'Not Available'}
           </div>
         </div>
 
         {/* Right Column */}
         <div className={styles.gameRight}>
-          <div className={styles.gameSummary}>{game.description}</div>
-          <div className={styles.ratings}>
-            Metacritic Rating: {game.metacritic_score}/100
+          <div className={styles.gameSummary}>
+            {game.description ? game.description : 'No description available.'}
           </div>
-          <div className={styles.reviews}>Release Date: {game.released}</div>
-          <div className={styles.playStatus}>
-            How long to Beat score: {game.hltb_score}
+          <div className={styles.reviews}>
+            <strong>Steam Reviews</strong>
+            <br />
+            <br />
+            {game.recommendations ? game.recommendations : 'N/A'}
           </div>
-          <div className={styles.writeReview}>Platforms: {game.platform}</div>
+          <div className={styles.hltb_score}>
+            <strong>How Long to Beat</strong>
+            <span className={styles.tooltipText}>
+              <strong>
+                The Average of the <br></br>Main Story & Main Story + Extras <br></br>
+              </strong>
+              howlongtobeat.com{' '}
+            </span>
+            <br />
+            <br />
+            {game.hltb_score ? `${Math.floor(game.hltb_score)} hours` : 'N/A'}
+          </div>
+          <div className={styles.platforms}>
+            <strong>Platforms</strong>
+            <br />
+            <br />
+            {game.platform ? game.platform : 'N/A'}
+          </div>
+          <div className={styles.metacritic_score}>
+            <strong>Metacritic Score</strong>
+            <br></br>
+            <br></br>
+            <div className={styles.circleContainer}>
+              <svg className={styles.progressRing} width='120' height='120'>
+                <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
+                <circle
+                  className={styles.progressRingCircle}
+                  cx='60'
+                  cy='60'
+                  r='50'
+                  style={{
+                    strokeDasharray: 314,
+                    strokeDashoffset: getStrokeDashOffset(game.metacritic_score),
+                    transition: 'stroke-dashoffset 0.6s ease-in-out',
+                  }}
+                ></circle>
+              </svg>
+              <span className={styles.progressText}>
+                {game.metacritic_score ? `${game.metacritic_score}%` : 'N/A'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

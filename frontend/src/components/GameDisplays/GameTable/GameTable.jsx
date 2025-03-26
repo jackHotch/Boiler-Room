@@ -9,16 +9,27 @@ const GameTable = ({ games }) => {
         <tbody>
           <tr className={styles.headerRow}>
             <th>Title</th>
-            <th>Aggregate Rating</th>
+            <th>Metacritic Rating</th>
             <th>Average Length</th>
             <th>BOIL</th>
             <th>Steam Page</th>
-            <th>Played?</th>
           </tr>
           {games.map((game) => (
             <tr key={game.game_id}>
               <td>
-                <a href={'/SingleGame/' + game.game_id}>{game.name}</a>
+                <div className={styles.title_container}>
+                  <img
+                    src={game.header_image}
+                    alt={game.name}
+                    className={styles.header_image}
+                    onError={(e) => {
+                      e.target.src = 'https://placehold.co/100x100?text=Image+Not+Found'
+                    }}
+                  />
+                  <a className={styles.title_text} href={'/SingleGame/' + game.game_id}>
+                    {game.name}
+                  </a>
+                </div>
               </td>
               <td>
                 {game.metacritic_score !== null && game.metacritic_score !== undefined
@@ -40,11 +51,12 @@ const GameTable = ({ games }) => {
                   <img
                     src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
                     className={styles.steamImg}
+                    alt='Steam Page'
+                    onError={(e) => {
+                      e.target.src = 'https://placehold.co/24x24?text=Steam'
+                    }}
                   />
                 </a>
-              </td>
-              <td>
-                <input type='checkbox' />
               </td>
             </tr>
           ))}

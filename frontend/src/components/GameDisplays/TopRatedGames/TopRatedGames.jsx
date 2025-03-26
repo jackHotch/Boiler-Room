@@ -34,7 +34,7 @@ const TopRatedGames = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Try These Highly Rated Titles Next</h1>
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -43,7 +43,7 @@ const TopRatedGames = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Your Top Played Games</h1>
+        <h1>Try These Highly Rated Titles Next</h1>
         <p className={styles.errorText}>{error}</p>
       </div>
     )
@@ -51,30 +51,45 @@ const TopRatedGames = () => {
 
   return (
     <div>
-      <h1>Your Top Rated Games</h1>
+      <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
       <div className={styles.scrollContainer}>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
             ownedGames.map((game, key) => (
               <a
                 key={key}
-                href={`/SingleGame/${game.id}`}
+                href={`/SingleGame/${game.game_id}`}
                 className={styles.imageWrapper}
               >
                 <img
                   src={
                     game.header_image ||
-                    `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
+                    `https://steamcdn-a.akamaihd.net/steam/apps/${game.game_id}/header.jpg`
                   }
-                  alt={game.title || `Game ${game.id}`}
+                  alt={game.title || `Game ${game.game_id}`}
                   className={styles.gameImage}
                 />
                 <div className={styles.gameTitle}>
-                  {game.name}
-                  <br />
-                  <small>{Math.floor(game.total_played / 60)} Hours Played</small>
+                  <small>
+                    Go To Game Page
+                    <img src='/redirect.png' className={styles.redirectImage}></img>
+                  </small>{' '}
                 </div>
-                <small className={styles.boil_score}>Boil: {game.boil_score}</small>
+
+                <div className={styles.gameCardInfo}>
+                  {game.name}
+
+                  <br />
+                  <small>
+                    {game.total_played > 0
+                      ? (game.total_played / 60).toFixed(2) + ' Hours Played'
+                      : "Looks like you haven't played this game"}
+                  </small>
+                  <span className={styles.boil_score}>
+                    <br></br>
+                    {'Boil Rating:\t' + Math.round(game.boil_score) + ' / 100'}
+                  </span>
+                </div>
               </a>
             ))
           ) : (

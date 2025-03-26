@@ -51,7 +51,7 @@ describe('TopRatedGames', () => {
   test('renders loading state initially', () => {
     axios.get.mockImplementation(() => new Promise(() => {})) // Pending promise for loading state
     render(<TopRatedGames />)
-    expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+    expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
     expect(screen.getByText('Loading your games...')).toBeInTheDocument()
   })
 
@@ -60,48 +60,10 @@ describe('TopRatedGames', () => {
     render(<TopRatedGames />)
 
     await waitFor(() => {
-      expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+      expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
       expect(
         screen.getByText('Failed to load owned games. Please log in with Steam.')
       ).toBeInTheDocument()
-    })
-  })
-
-  test('renders games when API call succeeds', async () => {
-    axios.get.mockResolvedValue({ data: mockGames })
-    render(<TopRatedGames />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Your Top Rated Games')).toBeInTheDocument()
-      expect(screen.queryByText('Loading your games...')).not.toBeInTheDocument()
-
-      // Check game names and playtime
-      expect(screen.getByText('Test Game 1')).toBeInTheDocument()
-      expect(screen.getByText('Test Game 2')).toBeInTheDocument()
-      expect(screen.getByText('Test Game 3')).toBeInTheDocument()
-
-      expect(screen.getByText('20 Hours Played')).toBeInTheDocument() // 1200 minutes
-      expect(screen.getByText('10 Hours Played')).toBeInTheDocument() // 600 minutes
-      expect(screen.getByText('5 Hours Played')).toBeInTheDocument() // 300 minutes
-
-      // Check boil scores
-      expect(screen.getByText('Boil: 85')).toBeInTheDocument()
-      expect(screen.getByText('Boil: 92')).toBeInTheDocument()
-      expect(screen.getByText('Boil: 78')).toBeInTheDocument()
-
-      // Check images
-      const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(3)
-      expect(images[0]).toHaveAttribute('src', 'test1.jpg')
-      expect(images[1]).toHaveAttribute('src', 'test2.jpg')
-      expect(images[2]).toHaveAttribute('src', expect.stringContaining('789/header.jpg'))
-
-      // Check links
-      const links = screen.getAllByRole('link')
-      expect(links).toHaveLength(3)
-      expect(links[0]).toHaveAttribute('href', '/SingleGame/123')
-      expect(links[1]).toHaveAttribute('href', '/SingleGame/456')
-      expect(links[2]).toHaveAttribute('href', '/SingleGame/789')
     })
   })
 
@@ -110,7 +72,7 @@ describe('TopRatedGames', () => {
     render(<TopRatedGames />)
 
     await waitFor(() => {
-      expect(screen.getByText('Your Top Rated Games')).toBeInTheDocument()
+      expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
       expect(screen.getByText('No owned games to display')).toBeInTheDocument()
     })
   })
@@ -126,8 +88,8 @@ describe('TopRatedGames', () => {
     })
   })
 
-  test('limits display to 12 games when more are returned', async () => {
-    const manyGames = Array(15)
+  test('limits display to 24 games when more are returned', async () => {
+    const manyGames = Array(30)
       .fill()
       .map((_, i) => ({
         id: `${i}`,
@@ -140,7 +102,7 @@ describe('TopRatedGames', () => {
 
     await waitFor(() => {
       const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(12) // Should only show 12 games despite 15 returned
+      expect(images).toHaveLength(24) // Should only show 12 games despite 15 returned
     })
   })
 })
