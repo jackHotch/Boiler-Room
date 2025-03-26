@@ -34,7 +34,7 @@ const TopRatedGames = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Try These Next</h1>
+        <h1>Try These Highly Rated Titles Next</h1>
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -43,7 +43,7 @@ const TopRatedGames = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Try These Next</h1>
+        <h1>Try These Highly Rated Titles Next</h1>
         <p className={styles.errorText}>{error}</p>
       </div>
     )

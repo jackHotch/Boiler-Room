@@ -22,7 +22,10 @@ const GameTable = ({ games }) => {
                     src={game.header_image}
                     alt={game.name}
                     className={styles.header_image}
-                  ></img>
+                    onError={(e) => {
+                      e.target.src = 'https://placehold.co/100x100?text=Image+Not+Found'
+                    }}
+                  />
                   <a className={styles.title_text} href={'/SingleGame/' + game.game_id}>
                     {game.name}
                   </a>
@@ -48,6 +51,10 @@ const GameTable = ({ games }) => {
                   <img
                     src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
                     className={styles.steamImg}
+                    alt='Steam Page'
+                    onError={(e) => {
+                      e.target.src = 'https://placehold.co/24x24?text=Steam'
+                    }}
                   />
                 </a>
               </td>
