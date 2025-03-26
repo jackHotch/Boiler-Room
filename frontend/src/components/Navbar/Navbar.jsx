@@ -19,7 +19,7 @@ export function Navbar() {
   const [steamPFP, setPFP] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  if (pathname === '/') return null
+  if (pathname === '/' || pathname === '/LoginRedirect') return null
 
   useEffect(() => {
     async function fetchProfileData() {
