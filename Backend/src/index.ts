@@ -733,7 +733,7 @@ export async function delay() {
   return new Promise( resolve => setTimeout(resolve, 2000) );
 }
 
-async function manageLockout(): Promise<string | null> {
+export async function manageLockout(): Promise<string | null> {
   const selectResult = await pool.query('SELECT "code" FROM "Lockout"');
   const row = selectResult.rows[0];
   const currentStatus = row.code;
@@ -747,7 +747,7 @@ async function manageLockout(): Promise<string | null> {
   }
 }
 
-async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) {
+export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) {
   const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
     params: {
       steamid: steamId,
@@ -778,7 +778,7 @@ async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) 
   return steamIds.filter(id => !existingRelatedIds.includes(id));
 }
 
-async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
+export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
   const existingProfilesQuery = `
     SELECT steam_id::text 
     FROM "Profiles" 
@@ -807,7 +807,6 @@ async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
       const avatar = response.data.response.players[0]?.avatarhash;
       const userName = response.data.response.players[0]?.personaname;
     
-      
       newUserProfiles.push({
         steamId,
         userName,
@@ -833,7 +832,7 @@ async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
   }
 }
 
-async function updateUserRelations(steamId: string, steamIds: string[]) {
+export async function updateUserRelations(steamId: string, steamIds: string[]) {
   const ourSteamId = steamId;
   const relationsData = steamIds.map(currentSteamId => {
     const user1 = BigInt(currentSteamId) < BigInt(ourSteamId) ? currentSteamId : ourSteamId;
@@ -856,7 +855,7 @@ async function updateUserRelations(steamId: string, steamIds: string[]) {
   }
 }
 
-async function processAndStoreGames(userIdsToCheck: string[]) {
+export async function processAndStoreGames(userIdsToCheck: string[]) {
 
   userIdsToCheck.forEach(steamId => {
       const steamIdBigInt = BigInt(steamId);
@@ -934,7 +933,7 @@ async function processAndStoreGames(userIdsToCheck: string[]) {
   }
 }
 
-async function getFinalResults(steamId: bigint) {
+export async function getFinalResults(steamId: bigint) {
   await pool.query('UPDATE "Lockout" SET "code" = 0', []);
 
   const finalQuery = `

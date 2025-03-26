@@ -1,4 +1,4 @@
-import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate} from './index';
+import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
@@ -286,3 +286,46 @@ describe('PUT /themepreference', () => {
     expect(response.status).toBe(200);
   })
 })
+
+test('Delay Works and does lock you out', async () => {
+    const selectResult = await pool.query('SELECT "code" FROM "Lockout"');
+    const row = selectResult.rows[0];
+    const currentStatus = row.code;
+  
+    if (currentStatus === 1) {
+        const result1 = await manageLockout();
+        expect(result1).toBe("You are presently locked out, please try again later");
+      }else if (currentStatus === 0){
+        const result0 = await manageLockout()
+        expect(result0).toBeNull
+    }
+
+    if(currentStatus === 0){
+        await pool.query('UPDATE "Lockout" SET "code" = 1', []);
+        const result1 = await manageLockout()
+        expect(result1).toBe("You are presently locked out, please try again later")
+        await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+        const result0 = await manageLockout()
+        expect(result0).toBeNull
+    }
+});
+
+test('fetchAndProcessFriends works in both forced and unforced mode', async () => {
+  //if testable, at the edge of what I feel comfortable faking
+});
+
+test('fetchAndStoreProfiles', async () => {
+  //should be testable with a bit of faking
+});
+
+test('updateUserRelations', async () => {
+  //should be testable with a faked relation
+});
+
+test('processAndStoreGames', async () => {
+  //i dont think that this is testable
+});
+
+test('getFinalResults', async () => {
+  //Easy to test if I mock some accounts that dont change?
+});
