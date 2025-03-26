@@ -2,20 +2,15 @@ import { useEffect, useState } from 'react'
 import styles from './CookieMessage.module.css'
 
 export function CookieMessage() {
-  const [showToast, setShowToast] = useState(false)
+  const [showToast, setShowToast] = useState(true)
 
   useEffect(() => {
-    const showTimer = setTimeout(() => {
-      setShowToast(true)
-    }, 3000)
-
-    const hideTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       setShowToast(false)
-    }, 8000)
+    }, 10000)
 
     return () => {
-      clearTimeout(showTimer)
-      clearTimeout(hideTimer)
+      clearTimeout(timer)
     }
   }, [])
 
