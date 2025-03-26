@@ -1,5 +1,10 @@
 // page.jsx
+'use client'
+
+import React from 'react'
 import styles from './NewGameRecs.module.css';
+import axios from 'axios'
+
 
 export default function GameRecommendation() {
   //Function to check for login and redirect
