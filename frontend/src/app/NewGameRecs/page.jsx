@@ -37,12 +37,7 @@ export default function GameRecommendation() {
   return (
     <div className={styles.container}>
       <div className={styles.recommendedGames}>
-        <div className={styles.sectionTitle}>Recommended Games</div>
-        <div className={styles.gamesGrid}>
-          <div className={styles.gameCard}></div>
-          <div className={styles.gameCard}></div>
-          <div className={styles.gameCard}></div>
-          <div className={styles.filters}>
+      <div className={styles.filters}>
             <form onSubmit={handleSubmit}>
               <div>
                 <label>Boil Rating: </label>
@@ -102,6 +97,11 @@ export default function GameRecommendation() {
               <button type="submit" className={styles.submitBtn}>Submit</button>
             </form>
           </div> 
+        <div className={styles.sectionTitle}>Recommended Games</div>
+        <div className={styles.gamesGrid}>
+          <div className={styles.gameCard}></div>
+          <div className={styles.gameCard}></div>
+          <div className={styles.gameCard}></div>
         </div>
       </div>
     </div>
