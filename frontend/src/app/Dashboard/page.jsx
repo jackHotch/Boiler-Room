@@ -10,32 +10,27 @@ import axios, { getAdapter } from 'axios'
 
 export default function Dashboard() {
 
-  const [steamId, setSteamId] = useState(null)
-
+  //Function to check for login and redirect
+  //to error page if not logged in
+  checkLogin()
+  async function checkLogin() {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
+        { withCredentials: true }
+      )
+      if (!response.data.steamId) {
+        //redirect to error page if not logged in
+          window.location.href = '/LoginRedirect';
+      }
+    } catch (error) {
+      window.location.href = '/LoginRedirect';
+    }
+  }
 
   const [games, setGames] = useState([])
 
   useEffect(() => {
-    checkLogin()
-    async function checkLogin() {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
-          { withCredentials: true }
-        )
-
-        if (response.data.steamId) {
-          setSteamId(response.data.steamId)
-
-          localStorage.setItem('steamId', response.data.steamId)
-        } else {
-          //redirect to error page if not logged in
-            window.location.href = '/LoginRedirect';
-        }
-      } catch (error) {
-        window.location.href = '/LoginRedirect';
-      }
-    }
 
     const fetchGames = async () => {
       try {

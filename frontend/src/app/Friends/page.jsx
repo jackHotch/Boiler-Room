@@ -6,6 +6,24 @@ import axios from 'axios'
 import Link from 'next/link'
 
 export default function Friends() {
+  //Function to check for login and redirect
+  //to error page if not logged in
+  checkLogin()
+  async function checkLogin() {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
+        { withCredentials: true }
+      )
+      if (!response.data.steamId) {
+        //redirect to error page if not logged in
+          window.location.href = '/LoginRedirect';
+      }
+    } catch (error) {
+      window.location.href = '/LoginRedirect';
+    }
+  }
+
   const [friendsInfo, setFriendsInfo] = useState([])
   const [loading, setLoading] = useState(true)
   const [loggedIn, setLoggedIn] = useState(true)
