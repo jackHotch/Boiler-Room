@@ -22,11 +22,16 @@ describe('OwnedGamesGallery', () => {
     {
       id: '123',
       title: 'Test Game 1',
-      playtime_forever: 1200,
-      header_image: 'test1.jpg',
+      playtime_2weeks: 1200,
+      header_image: '/redirect.png',
     },
-    { id: '456', title: 'Test Game 2', playtime_forever: 600, header_image: 'test2.jpg' },
-    { id: '789', title: 'Test Game 3', playtime_forever: 300 },
+    {
+      id: '456',
+      title: 'Test Game 2',
+      playtime_2weeks: 600,
+      header_image: '/redirect.png',
+    },
+    { id: '789', title: 'Test Game 3', playtime_2weeks: 300 },
   ]
 
   beforeEach(() => {
@@ -38,7 +43,7 @@ describe('OwnedGamesGallery', () => {
   test('renders loading state initially', () => {
     axios.get.mockImplementation(() => new Promise(() => {})) // Pending promise for loading state
     render(<OwnedGamesGallery />)
-    expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+    expect(screen.getByText('Jump Back In')).toBeInTheDocument()
     expect(screen.getByText('Loading your games...')).toBeInTheDocument()
   })
 
@@ -47,7 +52,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
       expect(
         screen.getByText('Failed to load owned games. Please log in with Steam.')
       ).toBeInTheDocument()
@@ -59,7 +64,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
       expect(screen.queryByText('Loading your games...')).not.toBeInTheDocument()
 
       // Check game titles and playtime
@@ -67,16 +72,15 @@ describe('OwnedGamesGallery', () => {
       expect(screen.getByText('Test Game 2')).toBeInTheDocument()
       expect(screen.getByText('Test Game 3')).toBeInTheDocument()
 
-      expect(screen.getByText('20 hours played')).toBeInTheDocument() // 1200 minutes
-      expect(screen.getByText('10 hours played')).toBeInTheDocument() // 600 minutes
-      expect(screen.getByText('5 hours played')).toBeInTheDocument() // 300 minutes
+      expect(screen.getByText('20.00 Hours Played')).toBeInTheDocument() // 1200 minutes
+      expect(screen.getByText('10.00 Hours Played')).toBeInTheDocument() // 600 minutes
+      expect(screen.getByText('5.00 Hours Played')).toBeInTheDocument() // 300 minutes
 
       // Check images
       const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(3)
-      expect(images[0]).toHaveAttribute('src', 'test1.jpg')
-      expect(images[1]).toHaveAttribute('src', 'test2.jpg')
-      expect(images[2]).toHaveAttribute('src', expect.stringContaining('789/header.jpg'))
+      expect(images).toHaveLength(6)
+      expect(images[0]).toHaveAttribute('src', '/redirect.png')
+      expect(images[1]).toHaveAttribute('src', '/redirect.png')
 
       // Check links
       const links = screen.getAllByRole('link')
@@ -92,7 +96,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Your Top Played Games')).toBeInTheDocument()
+      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
       expect(screen.getByText('No owned games to display')).toBeInTheDocument()
     })
   })
@@ -108,7 +112,7 @@ describe('OwnedGamesGallery', () => {
     })
   })
 
-  test('limits display to 12 games when more are returned', async () => {
+  test('limits display to 8 games when more are returned', async () => {
     const manyGames = Array(15)
       .fill()
       .map((_, i) => ({
@@ -121,15 +125,15 @@ describe('OwnedGamesGallery', () => {
 
     await waitFor(() => {
       const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(12) // Should only show 12 games despite 15 returned
+      expect(images).toHaveLength(8) // Should only show 12 games despite 15 returned
     })
   })
 
   test('sorts games by playtime in descending order', async () => {
     const unsortedGames = [
-      { id: '1', title: 'Low Play', playtime_forever: 300 },
-      { id: '2', title: 'High Play', playtime_forever: 1200 },
-      { id: '3', title: 'Medium Play', playtime_forever: 600 },
+      { id: '1', title: 'Low Play', playtime_2weeks: 300 },
+      { id: '2', title: 'High Play', playtime_2weeks: 1200 },
+      { id: '3', title: 'Medium Play', playtime_2weeks: 600 },
     ]
     axios.get.mockResolvedValue({ data: unsortedGames })
     render(<OwnedGamesGallery />)

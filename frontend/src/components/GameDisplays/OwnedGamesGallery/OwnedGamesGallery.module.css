@@ -25,12 +25,11 @@
   position: relative;
   width: fit-content;
   background-color: var(--bg-primary);
+  border: 1px solid var(--text-bw);
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
-  overflow: hidden;
-  /* Ensure the overlay stays within bounds */
-
+  overflow: hidden; /* Ensure the overlay stays within bounds */
 }
 
 .imageWrapper:hover {
@@ -141,12 +140,9 @@
 
 .gameTitle {
   position: absolute;
-  top: 35%;
-  /* Center vertically */
-  left: 50%;
-  /* Center horizontally */
-  transform: translate(-50%, -50%);
-  /* Adjust for the element's own size to truly center */
+  top: 35%; 
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for the element's own size to truly center */
   color: white;
   font-family: Arial, sans-serif;
   font-size: 18px;
@@ -158,17 +154,14 @@
   transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
   z-index: 1;
-  /* Ensure title is above the overlay */
   text-align: center;
-  /* Center the text within the gameTitle */
   max-width: fit-content;
-  /* Prevent text from overflowing the image */
+
 }
 
 .imageWrapper:hover .gameTitle {
   opacity: 1;
   background: transparent;
-  /* Remove background since the overlay handles it */
 }
 
 .errorText {

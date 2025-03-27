@@ -41,6 +41,8 @@
   font-size: 30px;
   font-weight: bold;
   backdrop-filter: blur(10px);
+  display: inline;
+  vertical-align: middle;
   width: fit-content;
 }
 
@@ -72,8 +74,31 @@
   border-radius: 12px;
 }
 
+.redirectImage{
+  height: 40px;
+  position: relative;
+  display: inline-block;
+  justify-self: center;
+  align-self: center;
+  vertical-align: middle;
+  transition: .25s scale;
+  padding: 5px;
+}
+
+.redirectImage:hover{
+  cursor: pointer;
+  scale: 1.1;
+  transition: .25s scale;
+}
+.price{
+  display: inline;
+  vertical-align: middle;
+  font-size: 30px;
+}
+
 /* Release Date */
 .releaseDate {
+  margin-top: 10px;
   border: none;
   background: var(--bg-dark);
   border-radius: 8px;
@@ -86,7 +111,14 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Right Side */
+.titlePrice{
+  text-align: left;
+  border: none;
+  background: var(--bg-dark);
+  margin-bottom: 15px;
+}
+
+
 .gameRight {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -100,7 +132,10 @@
 .hltb_score,
 .reviews,
 .platforms,
-.metacritic_score {
+.metacritic_score,
+.titlePrice,
+.imageContainer,
+.releaseDate{
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: var(--bg-dark);
   border-radius: 8px;
@@ -114,8 +149,11 @@
 .hltb_score:hover,
 .reviews:hover,
 .platforms:hover,
-.metacritic_score:hover {
-  transform: scale(1.03);
+.metacritic_score:hover ,
+.titlePrice:hover,
+.imageContainer:hover,
+.releaseDate:hover{
+  transform: scale(1.02);
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
 }
 
