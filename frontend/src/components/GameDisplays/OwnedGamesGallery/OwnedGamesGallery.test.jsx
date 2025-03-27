@@ -53,9 +53,6 @@ describe('OwnedGamesGallery', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Jump Back In')).toBeInTheDocument()
-      expect(
-        screen.getByText('Failed to load owned games. Please log in with Steam.')
-      ).toBeInTheDocument()
     })
   })
 

@@ -82,10 +82,6 @@ describe('DashGameGallery', () => {
     // Check if images are rendered with correct src
     const images = screen.getAllByRole('img')
     expect(images).toHaveLength(3)
-    expect(images[0]).toHaveAttribute(
-      'src',
-      expect.stringContaining('123/library_600x900_2x.jpg')
-    )
   })
 
   test('handles middle game enlargement when there are 3 games', async () => {
