@@ -79,10 +79,7 @@ const TopRatedGames = () => {
 
                 <div className={styles.gameCardInfo}>
                   <strong>{game.name}</strong>
-                  <span className={styles.boil_score}>
-                    <br></br>
-                    {'Boil Rating:\t' + Math.round(game.boil_score) + ' / 100'}
-                  </span>
+
                   <br />
                   <small>
                     {game.total_played > 0

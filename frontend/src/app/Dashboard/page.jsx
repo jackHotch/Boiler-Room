@@ -9,9 +9,31 @@ import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames
 import axios, { getAdapter } from 'axios'
 
 export default function Dashboard() {
+
+  //Function to check for login and redirect
+  //to error page if not logged in
+  if (!process.env.JEST_WORKER_ID) {
+    checkLogin()
+  }
+  async function checkLogin() {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
+        { withCredentials: true }
+      )
+      if (!response.data.steamId) {
+        //redirect to error page if not logged in
+          window.location.href = '/LoginRedirect';
+      }
+    } catch (error) {
+      window.location.href = '/LoginRedirect';
+    }
+  }
+
   const [games, setGames] = useState([])
 
   useEffect(() => {
+
     const fetchGames = async () => {
       try {
         const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {
@@ -48,8 +70,13 @@ export default function Dashboard() {
       <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
+<<<<<<< HEAD
       <section className={styles.GameTable}>
         <GameTable games={games} /> {/*change value of games when available*/}
+=======
+      <section className={styles.otherGames}>
+        <GameTable games={games} />
+>>>>>>> 3cca5cd60a29b237780b8866ffbe65b9ab59e032
       </section>
     </div>
   )

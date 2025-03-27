@@ -19,7 +19,7 @@ export function Navbar() {
   const [steamPFP, setPFP] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  if (pathname === '/') return null
+  if (pathname === '/' || pathname === '/LoginRedirect') return null
 
   useEffect(() => {
     async function fetchProfileData() {
@@ -49,7 +49,7 @@ export function Navbar() {
   return (
     <div className={styles.container}>
       <Link className={styles.logo} href='/Dashboard'>
-        Boiler Room
+        <img src='BRLogo.png' width={250} />
       </Link>
       <div className={styles.nav_options}>
         <Link className={styles.links} href='/Friends'>

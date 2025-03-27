@@ -1,35 +1,151 @@
 .gameTableContainer {
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--bg-light);
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      background-color: rgba(0, 0, 0, 0.25);
-    overflow-x: auto;
-    min-height: 800px;
-}
-.gameTable {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--bg-light);
-    color: var(--text-primary);
-    font-size: 14px;
-    border-radius: 10px;
-    overflow: hidden;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg-dark);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow-x: auto;
+  min-height: 800px;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-bottom: 50px;
+  position: relative;
 }
 
-.gameTable th, .gameTable td {
-    padding: 15px 20px;
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  order: -1;
 }
+
+.filters {
+  
+  display: flex;
+  gap: 15px;
+}
+
+.filters button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--bg-accent-secondary);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filters button:hover {
+  background-color: var(--bg-accent-secondary);
+}
+
+.filters .activeFilter {
+  background-color: var(--bg-accent);
+  font-weight: bold;
+}
+
+.pagination {
+  color: var(--text-bw);
+  display: absolute;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.pagination button {
+  display: absolute;
+  padding: 8px 12px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--bg-accent);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: var(--bg-accent);
+}
+
+.pagination button:disabled {
+  background-color:var(--bg-accent-secondary);
+  cursor: default;
+}
+
+.gameTable {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  font-size: 14px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gameTable th,
+.gameTable td {
+  padding: 15px 20px;
+  text-align: center;
+}
+
 
 .gameTable th {
-    background-color: var(--bg-dark);
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 16px;
-    text-align: center;
+  background-color: var(--bg-dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 16px;
+}
+
+.gameRow {
+  height: 80px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.titleColumn {
+  width: 40%;
+  max-width: 400px;
+  text-align: left;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+/* Header image styling */
+.headerImage {
+  width: 110px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Title text styling */
+.titleText {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  color: var(--bg-accent);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  flex: 1;
+  white-space: normal;
+}
+
+.titleText:hover {
+  color: var(--bg-accent-secondary);
 }
 
 .gameTable tr:nth-child(even) {
@@ -44,166 +160,26 @@
 }
 
 .gameTable td a {
-    color: var(--bg-accent);
-    text-decoration: none;
-    font-weight: bold; /* Makes title stand out */
-    font-size: 16px; /* Increases size */
-    transition: color 0.3s ease;
+  color: var(--bg-accent);
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .gameTable td a:hover {
-    color: var(--bg-accent-secondary);
+  color: var(--bg-accent-secondary);
 }
 
-.gameTable tr {
-  height: auto;
-}
-
-.gameTable td:first-child {
-    position: relative; /* Remove absolute positioning */
-    display: flex; /* Allows proper alignment */
-    align-items: center; /* Centers title and image vertically */
-    gap: 10px; /* Adds space between image and text */
-    padding: 10px;
-}
-
-/* Header row contrast */
 .headerRow {
   background-color: var(--bg-dark);
   color: var(--text-primary);
 }
 
-/* Ensure word wrapping for long titles */
-.gameTable td {
-    word-wrap: break-word;
-    max-width: 250px;
-    text-align: center;
-}
-
-/* Reduce column width for checkboxes */
 .gameTable td:last-child {
-    text-align: center;
-    width: 50px;
+  text-align: center;
+  width: 50px;
 }
 
 .steamImg {
-    width: 50%;
-    height: auto;
-}
-.title_container {
-    display: flex;
-    align-items: center; 
-    gap: 10px; 
-    width: 100%;
-    text-align: left;
-}
-
-.header_image {
-    width: 110px;
-    height: 55px;
-    display: block;
-}
-
-.title_text {
-    position: static; 
-    transform: none;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: left;
-    padding: 0;
-    background: none;
-}
-
-.gameTableContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* Push pagination to the bottom */
-  min-height: 800px;
-  max-width: 1000px;
-  padding-bottom: 50px;
-  /* Add padding to prevent overlap */
-  position: relative;
-  /* Ensure child elements can use absolute positioning */
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  /* Align filters left, pagination right */
-  align-items: center;
-  margin-bottom: 15px;
-  padding: 0 10px;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-}
-
-.filters button {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--bg-dark);
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.filters button:hover {
-  background-color: var(--bg-accent);
-}
-
-.filters .activeFilter {
-  background-color: var(--bg-accent-secondary);
-  font-weight: bold;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pagination button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--bg-dark);
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination button:hover {
-  background-color: var(--bg-accent);
-}
-
-.pagination button:disabled {
-  background-color: #777;
-  cursor: not-allowed;
-}
-
-.gameTableContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  /* Changed from space-between */
-  align-items: flex-start;
-  min-height: 800px;
-  max-width: 1000px;
-  padding-bottom: 50px;
-  position: relative;
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding: 0 10px;
-  order: -1;
-  /* Keep filters at the top */
+  width: 50%;
+  height: auto;
 }

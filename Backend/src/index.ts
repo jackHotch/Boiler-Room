@@ -47,6 +47,13 @@ app.use(
   })
 )
 
+app.use(function(req, res, next) {
+  res.set('credentials', 'include');
+  res.set('Access-Control-Allow-Credentials', true);
+  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  next();
+});
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
@@ -360,6 +367,21 @@ app.get('/steam/logout', (req, res) => {
   // Redirect the user back to the referring page
   res.redirect(process.env.FRONTEND_URL)
 })
+
+// Return steam id if logged in, else null
+app.get("/steam/logininfo", async (req, res) => {
+  // If Steam ID and name are in the session, return them
+  if (req.session.steamId) {
+
+    return res.json({
+      steamId: req.session.steamId
+    })
+  } else {
+    return res.json({
+      steamId: null,
+    })
+  }
+});
 
 // Used for fetching display card info after login
 app.get('/steam/getdisplayinfo', async (req, res) => {

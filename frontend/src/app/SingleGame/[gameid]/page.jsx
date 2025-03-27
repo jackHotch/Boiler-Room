@@ -47,7 +47,7 @@ const SingleGamePage = () => {
   ) : (
     <div className={styles.singleGameContainer}>
       <div className={styles.titlePrice}>
-        <a href={'https://store.steampowered.com/app/' + gameid}>
+        <a  target="_blank" href={'https://store.steampowered.com/app/' + gameid}>
           <img
             src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
             className={styles.redirectImage}

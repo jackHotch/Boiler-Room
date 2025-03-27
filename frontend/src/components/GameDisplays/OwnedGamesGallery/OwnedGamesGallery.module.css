@@ -4,7 +4,7 @@
   position: relative;
   width: 100%;
   padding: 20px 0;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-dark);
   border-radius: 15px;
   max-width: 1400px;
   padding-top: 2px;
@@ -25,7 +25,6 @@
   position: relative;
   width: fit-content;
   background-color: var(--bg-primary);
-  border: 1px solid var(--text-bw);
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
@@ -38,7 +37,6 @@
 
 .imageWrapper:hover .gameImage {
   filter: brightness(0.5) blur(1px);
-  /* Darken the image on hover for better contrast */
 }
 
 .boil_score {
@@ -96,7 +94,8 @@
 .sectionHeader {
   font-size: 35px;
   text-align: left;
-  padding: 15px;
+  padding: 30px;
+  padding-bottom: 0;
   padding-top: 0;
   border-radius: 15px;
   color: var(--text-bw);
