@@ -9,6 +9,9 @@ import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames
 import axios, { getAdapter } from 'axios'
 
 export default function Dashboard() {
+  let acclaimedClassic
+  let quickPick
+  let hiddenGem
 
   //Function to check for login and redirect
   //to error page if not logged in
@@ -48,7 +51,7 @@ export default function Dashboard() {
     fetchGames()
   }, []) // Single dependency array
 
-  const featuredGames = games.slice(0, 3)
+  const featuredGames = games.slice(0,3)
 
   const featuredCategories = [
     { label: 'Quick Pick' },
@@ -70,13 +73,8 @@ export default function Dashboard() {
       <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
-<<<<<<< HEAD
       <section className={styles.GameTable}>
         <GameTable games={games} /> {/*change value of games when available*/}
-=======
-      <section className={styles.otherGames}>
-        <GameTable games={games} />
->>>>>>> 3cca5cd60a29b237780b8866ffbe65b9ab59e032
       </section>
     </div>
   )
