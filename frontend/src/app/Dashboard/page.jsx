@@ -41,14 +41,14 @@ export default function Dashboard() {
       </section>
 
       <hr />
-      <section className={styles.otherGames}>
+      <section className={styles.JumpBackIn}>
         <OwnedGamesGallery />
       </section>
 
       <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
-      <section className={styles.otherGames}>
+      <section className={styles.GameTable}>
         <GameTable games={games} /> {/*change value of games when available*/}
       </section>
     </div>

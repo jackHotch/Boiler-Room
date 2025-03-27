@@ -8,7 +8,7 @@
   border-radius: 15px;
   max-width: 1400px;
   padding-top: 2px;
-
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .gridContainer {
@@ -16,12 +16,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-
   padding: 0 20px;
-
 }
 
 .imageWrapper {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
   position: relative;
   width: fit-content;

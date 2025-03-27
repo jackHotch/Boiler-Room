@@ -1,15 +1,15 @@
 .gameTableContainer {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     background-color: var(--bg-light);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.25);
     overflow-x: auto;
-    width: calc(100% - 40px);
+    min-height: 800px;
 }
-
 .gameTable {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     width: 100%;
     border-collapse: collapse;
     background-color: var(--bg-light);
@@ -40,6 +40,7 @@
   background-color: var(--bg-content);
   transition: background-color 0.3s ease;
   color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .gameTable td a {
@@ -55,7 +56,7 @@
 }
 
 .gameTable tr {
-  border-bottom: 1px solid var(--bg-content);
+  height: auto;
 }
 
 .gameTable td:first-child {
@@ -91,69 +92,118 @@
 }
 .title_container {
     display: flex;
-    align-items: center; /* Align image and text vertically */
-    gap: 10px; /* Add spacing between image and title */
+    align-items: center; 
+    gap: 10px; 
     width: 100%;
     text-align: left;
 }
 
 .header_image {
-    width: 100px; /* Adjust as needed */
-    height: auto;
+    width: 110px;
+    height: 55px;
     display: block;
-    border-radius: 8px;
-    opacity: 0.9;
 }
 
 .title_text {
-    position: static; /* Remove absolute positioning */
-    transform: none; /* Remove centering transform */
+    position: static; 
+    transform: none;
     font-size: 18px;
     font-weight: bold;
     text-align: left;
     padding: 0;
-    background: none; /* Remove background overlay */
+    background: none;
 }
 
-  
+.gameTableContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Push pagination to the bottom */
+  min-height: 800px;
+  max-width: 1000px;
+  padding-bottom: 50px;
+  /* Add padding to prevent overlap */
+  position: relative;
+  /* Ensure child elements can use absolute positioning */
+}
 
-.circleContainer {
-transform: scale(1);
+.controls {
+  display: flex;
+  justify-content: space-between;
+  /* Align filters left, pagination right */
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+}
+
+.filters button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--bg-dark);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filters button:hover {
+  background-color: var(--bg-accent);
+}
+
+.filters .activeFilter {
+  background-color: var(--bg-accent-secondary);
+  font-weight: bold;
+}
+
+.pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--bg-dark);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: var(--bg-accent);
+}
+
+.pagination button:disabled {
+  background-color: #777;
+  cursor: not-allowed;
+}
+
+.gameTableContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* Changed from space-between */
+  align-items: flex-start;
+  min-height: 800px;
+  max-width: 1000px;
+  padding-bottom: 50px;
   position: relative;
-  width: 60px;
-  height: 60px;
-  margin: auto; /* Center within parent */
 }
 
-.progressRing {
-  transform: rotate(-90deg);
-  width: 100%;
-  height: 100%;
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  order: -1;
+  /* Keep filters at the top */
 }
-
-.progressRingBg,
-.progressRingCircle {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: butt;
-}
-
-.progressRingBg {
-  stroke: #ddd;
-}
-
-.progressRingCircle {
-  stroke: #4caf50; /* Default color */
-  stroke-dasharray: 471; /* 2 * PI * r (r=50) */
-}
-
-.progressText {
-  position: absolute;
-  font-size: 15px;
-  font-weight: bold;
-  color: var(--text-primary);
-}
-
