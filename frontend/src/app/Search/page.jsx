@@ -46,10 +46,14 @@ export default function Search() {
     <div className={styles.container}>
       <section className={styles.otherGames}>
         <GameTable games={visibleGames} />
-        <span>
-          Showing {visibleGames.length} of {allGames.length} results
-        </span>
-        <button onClick={handleLoadMore}>Load More Games</button>
+        <div className={styles.footer}>
+          <span className={styles.num_results}>
+            Showing {visibleGames.length} of {allGames.length} results
+          </span>
+          <button className={styles.load_more} onClick={handleLoadMore}>
+            Load More Games
+          </button>
+        </div>
       </section>
     </div>
   )
