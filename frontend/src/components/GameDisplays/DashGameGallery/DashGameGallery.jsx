@@ -82,7 +82,7 @@ const DashGameGallery = ({ games, categories }) => {
                     </div>
                   ) : (
                     <img
-                      src={`https://steamcdn-a.akamaihd.net/steam/apps/${game.game_id}/library_600x900_2x.jpg`}
+                      src={game.header_image}
                       alt={game.name}
                       className={styles.gameImage}
                       onError={() => handleImageError(index)}
@@ -90,7 +90,7 @@ const DashGameGallery = ({ games, categories }) => {
                   )}
                 </div>
               </a>
-              <p className={styles.placeholderText}>{game.name}</p>
+              <p className={styles.gameName}>{game.name}</p>
             </div>
           )
         })

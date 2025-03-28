@@ -1,9 +1,14 @@
 .scrollContainer {
+  margin: 0 auto;
+    /* Centers within parent */
+  position: relative;
   width: 100%;
   padding: 20px 0;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-dark);
   border-radius: 15px;
-  border: 1px solid var(--text-bw); 
+  max-width: 1400px;
+    padding-top: 2px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .gridContainer {
@@ -15,6 +20,8 @@
 }
 
 .imageWrapper {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
   position: relative;
   width: fit-content;
   background-color: var(--bg-primary);
@@ -22,6 +29,7 @@
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
   overflow: hidden; /* Ensure the overlay stays within bounds */
+  
 }
 
 .imageWrapper:hover {
@@ -56,7 +64,6 @@
   padding: 15px;
   color: var(--text-bw);
   width: inherit;
-  background-color: var(--bg-primary);
   opacity: .6;
 }
 
@@ -66,8 +73,7 @@
 
 /* Overlay effect */
 .imageWrapper::after {
-  content: '';
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.75); /* Semi-transparent black overlay */
@@ -84,9 +90,9 @@
   font-size: 35px;
   text-align: left;
   padding: 15px;
+  padding-top: 0;
   border-radius: 15px;
   color: var(--text-bw);
-  width: fit-content;
 }
 
 .hoursPlayed{
@@ -107,6 +113,11 @@
   z-index: 1;
   text-align: bottom;
   max-width: 80%;
+  .hoursPlayed {
+  bottom: 10px; /* Position it properly */
+  left: 10px; /* Avoid any potential clipping */
+}
+
 }
 .redirectImage{
   padding-left: 8px;

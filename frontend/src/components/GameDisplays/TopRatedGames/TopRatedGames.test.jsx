@@ -102,7 +102,7 @@ describe('TopRatedGames', () => {
 
     await waitFor(() => {
       const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(24) // Should only show 12 games despite 15 returned
+      expect(images).toHaveLength(40) // Should only show 40 games despite 15 returned
     })
   })
 })

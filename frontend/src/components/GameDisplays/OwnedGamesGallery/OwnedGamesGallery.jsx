@@ -47,15 +47,15 @@ const OwnedGamesGallery = () => {
     return (
       <div className={styles.scrollContainer}>
         <h1>Jump Back In</h1>
-        <p className={styles.errorText}>{error}</p>
+        <p className={styles.errorText}>{error}Something went Wrong</p>
       </div>
     )
   }
 
   return (
     <div>
-      <h1 className={styles.sectionHeader}>Jump Back In</h1>
       <div className={styles.scrollContainer}>
+       <h1 className={styles.sectionHeader}>Jump Back In</h1>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
             ownedGames.map((game) => (
@@ -79,7 +79,7 @@ const OwnedGamesGallery = () => {
                   </small>
                 </div>
                 <div className={styles.gameCardInfo}>
-                  {game.title}
+                  <strong>{game.title}</strong>
                   <br />
                   <small>
                     {game.playtime_2weeks > 0

@@ -1,13 +1,18 @@
 .scrollContainer {
+  margin: 0 auto;
+  /* Centers within parent */
+  position: relative;
   width: 100%;
   padding: 20px 0;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-dark);
   border-radius: 15px;
-  border: 1px solid var(--text-bw); 
+  max-width: 1400px;
+  padding-top: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .gridContainer {
- padding: 5%;
+  padding: 5%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
@@ -15,14 +20,15 @@
 }
 
 .imageWrapper {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
   position: relative;
   width: fit-content;
   background-color: var(--bg-primary);
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
-  overflow: hidden;
-  
+  overflow: hidden; /* Ensure the overlay stays within bounds */
 }
 
 .imageWrapper:hover {
@@ -30,15 +36,13 @@
 }
 
 .imageWrapper:hover .gameImage {
-  filter: brightness(0.5) blur(1px); /* Darken the image on hover for better contrast */
+  filter: brightness(0.5) blur(1px);
 }
 
-.boil_score{
-  left: 60%;
-  position : absolute;
+.boil_score {
+  position: relative;
   font-family: Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 12px;
   padding: 8px 12px;
   border-radius: 4px;
   opacity: 1;
@@ -47,52 +51,57 @@
   z-index: 1;
   text-align: right;
 }
+
 .gameImage {
-  width: 100%; /* Full width of grid cell */
+  width: 100%;
+  /* Full width of grid cell */
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  transition: filter 0.3s ease-in-out; /* Smooth brightness transition */
+  transition: filter 0.3s ease-in-out;
+  /* Smooth brightness transition */
 }
 
-.gameCardInfo{
+.gameCardInfo {
   text-align: left;
   padding: 15px;
   color: var(--text-bw);
   width: inherit;
-  background-color: var(--bg-primary);
   opacity: .6;
 }
 
-.imageWrapper:active{
+.imageWrapper:active {
   filter: brightness(2);
 }
 
 /* Overlay effect */
 .imageWrapper::after {
-  content: '';
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75); /* Semi-transparent black overlay */
+  background: rgba(0, 0, 0, 0.75);
+  /* Semi-transparent black overlay */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  border-radius: 8px; /* Match the image border radius */
+  border-radius: 8px;
+  /* Match the image border radius */
 }
 
 .imageWrapper:hover::after {
-  opacity: 1; /* Show overlay on hover */
+  opacity: 1;
+  /* Show overlay on hover */
 }
 
-.sectionHeader{
+.sectionHeader {
   font-size: 35px;
   text-align: left;
-  padding: 15px;
+  padding: 30px;
+  padding-bottom: 0;
+  padding-top: 0;
   border-radius: 15px;
   color: var(--text-bw);
-  width: fit-content;
 }
 
-.hoursPlayed{
+.hoursPlayed {
   position: absolute;
   bottom: -50%;
   left: 0;
@@ -110,14 +119,24 @@
   z-index: 1;
   text-align: bottom;
   max-width: 80%;
+
+  .hoursPlayed {
+    bottom: 10px;
+    /* Position it properly */
+    left: 10px;
+    /* Avoid any potential clipping */
+  }
+
 }
-.redirectImage{
+
+.redirectImage {
   padding-left: 8px;
   top: 30%;
   position: absolute;
   height: 16px;
   filter: invert(1);
 }
+
 .gameTitle {
   position: absolute;
   top: 35%; 
@@ -133,9 +152,10 @@
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
-  z-index: 1; 
+  z-index: 1;
   text-align: center;
   max-width: fit-content;
+
 }
 
 .imageWrapper:hover .gameTitle {

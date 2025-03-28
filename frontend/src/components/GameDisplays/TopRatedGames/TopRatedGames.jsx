@@ -19,7 +19,7 @@ const TopRatedGames = () => {
 
         // Sort games by playtime_forever in descending order (most played first)
         let sortedGames = games.sort((a, b) => b.playtime_forever - a.playtime_forever)
-        sortedGames = sortedGames.slice(0, 12)
+        sortedGames = sortedGames.slice(0, 20)
         setOwnedGames(sortedGames)
       } catch (error) {
         console.error('Error fetching owned games:', error.message, error.response?.data)
@@ -51,8 +51,9 @@ const TopRatedGames = () => {
 
   return (
     <div>
-      <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
       <div className={styles.scrollContainer}>
+              <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
+
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
             ownedGames.map((game, key) => (
@@ -77,7 +78,7 @@ const TopRatedGames = () => {
                 </div>
 
                 <div className={styles.gameCardInfo}>
-                  {game.name}
+                  <strong>{game.name}</strong>
 
                   <br />
                   <small>
