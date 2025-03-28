@@ -319,7 +319,46 @@ test('fetchAndStoreProfiles', async () => {
 });
 
 test('updateUserRelations', async () => {
-  //should be testable with a faked relation
+  const testProfiles = [
+    { steamId: '111', username: 'testing111', avatarHash: 'hash111' },
+    { steamId: '222', username: 'testing222', avatarHash: 'hash222' },
+    { steamId: '333', username: 'testing333', avatarHash: 'hash333' }
+  ];
+
+  await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = ANY($1::bigint[])', [
+    testProfiles.map(p => BigInt(p.steamId))
+  ]);
+
+  for (const profile of testProfiles) {
+    await pool.query(
+      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3)',
+      [BigInt(profile.steamId), profile.username, profile.avatarHash]
+    );
+  }
+
+  const ourSteamId = '222';
+  const relatedSteamIds = ['111', '333'];
+  await updateUserRelations(ourSteamId, relatedSteamIds);
+
+  const relationsResult = await pool.query(
+    'SELECT "user1", "user2", "status" FROM "User_Relations" WHERE ("user1" = $1 OR "user2" = $1) ORDER BY "user1"',
+    [BigInt(ourSteamId)]
+  );
+
+  const actualRelations = relationsResult.rows.map(row => ({
+    user1: BigInt(row.user1),
+    user2: BigInt(row.user2),
+    status: row.status
+  }));
+
+  expect(actualRelations).toEqual([
+    { user1: 111n, user2: 222n, status: 3 },
+    { user1: 222n, user2: 333n, status: 3 }
+  ]);
+
+  await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = ANY($1::bigint[])', [
+    testProfiles.map(p => BigInt(p.steamId))
+  ]);
 });
 
 test('processAndStoreGames', async () => {
