@@ -1,9 +1,37 @@
 .container {
-    color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .otherGames {
-    padding: 50px 20px;
-    text-align: center;
-    margin-bottom: 0px;
+  padding: 50px 20px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.footer {
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.num_results {
+  position: absolute;
+  left: 0px;
+}
+
+.load_more {
+  background-color: var(--bg-accent);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.load_more:hover {
+  background-color: var(--bg-accent-secondary);
 }

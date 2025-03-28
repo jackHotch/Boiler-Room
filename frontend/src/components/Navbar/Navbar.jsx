@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import dynamic from 'next/dynamic'
 import { ThemeToggle } from '../ThemeToggle/ThemeToggle'
+import { Searchbar } from './Searchbar/Searchbar'
 
 // Dynamically load SteamIdDisplay to avoid SSR issues
 const SteamIdDisplay = dynamic(() => import('../SteamComponents/SteamIdDisplay'), {
@@ -71,10 +72,8 @@ export function Navbar() {
         <Link className={styles.links} href='/NewGameRecs'>
           New Game Recommendations
         </Link>
-        <div className={styles.searchbar}>
-          <input className={styles.input} type='text' placeholder='Search' />
-          <img src='/search.png' className={styles.search_icon} width={16} />
-        </div>
+
+        <Searchbar />
 
         <ThemeToggle />
 

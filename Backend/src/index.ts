@@ -605,12 +605,11 @@ app.get('/gamesByName', async (req, res) => {
     const { name } = req.query // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "game_id"
+      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score"
        FROM "Games" 
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
     )
-    console.log(rows)
     res.json(rows)
   } catch (error) {
     console.error('Error fetching games:', error)
