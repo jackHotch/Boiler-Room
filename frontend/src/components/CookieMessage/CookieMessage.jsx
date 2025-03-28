@@ -19,7 +19,7 @@ export function CookieMessage() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid='cookie-message'>
       <h3 className={styles.heading}>!!Firefox Users!!</h3>
       <p className={styles.message}>
         Please enables cookies in order to continue to use our website

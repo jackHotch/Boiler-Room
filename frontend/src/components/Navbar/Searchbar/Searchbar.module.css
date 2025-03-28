@@ -1,0 +1,33 @@
+.container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+}
+
+.input {
+  border: none;
+  width: 300px;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.search_icon {
+  cursor: pointer;
+}
+
+.searchbar:focus {
+  outline: 1px solid var(--bg--accent);
+}
+
+.container button {
+  background-color: white;
+  border: none;
+}

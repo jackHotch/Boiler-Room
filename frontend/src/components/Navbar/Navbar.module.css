@@ -51,15 +51,6 @@
   align-items: center;
 }
 
-.searchbar {
-  background-color: white;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  border: 1px solid black;
-}
-
 .pfp{
   width: 50px;
   height: 50px;
@@ -71,26 +62,6 @@
 .pfp:hover {
   border: 2px solid var(--bg-accent);
   cursor: pointer;
-}
-
-.input {
-  border: none;
-  width: 300px;
-  border-radius: 8px;
-  background-color: white;
-  color: black;
-}
-
-.input:focus {
-  outline: none;
-}
-
-.search_icon {
-  cursor: pointer;
-}
-
-.searchbar:focus {
-  outline: 1px solid var(--bg--accent);
 }
 
 .accountContainer {

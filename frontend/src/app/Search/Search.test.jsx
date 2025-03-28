@@ -6,6 +6,10 @@ jest.mock('../../components/GameDisplays/GameTable/GameTable', () => () => (
   <div data-testid='game-table'></div>
 ))
 
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams({ q: 'test query' }),
+}))
+
 describe('Search Component', () => {
   test('renders Search header', () => {
     const { baseElement } = render(<Search />)
