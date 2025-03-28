@@ -29,6 +29,33 @@ export const testFriendsList = [
   }
 ]
 
+export const sqlResult = [
+  {
+    "username": "test2",
+    "game_id": "30",
+    "last_2_weeks": "30"
+  },
+  {
+    "username": "test2",
+    "game_id": "20",
+    "last_2_weeks": "20"
+  },
+  {
+    "username": "test2",
+    "game_id": "10",
+    "last_2_weeks": "10"
+  },
+  {
+    "username": "test3",
+    "game_id": "20",
+    "last_2_weeks": "20"
+  },
+  {
+    "username": "test3",
+    "game_id": "10",
+    "last_2_weeks": "10"
+  }
+]
 export const testRecentGames = [
   {
       "appid": 2669320,

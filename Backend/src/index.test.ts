@@ -2,7 +2,7 @@ import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate,
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
-import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId } from './TestingResponses';
+import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId, sqlResult } from './TestingResponses';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -327,5 +327,9 @@ test('processAndStoreGames', async () => {
 });
 
 test('getFinalResults', async () => {
-  //Easy to test if I mock some accounts that dont change?
+  const results1 = await getFinalResults(BigInt(1));
+  expect(results1).toEqual(sqlResult)
+
+  const results2 = await getFinalResults(BigInt(4));
+  expect(results2).toEqual([]);
 });
