@@ -15,7 +15,7 @@ export function ThemeToggle() {
     } else {
       setTheme('dark')
     }
-    if (pathname != '/') {
+    if (pathname != '/' && pathname != '/LoginRedirect') {
       const preference = theme == 'dark' ? 1 : 0
       // technically 0=dark and 1=light but the theme variable doesn't updated
       // immediately so I have to just switch them
