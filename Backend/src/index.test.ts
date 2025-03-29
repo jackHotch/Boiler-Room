@@ -310,13 +310,6 @@ test('Delay Works and does lock you out', async () => {
     }
 });
 
-test('fetchAndProcessFriends works in both forced and unforced mode', async () => {
-  //if testable, at the edge of what I feel comfortable faking
-});
-
-test('fetchAndStoreProfiles', async () => {
-  //should be testable with a bit of faking
-});
 
 test('updateUserRelations', async () => {
   const testProfiles = [
