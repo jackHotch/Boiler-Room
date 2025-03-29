@@ -39,7 +39,7 @@ const GameTable = ({ games }) => {
         return (a.hltb_score ?? Infinity) - (b.hltb_score ?? Infinity)
       case 'boil':
         return (a.boil_score ?? 0) - (b.boil_score ?? 0)
-   
+
       default:
         return 0
     }
@@ -47,7 +47,7 @@ const GameTable = ({ games }) => {
 
   const sortGames = (criteria) => {
     const newOrder = sortBy === criteria && sortOrder === 'desc' ? 'asc' : 'desc'
-    
+
     const sortedGames = [...games].sort((a, b) => {
       const comparison = compareValues(a, b, criteria)
       return newOrder === 'asc' ? comparison : -comparison
@@ -73,21 +73,24 @@ const GameTable = ({ games }) => {
             onClick={() => sortGames('metacritic')}
             className={sortBy === 'metacritic' ? styles.activeFilter : ''}
           >
-            Sort by Metacritic {sortBy === 'metacritic' && (sortOrder === 'asc' ? '⬆' : '⬇')}
+            Sort by Metacritic{' '}
+            {sortBy === 'metacritic' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
 
           <button
             onClick={() => sortGames('timePlayed')}
             className={sortBy === 'timePlayed' ? styles.activeFilter : ''}
           >
-            Sort by Playtime {sortBy === 'timePlayed' && (sortOrder === 'asc' ? '⬆' : '⬇')}
+            Sort by Playtime{' '}
+            {sortBy === 'timePlayed' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
 
           <button
             onClick={() => sortGames('length')}
             className={sortBy === 'length' ? styles.activeFilter : ''}
           >
-            Sort by Time to Beat {sortBy === 'length' && (sortOrder === 'asc' ? '⬆' : '⬇')}
+            Sort by Time to Beat{' '}
+            {sortBy === 'length' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
 
           <button
@@ -99,9 +102,15 @@ const GameTable = ({ games }) => {
         </div>
 
         <div className={styles.pagination}>
-          <button onClick={prevPage} disabled={currentPage === 1}>Previous</button>
-          <span>{currentPage} of {totalPages}</span>
-          <button onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
+          <button onClick={prevPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>
+            {currentPage} of {totalPages}
+          </span>
+          <button onClick={nextPage} disabled={currentPage === totalPages}>
+            Next
+          </button>
         </div>
       </div>
 
@@ -121,22 +130,28 @@ const GameTable = ({ games }) => {
             <tr key={game.game_id} className={styles.gameRow}>
               <td className={styles.titleColumn}>
                 <div className={styles.titleContainer}>
-                  <img src={game.header_image} alt={game.name} className={styles.headerImage} />
+                  <img
+                    src={game.header_image}
+                    alt={game.name}
+                    className={styles.headerImage}
+                  />
                   <a className={styles.titleText} href={`/SingleGame/${game.game_id}`}>
                     {game.name}
                   </a>
                 </div>
               </td>
               <td>{game.metacritic_score ?? 'N/A'}</td>
-              <td>{game.hltb_score ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}</td>
+              <td>
+                {game.hltb_score ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}
+              </td>
               <td>{game.hltb_score ? `${game.hltb_score} Hrs` : 'N/A'}</td>
               <td>{game.boil_score ?? 'N/A'}</td>
               <td>
                 <a href={`https://store.steampowered.com/app/${game.game_id}`}>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png"
+                    src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
                     className={styles.steamImg}
-                    alt="Steam"
+                    alt='Steam'
                   />
                 </a>
               </td>
