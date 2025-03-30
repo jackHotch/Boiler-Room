@@ -480,7 +480,7 @@ app.get('/games/:gameid', async (req, res) => {
       let day = rows[0].released.split('-')[2]
       rows[0].released = `${monthMap[Number(month)]} ${day}, ${year}`
     }
-    if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
+    //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ['Unknown']
     return res.status(200).json(rows[0])
   } catch (error) {
