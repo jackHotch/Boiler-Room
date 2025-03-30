@@ -22,7 +22,8 @@
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
     "puppeteer": "^24.4.0",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "react-select": "^5.8.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
