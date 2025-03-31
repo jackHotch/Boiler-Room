@@ -12,7 +12,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/games') // Use the backend port
+        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/featuredgames') // Use the backend port
 
         // Ensure the response is JSON
         const contentType = response.headers.get('content-type')
