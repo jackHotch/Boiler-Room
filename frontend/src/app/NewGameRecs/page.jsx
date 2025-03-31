@@ -1,37 +1,70 @@
 // page.jsx
-"use client";  // Add this at the top
-import styles from './NewGameRecs.module.css';
-import React, { useState } from "react";
+"use client"  // Add this at the top
+import styles from './NewGameRecs.module.css'
+import React, { useState } from "react"
+import axios from 'axios'
 
 export default function GameRecommendation() {
-  let minBoilRating;
-  let minYear;
-  let maxYear;
-  let platform;
-  let genre;
-  let maxHLTB;
-
+  
+  const [gameList, setGameList] = useState([]); // Store fetched games
+  
   const dbGenres = ["Action","Strategy","RPG","Casual","Racing","Sports","Indie","Adventure",
     "Simulation","Massively Multiplayer","Free To Play","Accounting","Animation & Modeling",
     "Audio Production","Design & Illustration","Education","Photo Editing","Software Training",
     "Utilities","Video Production","Web Publishing","Game Development","Early Acess","Violent","Gore"]
   
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    minBoilRating = event.target.minBoilRating.value;
-    minYear = event.target.minYear.value;
-    maxYear = event.target.maxYear.value;
-    platform = [
+    let minBoilRating = parseFloat(event.target.minBoilRating.value) || -1;
+    let minYear = event.target.minYear.value || '1970-01-01';
+    let maxYear = event.target.maxYear.value || '2037-12-31';
+    let platform = [
       event.target.option1.checked ? '4' : null,
-      event.target.option2.checked ? '1' : null,
       event.target.option3.checked ? '2' : null,
-    ].filter(option => option !== null); // Remove null values
-    maxHLTB = event.target.maxHLTB.value;
-    genre = Array.from(event.target.genres.selectedOptions, option => option.value);
+      event.target.option2.checked ? '1' : null,
+    ].filter(option => option !== null);
+    let maxHLTB = parseInt(event.target.maxHLTB.value, 10) || 10000;
+    let genre = Array.from(event.target.genres.selectedOptions, option => option.value);
+
+
+
+    if (platform.length === 0) platform = ["4", "2", "1"];
+
+    try{
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + "/gamesByFilter",
+        {params: 
+          {minBoilRating, 
+          minYear, 
+          maxYear, 
+          platform: platform.join(","), 
+          genre: genre.join(","), 
+          maxHLTB} 
+        }
+      )
+
+      // Ensure the response is JSON
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server did not return JSON')
+      }
+
+      //Get top 3 by boil rating - ordered by BR in results
+      //Original 3 (without selecting anything) will have 3 games based on what user doesn't own,
+      // we'll take a look at the release dates, platforms, genres, and maxhltb
+
+      setGameList(response.data); // Store game list in state
+
+    } catch (err){
+      console.error(err);
+    }
+    console.log("GameList:",gameList);
 
     console.log("Form Data Submitted:");
     console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
+
+   
   };
 
   return (
@@ -99,9 +132,18 @@ export default function GameRecommendation() {
           </div> 
         <div className={styles.sectionTitle}>Recommended Games</div>
         <div className={styles.gamesGrid}>
-          <div className={styles.gameCard}></div>
-          <div className={styles.gameCard}></div>
-          <div className={styles.gameCard}></div>
+          
+          {/* Recommended games */}
+          {gameList.length > 0 ? (
+            gameList.slice(0, 3).map((game, index) => (
+              <div key={index} className={styles.gameCard}>
+                <img src={game.header_image} alt={game.name} className={styles.gameImage} />
+                <p className={styles.gameTitle}>{game.name}</p>
+              </div>
+            ))
+          ) : (
+            <p>No games found. Try adjusting your filters.</p>
+          )}
         </div>
       </div>
     </div>
