@@ -693,9 +693,9 @@ export async function insertGames(steamId: bigint) {
   }
 }
 
-app.get('/testFriends', async (req, res) => {
+app.get('/friendsListInfo', async (req, res) => {
+  const steamId = req.query.steamId || req.session.steamId
   try {
-    const steamId = BigInt("76561199154033472"); //me
     const forced = req.query.forced === 'true';
     const result = await loadFriends(steamId, forced);
     res.status(200).json(result);
@@ -732,8 +732,11 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
     }
   }); //starts by getting your friends list
 
+  console.log(friendsResponse.data)
+
   await delay();
   const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString());
+  console.log(steamIds)
 
   if (forced) {
     return steamIds; //if it is forced mode then we are updating EVERYTHING 
@@ -832,6 +835,7 @@ export async function updateUserRelations(steamId: string, steamIds: string[]) {
 }
 
 export async function processAndStoreGames(userIdsToCheck: string[]) {
+  console.log("JackProcessSteamIds" + userIdsToCheck)
   userIdsToCheck.forEach(steamId => {
       const steamIdBigInt = BigInt(steamId); //start by inserting all games the user has that we have
       insertGames(steamIdBigInt);
@@ -844,10 +848,12 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
     const { data } = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`, {
       params: {
         key: process.env.STEAM_API_KEY,
-        steamid: steamIdBigInt,
+        steamid: steamId,
         format: 'json',
       },
     });
+
+    console.log("JackRecentGames:" + JSON.stringify(data))
 
     await delay(); //sleeping here is critical
 
@@ -864,14 +870,18 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
     })); //the recently played game info gets logged
 
     const recentlyPlayedGameIds = recentlyPlayedGames.map(game => game.gameId.toString());
+    console.log("Recently played games" + recentlyPlayedGameIds)
 
     const existingUserGames = await pool.query(
-      'SELECT "game_id"::text FROM "User_Games" WHERE "steam_id" = $1 AND "game_id"::text = ANY($2::text[])',
-      [steamIdBigInt.toString(), recentlyPlayedGameIds]
+      'SELECT "game_id"::text FROM "User_Games" WHERE "steam_id" = $1',
+      [steamIdBigInt.toString()]
     ); //we once again have to get those games information
+    console.log("Existing User Games" + JSON.stringify(existingUserGames.rows))
 
     const existingGameIds = existingUserGames.rows.map(row => row.game_id.toString());
+    console.log("Existing Games Id" + existingGameIds)
     const gamesToKeep = recentlyPlayedGames.filter(game => existingGameIds.includes(game.gameId)); //we keep any games that they play and we have
+    console.log("Games to keep" + gamesToKeep)
   
     if (gamesToKeep.length === 0) {
       console.log('No games to update. Skipping query execution.');
