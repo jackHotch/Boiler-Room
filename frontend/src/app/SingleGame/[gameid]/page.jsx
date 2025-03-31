@@ -47,7 +47,7 @@ const SingleGamePage = () => {
   ) : (
     <div className={styles.singleGameContainer}>
       <div className={styles.titlePrice}>
-        <a  target="_blank" href={'https://store.steampowered.com/app/' + gameid}>
+        <a target='_blank' href={'https://store.steampowered.com/app/' + gameid}>
           <img
             src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
             className={styles.redirectImage}
@@ -87,7 +87,8 @@ const SingleGamePage = () => {
             <strong>Steam Reviews</strong>
             <br />
             <br />
-            {(game.recommendation_description) + ` (${Math.round((game.positive / game.total) * 100)}%)`}
+            {game.recommendation_description +
+              ` (${Math.round((game.positive / game.total) * 100)}%)`}
           </div>
           <div className={styles.hltb_score}>
             <strong>How Long to Beat</strong>

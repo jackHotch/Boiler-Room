@@ -55,7 +55,8 @@ const OwnedGamesGallery = () => {
   return (
     <div>
       <div className={styles.scrollContainer}>
-       <h1 className={styles.sectionHeader}>Jump Back In</h1>
+        <h1 className={styles.sectionHeader}>Jump Back In</h1>
+        <p className={styles.subHeader}>Games you've played recently</p>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
             ownedGames.map((game) => (
