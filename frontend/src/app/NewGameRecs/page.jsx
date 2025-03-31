@@ -1,30 +1,10 @@
 // page.jsx
 "use client";  // Add this at the top
+import Select from "react-select";
 import styles from './NewGameRecs.module.css';
 import React, { useState } from "react";
-import axios from 'axios'
 
 export default function GameRecommendation() {
-  //Function to check for login and redirect
-  //to error page if not logged in
-  if (!process.env.JEST_WORKER_ID) {
-    checkLogin()
-  }
-  async function checkLogin() {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
-        { withCredentials: true }
-      )
-      if (!response.data.steamId) {
-        //redirect to error page if not logged in
-          window.location.href = '/LoginRedirect';
-      }
-    } catch (error) {
-      window.location.href = '/LoginRedirect';
-    }
-  }
-  
   let minBoilRating;
   let minYear;
   let maxYear;
@@ -37,6 +17,11 @@ export default function GameRecommendation() {
     "Audio Production","Design & Illustration","Education","Photo Editing","Software Training",
     "Utilities","Video Production","Web Publishing","Game Development","Early Acess","Violent","Gore"]
   
+
+  const [selectedGenres, setSelectedGenres] = useState([]);
+
+  const genreOptions = dbGenres.map((genre) => ({ value: genre, label: genre }));
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -49,7 +34,7 @@ export default function GameRecommendation() {
       event.target.option3.checked ? '2' : null,
     ].filter(option => option !== null); // Remove null values
     maxHLTB = event.target.maxHLTB.value;
-    genre = Array.from(event.target.genres.selectedOptions, option => option.value);
+    genre = selectedGenres.map(g => g.value);
 
     console.log("Form Data Submitted:");
     console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
@@ -108,12 +93,14 @@ export default function GameRecommendation() {
               {/* Multi-Select Dropdown for Genres */}
               <div className={styles.genreDropdown}>
                 <label>Select Genres:</label>
-                <select name="genres" defaultValue="">
-                  <option value="" disabled>Choose a genre</option>
-                  {dbGenres.map((genre, index) => (
-                    <option key={index} value={genre}>{genre}</option>
-                  ))}
-                </select>
+                <Select
+                  isMulti
+                  options={genreOptions}
+                  value={selectedGenres}
+                  onChange={setSelectedGenres}
+                  className={styles.customSelect}
+                  classNamePrefix="reactSelect"
+                />
               </div>
               <button type="submit" className={styles.submitBtn}>Submit</button>
             </form>
