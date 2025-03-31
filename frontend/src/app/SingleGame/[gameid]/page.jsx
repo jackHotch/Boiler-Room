@@ -85,6 +85,13 @@ const SingleGamePage = () => {
           </div>
           <div className={styles.reviews}>
             <strong>Steam Reviews</strong>
+            <span className={styles.numReviews}>
+              <strong>
+                Total Reviews: {game.total} <br></br>
+                Positive Reviews: {game.positive} <br></br>
+                Negative Reviews: {game.negative}
+              </strong>
+            </span>
             <br />
             <br />
             {(game.recommendation_description) + ` (${Math.round((game.positive / game.total) * 100)}%)`}
