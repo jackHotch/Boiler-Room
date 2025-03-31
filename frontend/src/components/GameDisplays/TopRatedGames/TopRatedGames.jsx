@@ -52,7 +52,8 @@ const TopRatedGames = () => {
   return (
     <div>
       <div className={styles.scrollContainer}>
-              <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
+        <h1 className={styles.sectionHeader}>Try These Highly Rated Titles</h1>
+        <p className={styles.subHeader}>Give them a chance, you already own them</p>
 
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (

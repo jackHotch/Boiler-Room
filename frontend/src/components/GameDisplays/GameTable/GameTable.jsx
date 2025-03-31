@@ -3,6 +3,17 @@
 import { useState, useEffect } from 'react'
 import styles from './GameTable.module.css'
 
+{
+  /* TO DO:
+  Finish Button for hiding games
+  
+  On Hide
+    - Query to set hide to 1 (hidden)
+    - Refresh the game table so any hidden
+    games are not shown  
+  */
+}
+
 const GameTable = ({ games }) => {
   const ROWS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = useState(1)
@@ -11,7 +22,7 @@ const GameTable = ({ games }) => {
   const [sortOrder, setSortOrder] = useState('asc')
 
   useEffect(() => {
-    sortGames('title')
+    sortGames('boil_score')
   }, [games])
 
   const totalPages = Math.ceil(filteredGames.length / ROWS_PER_PAGE)
@@ -118,11 +129,12 @@ const GameTable = ({ games }) => {
         <thead>
           <tr className={styles.headerRow}>
             <th className={styles.titleColumn}>Title</th>
-            <th>Rating</th>
-            <th>Playtime</th>
-            <th>Time to Beat</th>
             <th>Boil</th>
+            <th>Rating</th>
+            <th>hltb</th>
+            <th>Playtime</th>
             <th>Steam Page</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -140,12 +152,13 @@ const GameTable = ({ games }) => {
                   </a>
                 </div>
               </td>
+              <td> {game.boil_score ?? 'N/A'}</td>
               <td>{game.metacritic_score ?? 'N/A'}</td>
-              <td>
-                {game.hltb_score ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}
-              </td>
               <td>{game.hltb_score ? `${game.hltb_score} Hrs` : 'N/A'}</td>
-              <td>{game.boil_score ?? 'N/A'}</td>
+              <td>
+                {' '}
+                {game.total_played ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}
+              </td>
               <td>
                 <a href={`https://store.steampowered.com/app/${game.game_id}`}>
                   <img
@@ -154,6 +167,11 @@ const GameTable = ({ games }) => {
                     alt='Steam'
                   />
                 </a>
+              </td>
+              <td>
+                <div className={styles.hideButton}>
+                  <button>{game.hide}</button>
+                </div>
               </td>
             </tr>
           ))}

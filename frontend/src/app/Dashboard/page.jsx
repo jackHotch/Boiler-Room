@@ -26,17 +26,16 @@ export default function Dashboard() {
       )
       if (!response.data.steamId) {
         //redirect to error page if not logged in
-          window.location.href = '/LoginRedirect';
+        window.location.href = '/LoginRedirect'
       }
     } catch (error) {
-      window.location.href = '/LoginRedirect';
+      window.location.href = '/LoginRedirect'
     }
   }
 
   const [games, setGames] = useState([])
 
   useEffect(() => {
-
     const fetchGames = async () => {
       try {
         const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {
@@ -51,7 +50,7 @@ export default function Dashboard() {
     fetchGames()
   }, []) // Single dependency array
 
-  const featuredGames = games.slice(0,3)
+  const featuredGames = games.slice(0, 3)
 
   const featuredCategories = [
     { label: 'Quick Pick' },
@@ -65,7 +64,6 @@ export default function Dashboard() {
         <DashGameGallery games={featuredGames} categories={featuredCategories} />
       </section>
 
-      <hr />
       <section className={styles.JumpBackIn}>
         <OwnedGamesGallery />
       </section>

@@ -47,12 +47,12 @@ app.use(
   })
 )
 
-app.use(function(req, res, next) {
-  res.set('credentials', 'include');
-  res.set('Access-Control-Allow-Credentials', true);
-  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  next();
-});
+app.use(function (req, res, next) {
+  res.set('credentials', 'include')
+  res.set('Access-Control-Allow-Credentials', true)
+  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  next()
+})
 
 app.use(
   cors({
@@ -369,19 +369,18 @@ app.get('/steam/logout', (req, res) => {
 })
 
 // Return steam id if logged in, else null
-app.get("/steam/logininfo", async (req, res) => {
+app.get('/steam/logininfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId) {
-
     return res.json({
-      steamId: req.session.steamId
+      steamId: req.session.steamId,
     })
   } else {
     return res.json({
       steamId: null,
     })
   }
-});
+})
 
 // Used for fetching display card info after login
 app.get('/steam/getdisplayinfo', async (req, res) => {
@@ -502,7 +501,6 @@ app.get('/games/:gameid', async (req, res) => {
       let day = rows[0].released.split('-')[2]
       rows[0].released = `${monthMap[Number(month)]} ${day}, ${year}`
     }
-    //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ['Unknown']
     return res.status(200).json(rows[0])
   } catch (error) {
@@ -515,9 +513,9 @@ app.get('/games/:gameid', async (req, res) => {
 app.get('/usergames', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT ug."steam_id", g."game_id", ug."total_played", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
+      `SELECT ug."steam_id", g."game_id", ug."total_played", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score", ug. "hide"
       FROM "Games" g 
-      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
+      JOIN "User_Games" ug ON g."game_id" = ug."game_id"
       WHERE ug."steam_id" = $1 
       ORDER BY g."boil_score" DESC NULLS LAST`,
       [req.session.steamId]
@@ -608,7 +606,7 @@ app.get('/gamesByName', async (req, res) => {
     const { name } = req.query // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score"
+      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score", "boil_score"
        FROM "Games" 
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
