@@ -447,9 +447,12 @@ app.get('/games/:gameid', async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
-              "price", "metacritic_score", "released", "platform"  
-       FROM "Games" WHERE "game_id" = $1`,
+      `SELECT g."name", g."header_image", g."description", g."hltb_score", 
+       r."total", r."positive", r."negative", r."description" AS recommendation_description,
+       g."price", g."metacritic_score", g."released", g."platform"  
+      FROM "Games" g
+      LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
+      WHERE g."game_id" = $1`,
       [gameid]
     )
 
@@ -499,7 +502,7 @@ app.get('/games/:gameid', async (req, res) => {
       let day = rows[0].released.split('-')[2]
       rows[0].released = `${monthMap[Number(month)]} ${day}, ${year}`
     }
-    if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
+    //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ['Unknown']
     return res.status(200).json(rows[0])
   } catch (error) {
