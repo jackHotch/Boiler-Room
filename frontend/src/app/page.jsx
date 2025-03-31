@@ -27,11 +27,6 @@ const LandingPage = () => {
       }
     }
     fetchGames()
-    setTimeout(() => {
-      if (footerRef.current) {
-        footerRef.current.scrollIntoView({ behavior: 'smooth' })
-      }
-    }, 2000) // Delays scrolling by 2 seconds
   }, [])
 
   return (
