@@ -183,3 +183,23 @@
   width: 32px;
   height: auto;
 }
+
+.hideButton button{
+  border-radius: 8px;
+  font-size: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: fit-content;
+  height: fit-content;
+  background: var(--bg-primary);
+  transition: all .25s;
+}
+
+.hideButton button:hover{
+  background:var(--bg-content);
+  transition: all .1s;
+}
+
+.hideButton button:active{
+  background: var(--bg-light);
+}

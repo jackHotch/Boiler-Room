@@ -14,6 +14,13 @@ import styles from './GameTable.module.css'
   */
 }
 
+function hideGame(game_id) {
+  // Create route to set 'hide' to 1
+  console.log('Button clicked for: ' + game_id)
+
+  //refreshTable()
+}
+
 const GameTable = ({ games }) => {
   const ROWS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = useState(1)
@@ -64,7 +71,7 @@ const GameTable = ({ games }) => {
       return newOrder === 'asc' ? comparison : -comparison
     })
 
-    setSortBy(criteria)
+    setSortBy('boil')
     setSortOrder(newOrder)
     setFilteredGames(sortedGames)
     setCurrentPage(1)
@@ -170,7 +177,7 @@ const GameTable = ({ games }) => {
               </td>
               <td>
                 <div className={styles.hideButton}>
-                  <button>{game.hide}</button>
+                  <button onClick={() => hideGame(game.game_id)}>-</button>
                 </div>
               </td>
             </tr>
