@@ -598,10 +598,12 @@ app.get("/gamesByName", async (req, res) => {
 //Request to retrieve games based on filtering parameters
 app.get("/gamesByFilter", async (req, res) => {
   //Gets steamId for user reference in sql command
-  const steamId = req.query.steamid || req.session.steamId;
+  // const steamId = req.query.steamid || req.session.steamId;
+  // console.log("gameFiltering steamId:", steamId);
+  // console.log("Received Query Params:", req.query); // Debugging line
   try {
     //Dissects values returned from frontend
-    let { minBoilRating, minYear, maxYear, platform, genre, maxHLTB } =
+    let { minBoilRating, minYear, maxYear, platform, genre, maxHLTB, steamId } =
       req.query;
 
     // Ensure numbers are properly converted
@@ -611,27 +613,7 @@ app.get("/gamesByFilter", async (req, res) => {
     // Convert strings to arrays if needed
     genre = genre ? genre.split(",") : [];
     platform = platform ? platform.split(",") : [];
-    console.log(
-      "MinBR: ",
-      minBoilRating,
-      "is float4?:",
-      typeof minBoilRating,
-      typeof minYear,
-      ":",
-      minYear,
-      typeof maxYear,
-      ":",
-      maxYear,
-      typeof platform,
-      ":",
-      platform,
-      typeof genre,
-      ":",
-      genre,
-      typeof maxHLTB,
-      ":",
-      maxHLTB
-    );
+    platform = platform.map(Number); // Convert array of strings to numbers
 
     const { rows } = await pool.query(
       `SELECT g."name", g."header_image", g."description", g."boil_score", g."released"
@@ -639,7 +621,11 @@ app.get("/gamesByFilter", async (req, res) => {
        JOIN "Game_Genres" gg ON gg.games = g.game_id 
        JOIN "Genres" gen ON gen.id = gg.genres
        WHERE g.boil_score > $2
-         --AND g.platform = ANY($7::text[])
+         AND EXISTS (
+            SELECT 1
+            FROM unnest($7::smallint[]) AS user_platform
+            WHERE g.platform & user_platform <> 0
+          ) --Using bitwise and (&) for operation
          AND g.hltb_score <= $5
          AND gen.description = ANY ($1::text[]) --ARRAY['RPG','Action'] is the original that worked, ANY($1) might need ARRAY tweaking
          AND NOT EXISTS (
@@ -652,11 +638,47 @@ app.get("/gamesByFilter", async (req, res) => {
        HAVING COUNT(DISTINCT gen.description) = array_length($1::text[],1)
        ORDER BY g."boil_score" DESC
        LIMIT 3;`,
-      //[genre, minBoilRating, minYear, maxYear, platform, maxHLTB, steamId]
-      [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId]
+      [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId, platform]
     );
 
     res.json(rows);
+  } catch (error) {
+    console.error("Error fetching games:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//Request to retrieve user's most common game specs for default new game recommendations
+app.get("/userGameSpecs", async (req, res) => {
+  //Gets steamId for user reference in sql command
+  //const steamId = req.query.steamid || req.session.steamId;
+  //console.log("Steam id:", steamId);
+  const steamId = req.query;
+  try {
+    const { rows } = await pool.query(
+      `SELECT gen.description AS most_common_genre,
+          COUNT(gen.description) AS genre_count,
+          (SELECT g.platform
+              FROM "User_Games" ug2
+              JOIN "Games" g ON ug2.game_id = g.game_id
+              WHERE ug2.steam_id = $1
+              GROUP BY g.platform
+              ORDER BY COUNT(*) DESC
+              LIMIT 1
+          ) AS most_common_platform,
+          AVG(g.hltb_score) AS avg_hltb
+      FROM "User_Games" ug
+      JOIN "Game_Genres" gg ON ug.game_id = gg.games
+      JOIN "Genres" gen ON gg.genres = gen.id
+      JOIN "Games" g ON ug.game_id = g.game_id
+      WHERE ug.steam_id = $1
+      GROUP BY gen.description
+      ORDER BY genre_count DESC
+      LIMIT 1;`,
+      [steamId]
+    );
+
+    console.log(rows);
   } catch (error) {
     console.error("Error fetching games:", error);
     res.status(500).json({ error: "Internal Server Error" });

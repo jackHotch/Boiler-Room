@@ -1,18 +1,78 @@
 // page.jsx
 "use client"  // Add this at the top
 import styles from './NewGameRecs.module.css'
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import axios from 'axios'
 
 export default function GameRecommendation() {
   
   const [gameList, setGameList] = useState([]); // Store fetched games
-  
+  const [userStats, setUserStats] = useState([]); //Stores User default preferences
+  let steamId; //Stores user's steamId
   const dbGenres = ["Action","Strategy","RPG","Casual","Racing","Sports","Indie","Adventure",
     "Simulation","Massively Multiplayer","Free To Play","Accounting","Animation & Modeling",
     "Audio Production","Design & Illustration","Education","Photo Editing","Software Training",
-    "Utilities","Video Production","Web Publishing","Game Development","Early Acess","Violent","Gore"]
+    "Utilities","Video Production","Web Publishing","Game Development","Early Acess","Violent","Gore"];
   
+  //User game specs (avg game length, genre, platform)
+  useEffect(() => {
+    console.log("Retrieving game Specs");
+    const fetchUserStats = async () => {
+      try {
+        steamId = await axios.get(process.env.NEXT_PUBLIC_BACKEND + "/logininfo");
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND + "/userGameSpecs", {steamId}
+        );
+        console.log("Retrieved game specs");
+        console.log("Game Specs response:", response);
+        setUserStats(response.data);
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      }
+    };
+
+    fetchUserStats();
+  }, []); // Runs once when the component mounts
+
+
+  // Fetch recommended games after user stats are loaded
+  useEffect(() => {
+    
+    if (userStats) {
+      console.log("Fetching recommendations");
+      fetchRecommendedGames(userStats);
+    }else{
+      console.log("no userStats");
+    }
+  }, [userStats]); // Runs when userStats is set
+
+  const fetchRecommendedGames = async (stats) => {
+    const params = {
+      minBoilRating: -1, // Default value
+      minYear: "1970-01-01",
+      maxYear: "2037-12-31",
+      platform: [stats.most_common_platform], // Use the most played platform
+      genre: [stats.most_common_genre], // Use the most played genre
+      maxHLTB: (Math.round(stats.avg_hltb) + 15) || "10000", // Default if no data, game length is maxed to 15 hours plus the average
+      steamId
+    };
+
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + "/gamesByFilter",
+        { params }
+      );
+      console.log("Fetched recommendations");
+      console.log("Full API Response:", response);
+      setGameList(response.data);
+      console.log("Updated GameList: ",gameList);
+    } catch (error) {
+      console.error("Error fetching recommended games:", error);
+    }
+  };
+
+
+    //Submitting filtering options, changes games recommended
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -25,10 +85,7 @@ export default function GameRecommendation() {
       event.target.option2.checked ? '1' : null,
     ].filter(option => option !== null);
     let maxHLTB = parseInt(event.target.maxHLTB.value, 10) || 10000;
-    let genre = Array.from(event.target.genres.selectedOptions, option => option.value);
-
-
-
+    let genre = Array.from(event.target.genres.selectedOptions, option => option.value); 
     if (platform.length === 0) platform = ["4", "2", "1"];
 
     try{
@@ -40,7 +97,8 @@ export default function GameRecommendation() {
           maxYear, 
           platform: platform.join(","), 
           genre: genre.join(","), 
-          maxHLTB} 
+          maxHLTB,
+          steamId} 
         }
       )
 
@@ -49,10 +107,6 @@ export default function GameRecommendation() {
       if (!contentType || !contentType.includes('application/json')) {
         throw new Error('Server did not return JSON')
       }
-
-      //Get top 3 by boil rating - ordered by BR in results
-      //Original 3 (without selecting anything) will have 3 games based on what user doesn't own,
-      // we'll take a look at the release dates, platforms, genres, and maxhltb
 
       setGameList(response.data); // Store game list in state
 
@@ -130,7 +184,7 @@ export default function GameRecommendation() {
               <button type="submit" className={styles.submitBtn}>Submit</button>
             </form>
           </div> 
-        <div className={styles.sectionTitle}>Recommended Games</div>
+        <div className={styles.sectionTitle}>Handpicked For You</div>
         <div className={styles.gamesGrid}>
           
           {/* Recommended games */}
