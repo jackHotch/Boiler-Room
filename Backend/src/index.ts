@@ -754,6 +754,41 @@ app.put('/themepreference', async (req, res) => {
   }
 })
 
+
+app.put('/hidegame', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId;
+  console.log('steamId:', steamId); // Debug log
+  let hide = req.body.hide;
+  const gameId = req.body.gameId;
+  console.log('hide:', hide, 'gameId:', gameId);
+
+  if (!steamId) {
+    return res.status(401).json({ error: 'No Steam ID provided' });
+  }
+
+  if (hide !== 1 && hide !== 0) {
+    return res.status(400).json({ error: 'Invalid hide value, must be 0 or 1' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE "User_Games" SET hide = $1 WHERE steam_id = $2 AND game_id = $3',
+      [hide, steamId, gameId]
+    );
+
+    console.log('Rows affected:', result.rowCount); // Debug log
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'No matching game found for this user' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Game visibility updated' });
+  } catch (err) {
+    console.error('Database error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export async function checkAccount(steamId) {
   let retVal = 0
   const KEY = process.env.STEAM_API_KEY
