@@ -694,8 +694,7 @@ export async function insertGames(steamId: bigint) {
 }
 
 app.get('/friendsListInfo', async (req, res) => {
-  const steamId = req.session.steamId
-  console.log('JackSteamId ' + steamId)
+  const steamId = req.query.steamId || req.session.steamId
   //const steamId = BigInt("76561199154033472"); //me
   // const steamId = BigInt("76561199509790498"); //Jack
   try {
