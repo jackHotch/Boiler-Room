@@ -6,7 +6,7 @@ import DashGameGallery from '@/components/GameDisplays/DashGameGallery/DashGameG
 import GameTable from '@/components/GameDisplays/GameTable/GameTable'
 import OwnedGamesGallery from '@/components/GameDisplays/OwnedGamesGallery/OwnedGamesGallery'
 import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames'
-import axios, { getAdapter } from 'axios'
+import axios from 'axios'
 
 export default function Dashboard() {
   let acclaimedClassic
@@ -14,7 +14,6 @@ export default function Dashboard() {
   let hiddenGem
 
   //Function to check for login and redirect
-  //to error page if not logged in
   if (!process.env.JEST_WORKER_ID) {
     checkLogin()
   }
@@ -25,7 +24,6 @@ export default function Dashboard() {
         { withCredentials: true }
       )
       if (!response.data.steamId) {
-        //redirect to error page if not logged in
         window.location.href = '/LoginRedirect'
       }
     } catch (error) {
@@ -35,18 +33,19 @@ export default function Dashboard() {
 
   const [games, setGames] = useState([])
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {
-          withCredentials: true,
-        }) // Use the backend port
-        const games = response.data
-        setGames(games)
-      } catch (error) {
-        console.error('Error fetching game images:', error)
-      }
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + '/usergames',
+        { withCredentials: true }
+      )
+      setGames(response.data)
+    } catch (error) {
+      console.error('Error fetching game images:', error)
     }
+  }
+
+  useEffect(() => {
     fetchGames()
   }, []) // Single dependency array
 
@@ -71,8 +70,10 @@ export default function Dashboard() {
       <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
+
       <section className={styles.GameTable}>
-        <GameTable games={games} /> {/*change value of games when available*/}
+        {/* ✅ Pass fetchGames correctly */}
+        <GameTable games={games} onGamesUpdate={fetchGames} />
       </section>
     </div>
   )
