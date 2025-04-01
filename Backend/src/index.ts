@@ -694,15 +694,16 @@ export async function insertGames(steamId: bigint) {
 }
 
 app.get('/friendsListInfo', async (req, res) => {
-  //const steamId = req.query.steamId || req.session.steamId
+  const steamId = req.session.steamId
+  console.log('JackSteamId ' + steamId)
   //const steamId = BigInt("76561199154033472"); //me
-  const steamId = BigInt("76561199509790498"); //Jack
+  // const steamId = BigInt("76561199509790498"); //Jack
   try {
     const forced = req.query.forced === 'true';
     const result = await loadFriends(steamId, forced);
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error in /testFriends:', error);
+    console.error('Error in /friendsListInfo:', error);
     res.status(500).json({ error: 'Failed to load friends' });
   }
 });
@@ -967,31 +968,37 @@ export async function getFinalResults(steamId: bigint) {
   const finalQuery = `
     WITH Friends AS (
       SELECT 
-        CASE 
-            WHEN user1 = $1 THEN user2
-            ELSE user1
-            END AS friend_steam_id
-        FROM "User_Relations"
-        WHERE user1 = $1 OR user2 = $1
+          CASE 
+              WHEN user1 = $1 THEN user2
+              ELSE user1
+          END AS friend_steam_id
+      FROM "User_Relations"
+      WHERE user1 = $1 OR user2 = $1
+    ),
+    FriendProfiles AS (
+        SELECT 
+            f.friend_steam_id,
+            p.username
+        FROM Friends f
+        JOIN "Profiles" p ON f.friend_steam_id = p.steam_id
     ),
     RecentGames AS (
         SELECT 
-          ug.steam_id,
-          ug.game_id,
-          ug.last_2_weeks,
-          ROW_NUMBER() OVER (PARTITION BY ug.steam_id ORDER BY ug.last_2_weeks DESC) AS game_rank
+            ug.steam_id,
+            ug.game_id,
+            ug.last_2_weeks,
+            ROW_NUMBER() OVER (PARTITION BY ug.steam_id ORDER BY ug.last_2_weeks DESC) AS game_rank
         FROM "User_Games" ug
         JOIN Friends f ON ug.steam_id = f.friend_steam_id
         WHERE ug.recency = 1
     )
     SELECT 
-      p.username,
-      rg.game_id,
-      rg.last_2_weeks
-    FROM RecentGames rg
-    JOIN "Profiles" p ON rg.steam_id = p.steam_id
-    WHERE rg.game_rank <= 3
-    ORDER BY rg.steam_id, rg.game_rank;
+        fp.username,
+        COALESCE(rg.game_id, -1) AS game_id,
+        COALESCE(rg.last_2_weeks, 0) AS last_2_weeks
+    FROM FriendProfiles fp
+    LEFT JOIN RecentGames rg ON fp.friend_steam_id = rg.steam_id AND rg.game_rank <= 3
+    ORDER BY fp.friend_steam_id, COALESCE(rg.game_rank, 1);
   `; //big long query that gets all of the recently played games
 
   const finalResult = await pool.query(finalQuery, [steamId]);

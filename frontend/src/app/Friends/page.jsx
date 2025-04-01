@@ -27,134 +27,93 @@ export default function Friends() {
   }
 
   const [friendsInfo, setFriendsInfo] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [loggedIn, setLoggedIn] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  async function checkIfUserLoggedIn() {
-    try {
-      await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary', {
-        withCredentials: true,
-      })
-      return true
-    } catch (err) {
-      return false
-    }
-  }
-
-  async function fetchFriendsList() {
-    try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND + '/steam/friendsList',
-        {
-          withCredentials: true,
-        }
-      )
-
-      return response.data
-    } catch (error) {
-      console.error('Error fetching Steam ID:', error)
-    }
-  }
-
-  async function fetchFriendsRecentGames(friendsList) {
-    const friendsInfoList = []
-    for (const friend of friendsList) {
-      try {
-        const username = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary',
-          {
-            withCredentials: true,
-            params: {
-              steamid: friend.steamid,
-            },
-          }
-        )
-
-        const recentGames = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/recentGames',
-          {
-            withCredentials: true,
-            params: {
-              steamid: friend.steamid,
-            },
-          }
-        )
-
-        friendsInfoList.push({
-          username: username.data.username,
-          recentGames: recentGames.data,
-        })
-      } catch (error) {
-        console.error('Error Fetching Friends Info:', error)
-      } finally {
-        setLoading(false)
+  function formatData(data) {
+    return data.reduce((acc, { username, game_id, last_2_weeks }) => {
+      let user = acc.find((user) => user.username === username)
+      if (!user) {
+        user = { username: username, games: [] }
+        acc.push(user)
       }
-    }
-    return friendsInfoList
+
+      user.games.push({
+        gameId: parseInt(game_id, 10),
+        playtime: parseInt(last_2_weeks, 10),
+      })
+
+      return acc
+    }, [])
   }
 
   useEffect(() => {
     async function fetchData() {
-      if (await checkIfUserLoggedIn()) {
-        const friendsList = await fetchFriendsList()
-        const friendsInfoList = await fetchFriendsRecentGames(friendsList)
-        setFriendsInfo(friendsInfoList)
-      } else {
-        setLoggedIn(false)
-      }
+      setLoading(true)
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + '/friendsListInfo',
+        {
+          withCredentials: true,
+        }
+      )
+      setLoading(false)
+      const formattedData = formatData(response.data)
+      console.log(formattedData)
+      setFriendsInfo(formattedData)
     }
 
     fetchData()
   }, [])
 
-  if (!loggedIn) {
-    return <h1 className={styles.title}>Not Logged In</h1>
-  }
-
   return (
     <div className={styles.container}>
       <h1>Your Friends</h1>
       <div className={styles.list_of_friends}>
-        {loading
-          ? 'Fetching Friends Data...'
-          : friendsInfo?.map((friend, key) => {
-              return (
-                <div className={styles.friend_info} key={key}>
-                  <h4 className={styles.username}>{friend.username}</h4>
+        {loading ? (
+          <div className={styles.loading_message}>
+            <span>Please wait while we fetch your friends data</span>
+            <span>This could take a while if it's your first time visiting</span>
+          </div>
+        ) : (
+          friendsInfo?.map((friend, key) => {
+            return (
+              <div className={styles.friend_info} key={key}>
+                <h4 className={styles.username}>{friend.username}</h4>
 
+                {friend.games[0].gameId != -1 && (
                   <span className={styles.recently_played_label}>
                     Recently Played Games
                   </span>
-                  <div className={styles.recent_game_list}>
-                    {friendsInfo.recentGames?.length != 0 ? (
-                      friend.recentGames?.map((game, key) => {
-                        return (
-                          <div className={styles.recent_game} key={key}>
-                            <Link href={`SingleGame/${game.appid}`}>
-                              <img
-                                className={styles.image}
-                                src={
-                                  'https://steamcdn-a.akamaihd.net/steam/apps/' +
-                                  game.appid +
-                                  '/library_600x900_2x.jpg'
-                                }
-                                alt={game.name}
-                              />
-                            </Link>
-                            <span>
-                              {Math.round(game.playtime_2weeks / 60)} hours in last 2
-                              weeks
-                            </span>
-                          </div>
-                        )
-                      })
+                )}
+                <div className={styles.recent_game_list}>
+                  {friend.games?.map((game, key) => {
+                    return game.gameId == -1 ? (
+                      <span className={styles.no_recent_games_message}>
+                        Your friend hasn't played any games recently
+                      </span>
                     ) : (
-                      <span>No Games Played</span>
-                    )}
-                  </div>
+                      <div className={styles.recent_game} key={key}>
+                        <Link href={`SingleGame/${game.gameId}`}>
+                          <img
+                            className={styles.image}
+                            src={
+                              'https://steamcdn-a.akamaihd.net/steam/apps/' +
+                              game.gameId +
+                              '/library_600x900_2x.jpg'
+                            }
+                            alt='Title'
+                          />
+                        </Link>
+                        <span>
+                          {Math.round(game.playtime / 60)} hours in last 2 weeks
+                        </span>
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
+              </div>
+            )
+          })
+        )}
       </div>
     </div>
   )

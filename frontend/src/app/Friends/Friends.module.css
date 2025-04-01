@@ -58,3 +58,15 @@
   margin-bottom: 8px;
   border-radius: 10px;
 }
+
+.no_recent_games_message {
+  color: var(--text-secondary);
+}
+
+.loading_message {
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
