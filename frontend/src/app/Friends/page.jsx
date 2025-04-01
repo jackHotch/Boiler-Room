@@ -4,6 +4,7 @@ import styles from './Friends.module.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
+import { FriendsRecentGames } from '@/components/GameDisplays/FriendsRecentGames/FriendsRecentGames'
 
 export default function Friends() {
   //Function to check for login and redirect
@@ -19,10 +20,10 @@ export default function Friends() {
       )
       if (!response.data.steamId) {
         //redirect to error page if not logged in
-          window.location.href = '/LoginRedirect';
+        window.location.href = '/LoginRedirect'
       }
     } catch (error) {
-      window.location.href = '/LoginRedirect';
+      window.location.href = '/LoginRedirect'
     }
   }
 
@@ -30,20 +31,24 @@ export default function Friends() {
   const [loading, setLoading] = useState(false)
 
   function formatData(data) {
-    return data.reduce((acc, { username, game_id, last_2_weeks }) => {
-      let user = acc.find((user) => user.username === username)
-      if (!user) {
-        user = { username: username, games: [] }
-        acc.push(user)
-      }
+    return data.reduce(
+      (acc, { username, game_id, last_2_weeks, title, friend_steam_id }) => {
+        let user = acc.find((user) => user.username === username)
+        if (!user) {
+          user = { username: username, steamId: friend_steam_id, games: [] }
+          acc.push(user)
+        }
 
-      user.games.push({
-        gameId: parseInt(game_id, 10),
-        playtime: parseInt(last_2_weeks, 10),
-      })
+        user.games.push({
+          gameId: parseInt(game_id),
+          playtime: parseInt(last_2_weeks),
+          title: title,
+        })
 
-      return acc
-    }, [])
+        return acc
+      },
+      []
+    )
   }
 
   useEffect(() => {
@@ -57,7 +62,6 @@ export default function Friends() {
       )
       setLoading(false)
       const formattedData = formatData(response.data)
-      console.log(formattedData)
       setFriendsInfo(formattedData)
     }
 
@@ -77,38 +81,16 @@ export default function Friends() {
           friendsInfo?.map((friend, key) => {
             return (
               <div className={styles.friend_info} key={key}>
-                <h4 className={styles.username}>{friend.username}</h4>
+                <a
+                  className={styles.friend_steam_link}
+                  target='_blank'
+                  href={`https://steamcommunity.com/profiles/${friend.steamId}`}
+                >
+                  <h4 className={styles.username}>{friend.username}</h4>
+                </a>
 
-                {friend.games[0].gameId != -1 && (
-                  <span className={styles.recently_played_label}>
-                    Recently Played Games
-                  </span>
-                )}
                 <div className={styles.recent_game_list}>
-                  {friend.games?.map((game, key) => {
-                    return game.gameId == -1 ? (
-                      <span className={styles.no_recent_games_message}>
-                        Your friend hasn't played any games recently
-                      </span>
-                    ) : (
-                      <div className={styles.recent_game} key={key}>
-                        <Link href={`SingleGame/${game.gameId}`}>
-                          <img
-                            className={styles.image}
-                            src={
-                              'https://steamcdn-a.akamaihd.net/steam/apps/' +
-                              game.gameId +
-                              '/library_600x900_2x.jpg'
-                            }
-                            alt='Title'
-                          />
-                        </Link>
-                        <span>
-                          {Math.round(game.playtime / 60)} hours in last 2 weeks
-                        </span>
-                      </div>
-                    )
-                  })}
+                  <FriendsRecentGames games={friend.games} />
                 </div>
               </div>
             )

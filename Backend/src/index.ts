@@ -992,11 +992,14 @@ export async function getFinalResults(steamId: bigint) {
         WHERE ug.recency = 1
     )
     SELECT 
+        fp.friend_steam_id,
         fp.username,
         COALESCE(rg.game_id, -1) AS game_id,
-        COALESCE(rg.last_2_weeks, 0) AS last_2_weeks
+        COALESCE(rg.last_2_weeks, 0) AS last_2_weeks,
+        g.name AS title
     FROM FriendProfiles fp
     LEFT JOIN RecentGames rg ON fp.friend_steam_id = rg.steam_id AND rg.game_rank <= 3
+    LEFT JOIN "Games" g ON rg.game_id = g.game_id
     ORDER BY fp.friend_steam_id, COALESCE(rg.game_rank, 1);
   `; //big long query that gets all of the recently played games
 
