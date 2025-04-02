@@ -4,6 +4,7 @@ import styles from './Home.module.css'
 import axios from 'axios'
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle'
 import { CookieMessage } from '@/components/CookieMessage/CookieMessage'
+import { Searchbar } from '@/components/Navbar/Searchbar/Searchbar'
 
 const LandingPage = () => {
   const [games, setGames] = useState([])
@@ -37,6 +38,7 @@ const LandingPage = () => {
             <img src='BRLogo.png' width={250} />
             <nav>
               <ul className={styles.navList}>
+              <Searchbar />
                 <li>
                   <ThemeToggle />
                 </li>
