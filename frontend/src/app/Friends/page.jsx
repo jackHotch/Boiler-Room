@@ -76,6 +76,7 @@ export default function Friends() {
           <div className={styles.loading_message}>
             <span>Please wait while we fetch your friends data</span>
             <span>This could take a while if it's your first time visiting</span>
+            <span>!!Please don't refresh!!</span>
           </div>
         ) : (
           friendsInfo?.map((friend, key) => {
