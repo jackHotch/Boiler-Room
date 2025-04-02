@@ -86,28 +86,33 @@
   opacity: 1; /* Show overlay on hover */
 }
 
-.sectionHeader{
+.sectionHeader {
+  display: inline-block;
+  text-align: start;
   font-size: 35px;
-  text-align: left;
   padding: 30px;
-  padding-bottom: 0;
-  padding-top: 0;
+  padding-top: 15px;
+  margin: 15px;
   margin-bottom: 0;
   border-radius: 15px;
+  align-self: flex-start;
+  font-weight: 700;
   color: var(--text-bw);
 }
 
 .subHeader{
+  display: inline-flex;
   font-size: 15px;
   text-align: left;
-  padding: 35px;
   padding-bottom: 0;
   padding-top: 0;
   border-radius: 15px;
   color: var(--text-bw);
   font-style: italic;
   opacity: .5;
+  text-align: right;
 }
+
 
 .hoursPlayed{
   position: absolute;

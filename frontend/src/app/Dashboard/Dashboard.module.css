@@ -9,7 +9,6 @@
 .JumpBackIn {
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: 25px;
     width: 100%-padding;
 }
@@ -17,7 +16,6 @@
 .TopRatedGames {
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: 25px;
     width: 100%-padding;
 }

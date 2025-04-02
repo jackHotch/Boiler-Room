@@ -1,14 +1,14 @@
 .scrollContainer {
   margin: 0 auto;
-  /* Centers within parent */
+    /* Centers within parent */
   position: relative;
   width: 100%;
   padding: 20px 0;
   background-color: var(--bg-dark);
   border-radius: 15px;
   max-width: 1400px;
-  padding-top: 2px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding-top: 2px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .gridContainer {
@@ -20,7 +20,7 @@
 }
 
 .imageWrapper {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
   position: relative;
   width: fit-content;
@@ -92,20 +92,24 @@
 }
 
 .sectionHeader {
+  display: inline-block;
+  text-align: start;
   font-size: 35px;
-  text-align: left;
   padding: 30px;
-  padding-bottom: 0;
-  padding-top: 0;
+  padding-top: 15px;
+  margin: 15px;
   margin-bottom: 0;
   border-radius: 15px;
+  align-self: flex-start;
+  font-weight: 700;
   color: var(--text-bw);
 }
 
 .subHeader{
+  vertical-align: center;
+  display: inline-block;
   font-size: 15px;
   text-align: left;
-  padding: 35px;
   padding-bottom: 0;
   padding-top: 0;
   border-radius: 15px;
