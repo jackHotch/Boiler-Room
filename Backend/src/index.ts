@@ -635,6 +635,8 @@ export async function insertGames(steamId: bigint) {
       }
     );
 
+    await delay();
+
     const games = response.data.response.games; // the games we get are saved here
 
     if (!games || games.length === 0) {
@@ -1020,9 +1022,9 @@ export async function loadFriends(steamId: bigint, forced: boolean = false) {
     await fetchAndStoreProfiles(userIdsToCheck);
     console.log("Creating relations")
     await updateUserRelations(steamId.toString(), userIdsToCheck);
-    //console.log("Looking at their games")
+    console.log("Looking at their games")
     await processAndStoreGames(userIdsToCheck);
-    //console.log("Cleaning up")
+    console.log("Cleaning up")
     return await getFinalResults(steamId);
   } catch (error) { 
     console.error('Error in loadFriends:', error);
