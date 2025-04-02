@@ -29,33 +29,61 @@ export const testFriendsList = [
   }
 ]
 
-export const sqlResult = [
+export const test1SqlResult = [
   {
+    "friend_steam_id": "2",
     "username": "test2",
     "game_id": "30",
-    "last_2_weeks": "30"
+    "last_2_weeks": "30",
+    "title": "Day of Defeat"
   },
   {
+    "friend_steam_id": "2",
     "username": "test2",
     "game_id": "20",
-    "last_2_weeks": "20"
+    "last_2_weeks": "20",
+    "title": "Team Fortress Classic"
   },
   {
+    "friend_steam_id": "2",
     "username": "test2",
     "game_id": "10",
-    "last_2_weeks": "10"
+    "last_2_weeks": "10",
+    "title": "Counter-Strike"
   },
   {
+    "friend_steam_id": "3",
     "username": "test3",
     "game_id": "20",
-    "last_2_weeks": "20"
+    "last_2_weeks": "20",
+    "title": "Team Fortress Classic"
   },
   {
+    "friend_steam_id": "3",
     "username": "test3",
     "game_id": "10",
-    "last_2_weeks": "10"
+    "last_2_weeks": "10",
+    "title": "Counter-Strike"
+  },
+  {
+    "friend_steam_id": "4",
+    "username": "test4",
+    "game_id": "-1",
+    "last_2_weeks": "0",
+    "title": null
   }
 ]
+
+export const test4SqlResult = [
+  {
+    "friend_steam_id": "1",
+    "username": "test1",
+    "game_id": "-1",
+    "last_2_weeks": "0",
+    "title": null
+  }
+]
+
 export const testRecentGames = [
   {
       "appid": 2669320,
