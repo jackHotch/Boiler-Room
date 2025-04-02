@@ -32,6 +32,9 @@ const SingleGamePage = () => {
       fetchGame()
     }
   }, [gameid])
+  // Ensure that game is not null before accessing its properties 
+  let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0;
+
 
   // Circular Progress Function
   const getStrokeDashOffset = (score) => {
@@ -83,18 +86,11 @@ const SingleGamePage = () => {
           <div className={styles.gameSummary}>
             {game.description ? game.description : 'No description available.'}
           </div>
-          <div className={styles.reviews}>
-            <strong>Steam Reviews</strong>
-            <span className={styles.numReviews}>
-              <strong>
-                Total Reviews: {game.total} <br></br>
-                Positive Reviews: {game.positive} <br></br>
-                Negative Reviews: {game.negative}
-              </strong>
-            </span>
+          <div className={styles.platforms}>
+            <strong>Platforms</strong>
             <br />
             <br />
-            {(game.recommendation_description) + ` (${Math.round((game.positive / game.total) * 100)}%)`}
+            {game.platform ? game.platform : 'N/A'}
           </div>
           <div className={styles.hltb_score}>
             <strong>How Long to Beat</strong>
@@ -108,11 +104,38 @@ const SingleGamePage = () => {
             <br />
             {game.hltb_score ? `${Math.floor(game.hltb_score)} hours` : 'N/A'}
           </div>
-          <div className={styles.platforms}>
-            <strong>Platforms</strong>
-            <br />
-            <br />
-            {game.platform ? game.platform : 'N/A'}
+          <div className={styles.reviews}>
+            <strong>Steam Reviews</strong>
+            <br></br>
+            <br></br>
+            <span className={styles.numReviews}>
+              <strong>
+                Total Reviews: {game.total} <br></br>
+                Positive Reviews: {game.positive} <br></br>
+                Negative Reviews: {game.negative}
+              </strong>
+            </span>
+            
+            <div className={styles.circleContainer}>
+              <svg className={styles.progressRing} width='120' height='120'>
+                <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
+                <circle
+                  className={styles.progressRingCircle}
+                  cx='60'
+                  cy='60'
+                  r='50'
+                  style={{
+                    strokeDasharray: 314,
+                    strokeDashoffset: getStrokeDashOffset(reviewRatio),
+                    transition: 'stroke-dashoffset 0.6s ease-in-out',
+                  }}
+                ></circle>
+              </svg>
+              <span className={styles.progressText}>
+                {reviewRatio ? `${reviewRatio}%` : 'N/A'}
+              </span>
+            </div>
+            {(game.recommendation_description)}
           </div>
           <div className={styles.metacritic_score}>
             <strong>Metacritic Score</strong>
