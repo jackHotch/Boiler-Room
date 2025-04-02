@@ -35,12 +35,18 @@ const SingleGamePage = () => {
   // Ensure that game is not null before accessing its properties 
   let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0;
 
-
   // Circular Progress Function
   const getStrokeDashOffset = (score) => {
     const radius = 50
     const circumference = 2 * Math.PI * radius
     return circumference - (score / 100) * circumference
+  }
+
+  // Added a Function to determine the color of the progress bar
+  const getStrokeColor = (reviewRatio) =>{
+      if (reviewRatio >= 70) return 'Green';
+      if (reviewRatio >= 40) return 'Yellow';
+      return 'Red';
   }
 
   return error ? (
@@ -127,7 +133,7 @@ const SingleGamePage = () => {
                   style={{
                     strokeDasharray: 314,
                     strokeDashoffset: getStrokeDashOffset(reviewRatio),
-                    transition: 'stroke-dashoffset 0.6s ease-in-out',
+                    stroke: getStrokeColor(reviewRatio),
                   }}
                 ></circle>
               </svg>
@@ -152,7 +158,7 @@ const SingleGamePage = () => {
                   style={{
                     strokeDasharray: 314,
                     strokeDashoffset: getStrokeDashOffset(game.metacritic_score),
-                    transition: 'stroke-dashoffset 0.6s ease-in-out',
+                    stroke: getStrokeColor(reviewRatio),
                   }}
                 ></circle>
               </svg>

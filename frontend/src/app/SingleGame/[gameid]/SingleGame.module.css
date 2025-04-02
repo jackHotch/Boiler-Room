@@ -275,8 +275,10 @@
 }
 
 .progressRingCircle {
-  stroke: #4caf50; /* Default color */
+  /*stroke: #4caf50; /* Default color */
   stroke-dasharray: 314; /* 2 * PI * r (r=50) */
+  transition: stroke 0.6s ease-in-out, stroke-dashoffset 0.6s ease-in-out;
+  
 }
 
 .progressText {
