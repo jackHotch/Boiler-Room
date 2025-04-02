@@ -354,10 +354,6 @@ test('updateUserRelations', async () => {
   ]);
 });
 
-test('processAndStoreGames', async () => {
-  //i dont think that this is testable
-});
-
 test('getFinalResults', async () => {
   const results1 = await getFinalResults(BigInt(1));
   expect(results1).toEqual(test1SqlResult)
