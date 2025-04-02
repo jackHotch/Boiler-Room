@@ -16,7 +16,11 @@
   gap: 16px;
 }
 
-.logo, .links {
+.logo {
+  filter: var(--logo-bw);
+}
+
+.links {
   display: flex;
   justify-content: center;
   align-items: center;

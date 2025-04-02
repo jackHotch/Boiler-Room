@@ -10,6 +10,7 @@
   --danger: #ff4d4d;
   --danger-secondary: #cc0000;
   --text-bw: #000000;
+  --logo-bw: invert(100%);
 }
 
 .dark {
@@ -24,6 +25,7 @@
   --danger: #ff4d4d;
   --danger-secondary: #cc0000;
   --text-bw: #ffffff;
+  --logo-bw: invert(0%);
 }
 
 body {
