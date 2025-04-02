@@ -275,6 +275,8 @@ export async function insertProfile(steamId: bigint) {
       }
     )
 
+    await delay();
+
     const avatar = response.data.response.players[0]?.avatarhash //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname
 
@@ -313,6 +315,8 @@ app.get('/steam/playersummary', async (req, res) => {
       }
     )
 
+    await delay();
+
     const username = response.data.response.players[0]?.personaname
     const userImage = response.data.response.players[0]?.avatarfull
 
@@ -345,6 +349,8 @@ app.get('/steam/recentgames', async (req, res) => {
       }
     )
 
+    await delay();
+    
     const games = data.response.games?.slice(0, 3) || []
     res.status(200).send(games)
   } catch (error) {
@@ -407,6 +413,7 @@ app.get('/steam/friendsList', async (req, res) => {
     const data = await axios.get(
       `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
     )
+    await delay();
     return res.status(200).json(data.data.friendslist.friends)
   } else {
     console.log('no steam id')
@@ -560,7 +567,7 @@ app.get('/ownedGames', async (req, res) => {
         },
       }
     )
-
+    await delay();
     const data = gameResponse.data
     if (!data.response || !data.response.games) {
       return res.status(404).json({ error: 'No owned games found for this user.' })
@@ -1091,6 +1098,8 @@ export async function checkAccount(steamId) {
       }
     )
 
+    await delay();
+
     if (Object.keys(gameResponse.data.response).length > 0) {
       retVal += 2
     }
@@ -1107,6 +1116,8 @@ export async function checkAccount(steamId) {
       }
     )
 
+    await delay();
+    
     if (Object.keys(friendsResponse.data).length > 0) {
       retVal += 1
     }
