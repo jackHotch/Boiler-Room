@@ -1,9 +1,14 @@
 .container {
-    color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .otherGames {
-    padding: 50px 20px;
-    text-align: center;
-    margin-bottom: 0px;
+  padding: 50px 20px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.num_results {
+  position: absolute;
+  left: 0px;
 }

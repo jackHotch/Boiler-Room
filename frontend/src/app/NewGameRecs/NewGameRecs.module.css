@@ -10,7 +10,7 @@
 
 .sectionTitle {
   font-size: 30px;
-  margin-bottom: 20px;
+  margin-top: 30px;
 }
 
 .gamesGrid {
@@ -101,15 +101,6 @@
   gap: 10px;
 }
 
-.genreDropdown select {
-  padding: 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background-color: #5e5e5e;
-  color: var(--text-primary);
-  font-size: 14px;
-}
-
 .submitBtn {
   padding: 10px 20px;
   background-color: var(--bg-accent);
@@ -123,4 +114,42 @@
 
 .submitBtn:hover {
   background-color: var(--primary-hover);
+}
+
+/* 🔹 Custom select styles for React-Select */
+.customSelect {
+  width: 100%;
+  color: white;
+}
+
+/* 🔹 Apply global styles within a local class */
+.customSelect :global(.reactSelect__control) {
+  background-color: #5e5e5e !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 5px !important;
+  font-size: 14px !important;
+}
+
+/* 🔹 Dropdown menu styles */
+.customSelect :global(.reactSelect__menu) {
+  background-color: #5e5e5e !important;
+  border: 1px solid var(--border-color) !important;
+  width: 100% !important;
+}
+
+/* 🔹 Style each option */
+.customSelect :global(.reactSelect__option) {
+  background-color: #222 !important;
+  font-size: 14px !important;
+  padding: 8px !important;
+}
+
+/* 🔹 Selected option */
+.customSelect :global(.reactSelect__option--is-selected) {
+  background-color: var(--primary-color) !important;
+}
+
+/* 🔹 Focused option */
+.customSelect :global(.reactSelect__option--is-focused) {
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }

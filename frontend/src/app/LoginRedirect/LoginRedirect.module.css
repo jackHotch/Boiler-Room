@@ -32,6 +32,7 @@
 
 .hero {
     position: relative;
+    background: url('https://via.placeholder.com/1500x800') center/cover;
     height: 70vh;
     display: flex;
     align-items: center;
@@ -62,13 +63,25 @@
     margin-bottom: 20px;
 }
 
-.exploreButton {
+.loginButton {
     background-color: var(--bg-accent);
     color: var(--text-primary);
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 18px;
+    margin: 10px;
+}
+
+.landingButton {
+    background-color: var(--bg-accent-secondary);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 10px;
+
 }
 
 .exploreButton:hover {

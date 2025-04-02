@@ -5,6 +5,7 @@ const session = require("express-session");
 import axios from "axios";
 import dotenv from "dotenv";
 import puppeteer from "puppeteer";
+import { release } from "os";
 
 const { Pool } = pg;
 const port = 8080;
@@ -373,6 +374,34 @@ app.get("/steam/logout", (req, res) => {
   res.redirect(process.env.FRONTEND_URL);
 });
 
+// Return steam id if logged in, else null
+app.get("/steam/logininfo", async (req, res) => {
+  // If Steam ID and name are in the session, return them
+  if (req.session.steamId) {
+    return res.json({
+      steamId: req.session.steamId,
+    });
+  } else {
+    return res.json({
+      steamId: null,
+    });
+  }
+});
+
+// Return steam id if logged in, else null
+app.get("/steam/logininfo", async (req, res) => {
+  // If Steam ID and name are in the session, return them
+  if (req.session.steamId) {
+    return res.json({
+      steamId: req.session.steamId,
+    });
+  } else {
+    return res.json({
+      steamId: null,
+    });
+  }
+});
+
 // Used for fetching display card info after login
 app.get("/steam/getdisplayinfo", async (req, res) => {
   // If Steam ID and name are in the session, return them
@@ -439,9 +468,12 @@ app.get("/games/:gameid", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "description", "hltb_score", "recommendations", 
-              "price", "metacritic_score", "released", "platform"  
-       FROM "Games" WHERE "game_id" = $1`,
+      `SELECT g."name", g."header_image", g."description", g."hltb_score", 
+       r."total", r."positive", r."negative", r."description" AS recommendation_description,
+       g."price", g."metacritic_score", g."released", g."platform"  
+      FROM "Games" g
+      LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
+      WHERE g."game_id" = $1`,
       [gameid]
     );
 
@@ -452,11 +484,26 @@ app.get("/games/:gameid", async (req, res) => {
     const platformMap = {
       1: ["Linux"],
       2: ["Mac"],
-      3: ["Linux, ", "Mac, "],
+      3: ["Linux, ", "Mac"],
       4: ["Windows"],
       5: ["Linux, ", "Windows"],
-      6: ["Windows, ", "Mac, "],
+      6: ["Windows, ", "Mac"],
       7: ["Linux, ", "Mac, ", "Windows"],
+    };
+
+    const monthMap = {
+      1: "January",
+      2: "February",
+      3: "March",
+      4: "April",
+      5: "May",
+      6: "June",
+      7: "July",
+      8: "August",
+      9: "September",
+      10: "October",
+      11: "November",
+      12: "December",
     };
 
     console.log("Query result for gameid:", gameid, rows); // Debugging log
@@ -464,15 +511,19 @@ app.get("/games/:gameid", async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Game not found" });
     }
-
+    console.log(rows[0].description);
     if (rows.length > 0 && rows[0].released) {
       // If 'released' is a Date object, convert it to ISO string before splitting
       rows[0].released =
         typeof rows[0].released === "string"
           ? rows[0].released.split("T")[0] // Already a string, just split
           : rows[0].released.toISOString().split("T")[0]; // Convert Date to string, then split
+      let year = rows[0].released.split("-")[0];
+      let month = rows[0].released.split("-")[1];
+      let day = rows[0].released.split("-")[2];
+      rows[0].released = `${monthMap[Number(month)]} ${day}, ${year}`;
     }
-
+    //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
     return res.status(200).json(rows[0]);
   } catch (error) {
@@ -543,6 +594,7 @@ app.get("/ownedGames", async (req, res) => {
       title: game.name,
       header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
       playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
+      playtime_2weeks: game.playtime_2weeks || 0,
     }));
 
     return res.json(ownedGames);
@@ -582,12 +634,11 @@ app.get("/gamesByName", async (req, res) => {
     const { name } = req.query; // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "game_id"
+      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score"
        FROM "Games" 
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
     );
-    console.log(rows);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching games:", error);
@@ -611,10 +662,23 @@ app.get("/gamesByFilter", async (req, res) => {
     maxHLTB = parseInt(maxHLTB, 10) || 10000;
 
     // Convert strings to arrays if needed
-    genre = genre ? genre.split(",") : [];
-    platform = platform ? platform.split(",") : [];
-    platform = platform.map(Number); // Convert array of strings to numbers
-
+    //genre = genre ? genre.split(",") : [];
+    console.log(
+      "Platform:",
+      platform,
+      "Genre:",
+      genre,
+      "MinBR:",
+      minBoilRating,
+      "minYear:",
+      minYear,
+      "maxYear:",
+      maxYear,
+      "maxHLTB",
+      maxHLTB,
+      "steamID:",
+      steamId
+    );
     const { rows } = await pool.query(
       `SELECT g."name", g."header_image", g."description", g."boil_score", g."released"
        FROM "Games" g
@@ -627,7 +691,7 @@ app.get("/gamesByFilter", async (req, res) => {
             WHERE g.platform & user_platform <> 0
           ) --Using bitwise and (&) for operation
          AND g.hltb_score <= $5
-         AND gen.description = ANY ($1::text[]) --ARRAY['RPG','Action'] is the original that worked, ANY($1) might need ARRAY tweaking
+         AND gen.description = ANY($1::text[])
          AND NOT EXISTS (
             SELECT *
             FROM "User_Games" ug
@@ -641,6 +705,7 @@ app.get("/gamesByFilter", async (req, res) => {
       [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId, platform]
     );
 
+    console.log("Rows in gamesbyfilter:", rows);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching games:", error);
@@ -653,7 +718,9 @@ app.get("/userGameSpecs", async (req, res) => {
   //Gets steamId for user reference in sql command
   //const steamId = req.query.steamid || req.session.steamId;
   //console.log("Steam id:", steamId);
-  const steamId = req.query;
+  console.log("First line userGameSpecs");
+  const steamId = req.query.steamid || req.session.steamId;
+  console.log("received id:", steamId);
   try {
     const { rows } = await pool.query(
       `SELECT gen.description AS most_common_genre,
@@ -666,7 +733,8 @@ app.get("/userGameSpecs", async (req, res) => {
               ORDER BY COUNT(*) DESC
               LIMIT 1
           ) AS most_common_platform,
-          AVG(g.hltb_score) AS avg_hltb
+          --AVG(g.hltb_score) AS avg_hltb
+          ROUND(AVG(g.hltb_score)::numeric, 2) AS avg_hltb
       FROM "User_Games" ug
       JOIN "Game_Genres" gg ON ug.game_id = gg.games
       JOIN "Genres" gen ON gg.genres = gen.id
@@ -678,9 +746,10 @@ app.get("/userGameSpecs", async (req, res) => {
       [steamId]
     );
 
-    console.log(rows);
+    console.log("Results of userGameSpecs:", rows);
+    res.status(200).json(rows);
   } catch (error) {
-    console.error("Error fetching games:", error);
+    console.error("Error fetching specs:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
