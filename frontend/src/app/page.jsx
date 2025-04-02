@@ -58,7 +58,7 @@ const LandingPage = () => {
             <div className={styles.heroContent}>
               <h2 className={styles.heroTitle}>Welcome to Boiler Room</h2>
               <p className={styles.heroSubtitle}>
-                Discover, play, and share amazing games.
+                Boil down your backlog, optimize your playtime, and discover and rediscover highly-rated games that fit your schedule 
               </p>
               <a href='/Dashboard' className={styles.exploreButton}>
                 Explore Now
