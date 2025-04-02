@@ -60,11 +60,20 @@ const LandingPage = () => {
             <div className={styles.heroContent}>
               <h2 className={styles.heroTitle}>Welcome to Boiler Room</h2>
               <p className={styles.heroSubtitle}>
-                Boil down your backlog, optimize your playtime, and discover and rediscover highly-rated games that fit your schedule 
+                Boil down your backlog, optimize your gametime, discover and rediscover highly-rated games that fit your schedule 
               </p>
-              <a href='/Dashboard' className={styles.exploreButton}>
-                Explore Now
-              </a>
+                  <a
+                    href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}
+                    className={styles.loginButton}
+                  >
+                    Sign In With Steam
+                  </a>
+                  <a
+                    href='/Search'
+                    className={styles.exploreButton}
+                  >
+                    Explore Games
+                  </a>
             </div>
           </div>
         </section>
