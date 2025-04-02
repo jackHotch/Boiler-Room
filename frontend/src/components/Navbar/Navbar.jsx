@@ -62,7 +62,7 @@ export function Navbar() {
   return (
     <div className={styles.container}>
       <Link className={theme === 1 ? styles.logo : styles.logoDark} href='/Dashboard'>
-        <img src='BRLogo.png' width={250} />
+        <img className={styles.logo} src='BRLogo.png' width={250} />
       </Link>
 
       <div className={styles.nav_options}>
