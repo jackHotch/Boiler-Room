@@ -798,6 +798,7 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
     
       await delay(); //always making sure we sleep
     } catch (error) {
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
       console.error(`Error processing Steam ID ${steamId}:`, error.message);
     }
   }
@@ -952,11 +953,13 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
         const result = await pool.query(query, values);
         console.log(`Successfully updated ${result.rowCount} games for SteamID ${steamId}`);
       } catch (err) {
+        await pool.query('UPDATE "Lockout" SET "code" = 0', []);
         console.error('Error updating User_Games:', err);
         console.error('Failed query:', query);
         console.error('Failed values:', values);
       }
     } catch (error) {
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
       console.error(`Error processing SteamID ${steamId}:`, error);
     }
   }
@@ -1027,9 +1030,9 @@ export async function loadFriends(steamId: bigint, forced: boolean = false) {
     console.log("Cleaning up")
     return await getFinalResults(steamId);
   } catch (error) { 
-    console.error('Error in loadFriends:', error);
-    await pool.query('UPDATE "Lockout" SET "code" = 0', []);
-    throw error;
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+      console.error('Error in loadFriends:', error);
+      throw error;
   }
 }
 
