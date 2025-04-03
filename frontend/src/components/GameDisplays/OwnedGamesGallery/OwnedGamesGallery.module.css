@@ -93,6 +93,7 @@
 
 .sectionHeader {
   display: inline-block;
+  font-variant: small-caps;
   text-align: start;
   font-size: 35px;
   padding: 30px;
@@ -106,25 +107,8 @@
 }
 
 .subHeader{
-  vertical-align: center;
-  display: inline-block;
   font-size: 15px;
-  text-align: left;
-  padding-bottom: 0;
-  padding-top: 0;
-  margin-bottom: 0;
-  border-radius: 15px;
-  color: var(--text-bw);
-  font-style: italic;
-  opacity: .5;
-}
-
-.subHeader{
-  font-size: 15px;
-  text-align: left;
-  padding: 35px;
-  padding-bottom: 0;
-  padding-top: 0;
+  text-align: right;
   border-radius: 15px;
   color: var(--text-bw);
   font-style: italic;

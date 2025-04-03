@@ -52,8 +52,10 @@ const TopRatedGames = () => {
   return (
     <div>
       <div className={styles.scrollContainer}>
-        <h1 className={styles.sectionHeader}>Try These Highly Rated Titles</h1>
-        <p className={styles.subHeader}>Give them a chance, you already own them</p>
+        <h1 className={styles.sectionHeader}>Discover These Top-Rated Gems</h1>
+        <p className={styles.subHeader}>
+          You already own these highly reviewed titles—dive in and experience the hype!
+        </p>
 
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
