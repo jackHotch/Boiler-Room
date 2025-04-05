@@ -5,6 +5,8 @@ import axios from 'axios'
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle'
 import { CookieMessage } from '@/components/CookieMessage/CookieMessage'
 import { Searchbar } from '@/components/Navbar/Searchbar/Searchbar'
+import LandingGames from '@/components/GameDisplays/LandingGames/LandingGames'
+
 
 const LandingPage = () => {
   const [games, setGames] = useState([])
@@ -78,25 +80,7 @@ const LandingPage = () => {
           </div>
         </section>
         {/*Dynamically Update the featured games section to display 3 random games from the data base.*/}
-        <section className={styles.featuredGames}>
-          <h3 className={styles.sectionTitle}>Featured Games</h3>
-          <div className={styles.gamesGrid}>
-            {games.map((game, index) => (
-              <div key={index} className={styles.gameCard}>
-                {/* Link to the game's Steam page */}
-                <a href={`/SingleGame/${game.game_id}`}>
-                  <img
-                    src={game.header_image}
-                    alt={game.name}
-                    className={styles.gameImage}
-                  />
-                </a>
-                <h4 className={styles.gameTitle}>{game.name}</h4>
-                <p className={styles.gameDescription}>{game.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <LandingGames games={games} />
 
         <footer ref={footerRef} className={styles.footer}>
           {' '}
