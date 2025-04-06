@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import styles from './LandingGames.module.css'
 
-const LandingGames = ({ games, categories }) => {
+const LandingGames = ({ games }) => {
 
   return (
     <section className={styles.featuredGames}>
