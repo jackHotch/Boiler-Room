@@ -32,8 +32,15 @@ const SingleGamePage = () => {
       fetchGame()
     }
   }, [gameid])
+ 
+   // Start the Progress Bar fully Empty
+   const [animatedOffset, setAnimatedOffset] = useState(314);
+   const [animatedOffset2, setAnimatedOffset1] = useState(314);
+
+  
   // Ensure that game is not null before accessing its properties 
   let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0;
+
 
   // Circular Progress Function
   const getStrokeDashOffset = (score) => {
@@ -42,12 +49,25 @@ const SingleGamePage = () => {
     return circumference - (score / 100) * circumference
   }
 
+
+  //Trigger the Animation when the page loads
+  useEffect(() => {
+    if (!game || game.metacritic_score == null) return; // guard clause
+    setTimeout(() => {
+      setAnimatedOffset(getStrokeDashOffset(reviewRatio));
+      setAnimatedOffset1(getStrokeDashOffset(game.metacritic_score));
+    }, 300); // Added Delay for a smoother animation
+  }, [reviewRatio]); // Trigger animation when reviewRatio updates
+
+
   // Added a Function to determine the color of the progress bar
   const getStrokeColor = (reviewRatio) =>{
       if (reviewRatio >= 70) return 'Green';
       if (reviewRatio >= 40) return 'Yellow';
       return 'Red';
   }
+
+  
 
   return error ? (
     <div className={styles.error}>{error}</div>
@@ -132,7 +152,7 @@ const SingleGamePage = () => {
                   r='50'
                   style={{
                     strokeDasharray: 314,
-                    strokeDashoffset: getStrokeDashOffset(reviewRatio),
+                    strokeDashoffset: animatedOffset,
                     stroke: getStrokeColor(reviewRatio),
                   }}
                 ></circle>
@@ -157,8 +177,8 @@ const SingleGamePage = () => {
                   r='50'
                   style={{
                     strokeDasharray: 314,
-                    strokeDashoffset: getStrokeDashOffset(game.metacritic_score),
-                    stroke: getStrokeColor(reviewRatio),
+                    strokeDashoffset: animatedOffset2,
+                    stroke: getStrokeColor(game.metacritic_score),
                   }}
                 ></circle>
               </svg>
