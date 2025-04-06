@@ -115,6 +115,8 @@ export default function GameRecommendation() {
     ].filter(option => option !== null);
     let maxHLTB = parseInt(event.target.maxHLTB.value, 10) || 10000;
     let genre = selectedGenres.map(g => g.value); 
+    console.log("Genres:",genre);
+    console.log("Genres.join:",genre.join(","));
     if (platform.length === 0) platform = [4, 2, 1];
 
     try{
@@ -127,7 +129,7 @@ export default function GameRecommendation() {
           minYear, 
           maxYear, 
           platform, 
-          genre: genre.join(","), 
+          genre, 
           maxHLTB,
           steamId} 
         }       
