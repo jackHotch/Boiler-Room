@@ -706,6 +706,7 @@ app.get('/friendsListInfo', async (req, res) => {
   const steamId = req.query.steamId || req.session.steamId
   //const steamId = BigInt("76561199154033472"); //me
   // const steamId = BigInt("76561199509790498"); //Jack
+  //const steamId = BigInt("76561198047476018"); //Matt
   try {
     const forced = req.query.forced === 'true';
     const result = await loadFriends(steamId, forced);
@@ -746,7 +747,7 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
   console.log(friendsResponse.data)
 
   await delay();
-  const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString());
+  const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString()).slice(0, 20);;
   console.log(steamIds)
 
   if (forced) {
@@ -780,7 +781,7 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
   const { rows: existingProfiles } = await pool.query(existingProfilesQuery, [userIdsAsBigints]);
   
   const existingProfileIds = existingProfiles.map(row => row.steam_id);
-  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id)).slice(0, 20);
+  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id))
 
   const newUserProfiles = []; //these are going to be the new accounts we need to setup
   for (const steamId of idsToFetch) {

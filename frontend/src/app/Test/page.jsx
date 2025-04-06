@@ -8,7 +8,7 @@ export default function Test() {
 
   async function handleFriends() {
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/testFriends');
+      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/friendsListInfo');
       setDatabaseMessage(response.data.message);
     } catch (error) {
       console.error('Error fetching data', error);
