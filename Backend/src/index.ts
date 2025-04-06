@@ -525,6 +525,26 @@ app.get('/games/:gameid', async (req, res) => {
   }
 })
 
+app.get('/featuredgames', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score", "boil_score" 
+      FROM "Games" 
+      WHERE "game_id" IN
+        (SELECT "game_id"
+        FROM "Games" 
+        ORDER BY "boil_score" DESC NULLS LAST
+        LIMIT 500)
+      ORDER BY RANDOM() LIMIT 3`
+    )
+
+    res.json(rows)
+  } catch (error) {
+    console.error('Database error:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 // Created Backend route to access the games table from database
 app.get('/usergames', async (req, res) => {
   try {
