@@ -16,7 +16,11 @@
   gap: 16px;
 }
 
-.logo, .links {
+.logoDark {
+  filter: var(--logo-bw);
+}
+
+.links {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,19 +32,17 @@
   min-width: 120px; /* Ensures enough space for text */
   height: 30px; /* Adjust based on design */
   line-height: 1;
+  background-color: var(--button-primary);
 }
 
-.logo:hover, .links:hover {
+.logoBackground:hover, .links:hover {
   background-color: var(--bg-primary);
+  border-radius: 8px;
 }
 
 .logo {
   font-size: 32px;
   font-weight: bold;
-}
-
-.links {
-  background-color: var(--button-primary);
 }
 
 .account {

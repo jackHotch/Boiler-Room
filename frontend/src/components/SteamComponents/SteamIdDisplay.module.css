@@ -92,7 +92,7 @@
 }
 
 /* Reuse profileButton styles with different colors */
-.steamLogout {
+.steamLogout, .steamLogin {
     background: var(--danger); /* Red color for logout warning effect */
     color: var(--text-primary);
     border: none;
@@ -109,4 +109,10 @@
   
   .steamLogout:hover {
     background: var(--danger-secondary); /* Darker red on hover, matching your original intent */
+  }
+
+  .steamLogin {
+    background-color: var(--bg-accent);
+    color: white;
+    margin-top: 16px;
   }

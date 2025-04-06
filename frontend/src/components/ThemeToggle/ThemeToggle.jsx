@@ -8,6 +8,16 @@ import { usePathname } from 'next/navigation'
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
+  const unauthenticatedUrls = ['/', '/LoginRedirect', 'Search', /^\/SingleGame\/\d+$/]
+
+  function matchesAnyPattern(str, patterns) {
+    return patterns.some((pattern) => {
+      if (pattern instanceof RegExp) {
+        return pattern.test(str)
+      }
+      return str === pattern
+    })
+  }
 
   async function toggleTheme() {
     if (theme == 'dark') {
@@ -15,7 +25,7 @@ export function ThemeToggle() {
     } else {
       setTheme('dark')
     }
-    if (pathname != '/' && pathname != '/LoginRedirect') {
+    if (!matchesAnyPattern(pathname, unauthenticatedUrls)) {
       const preference = theme == 'dark' ? 1 : 0
       // technically 0=dark and 1=light but the theme variable doesn't updated
       // immediately so I have to just switch them
