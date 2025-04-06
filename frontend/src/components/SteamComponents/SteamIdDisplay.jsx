@@ -51,7 +51,7 @@ function SteamProfile() {
     return (
       <p className={styles.errorText}>
         {error}
-        <button className='steamLogin' onClick={handleLogin} style={{}}>
+        <button className={styles.steamLogin} onClick={handleLogin} style={{}}>
           Log in with Steam
         </button>
       </p>

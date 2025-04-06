@@ -9,6 +9,7 @@ export function Searchbar() {
   function handleSearch(e) {
     e.preventDefault()
     if (query.trim()) {
+      setQuery('')
       router.push(`/Search?query=${encodeURIComponent(query)}`)
     }
   }
