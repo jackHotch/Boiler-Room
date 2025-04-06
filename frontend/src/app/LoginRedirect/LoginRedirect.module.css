@@ -80,11 +80,14 @@
     text-decoration: none;
     font-size: 18px;
     margin: 10px;
-
 }
 
-.exploreButton:hover {
+.loginButton:hover {
   background-color: var(--bg-accent-secondary);
+}
+
+.landingButton:hover {
+    background-color: var(--bg-accent);
 }
 
 .featuredGames {
