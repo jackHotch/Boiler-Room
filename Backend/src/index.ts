@@ -780,7 +780,7 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
   const { rows: existingProfiles } = await pool.query(existingProfilesQuery, [userIdsAsBigints]);
   
   const existingProfileIds = existingProfiles.map(row => row.steam_id);
-  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id));
+  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id)).slice(0, 20);
 
   const newUserProfiles = []; //these are going to be the new accounts we need to setup
   for (const steamId of idsToFetch) {
