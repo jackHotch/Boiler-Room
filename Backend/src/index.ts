@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import puppeteer from "puppeteer";
 import { release } from "os";
 
-const { Pool } = pg;
+export const { Pool } = pg; //Jonathan added the export, not sure if this will create other problems
 const port = 8080;
 const app = express();
 
@@ -648,10 +648,6 @@ app.get("/gamesByName", async (req, res) => {
 
 //Request to retrieve games based on filtering parameters
 app.get("/gamesByFilter", async (req, res) => {
-  //Gets steamId for user reference in sql command
-  // const steamId = req.query.steamid || req.session.steamId;
-  // console.log("gameFiltering steamId:", steamId);
-  // console.log("Received Query Params:", req.query); // Debugging line
   try {
     //Dissects values returned from frontend
     let { minBoilRating, minYear, maxYear, platform, genre, maxHLTB, steamId } =
@@ -661,24 +657,6 @@ app.get("/gamesByFilter", async (req, res) => {
     minBoilRating = parseFloat(minBoilRating) || -1;
     maxHLTB = parseInt(maxHLTB, 10) || 10000;
 
-    // Convert strings to arrays if needed
-    //genre = genre ? genre.split(",") : [];
-    console.log(
-      "Platform:",
-      platform,
-      "Genre:",
-      genre,
-      "MinBR:",
-      minBoilRating,
-      "minYear:",
-      minYear,
-      "maxYear:",
-      maxYear,
-      "maxHLTB",
-      maxHLTB,
-      "steamID:",
-      steamId
-    );
     const { rows } = await pool.query(
       `SELECT g."name", g."header_image", g."description", g."boil_score", g."released"
        FROM "Games" g
@@ -705,7 +683,6 @@ app.get("/gamesByFilter", async (req, res) => {
       [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId, platform]
     );
 
-    console.log("Rows in gamesbyfilter:", rows);
     res.json(rows);
   } catch (error) {
     console.error("Error fetching games:", error);
@@ -715,12 +692,8 @@ app.get("/gamesByFilter", async (req, res) => {
 
 //Request to retrieve user's most common game specs for default new game recommendations
 app.get("/userGameSpecs", async (req, res) => {
-  //Gets steamId for user reference in sql command
-  //const steamId = req.query.steamid || req.session.steamId;
-  //console.log("Steam id:", steamId);
-  console.log("First line userGameSpecs");
   const steamId = req.query.steamid || req.session.steamId;
-  console.log("received id:", steamId);
+
   try {
     const { rows } = await pool.query(
       `SELECT gen.description AS most_common_genre,
@@ -746,7 +719,6 @@ app.get("/userGameSpecs", async (req, res) => {
       [steamId]
     );
 
-    console.log("Results of userGameSpecs:", rows);
     res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching specs:", error);
