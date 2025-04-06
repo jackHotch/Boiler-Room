@@ -514,7 +514,7 @@ app.get('/games/:gameid', async (req, res) => {
 app.get('/featuredgames', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score" 
+      `SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score", "boil_score" 
       FROM "Games" 
       WHERE "game_id" IN
         (SELECT "game_id"
