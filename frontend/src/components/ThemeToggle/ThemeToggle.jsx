@@ -8,10 +8,15 @@ import { usePathname } from 'next/navigation'
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
-  const unauthenticatedUrls = ['/', '/LoginRedirect', 'Search', '/SingleGame']
+  const unauthenticatedUrls = ['/', '/LoginRedirect', 'Search', /^\/SingleGame\/\d+$/]
 
   function matchesAnyPattern(str, patterns) {
-    return patterns.some((pattern) => new RegExp(`^${pattern}$`).test(str))
+    return patterns.some((pattern) => {
+      if (pattern instanceof RegExp) {
+        return pattern.test(str)
+      }
+      return str === pattern
+    })
   }
 
   async function toggleTheme() {
