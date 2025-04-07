@@ -4,12 +4,27 @@ import axios from 'axios'
 import styles from './SteamIdDisplay.module.css'
 import Link from 'next/link'
 
-const resyncHelper = () => {
+const resyncHelper = async () => {
   try {
-    const response = axios.get(process.env.NEXT_PUBLIC_BACKEND + '/resyncHelper');
-    return(response)
-  } catch (error) {
+    const userSteamId = localStorage.getItem('steamId') || steamId;
     
+    if (!userSteamId) {
+      console.error('No steamId found');
+      return;
+    }
+
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/resyncHelper`, {
+      params: {
+        steamId: userSteamId,
+        forced: true
+      }
+    });
+    
+    console.log('Resync successful:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in resyncHelper:', error);
+    throw error;
   }
 }
 
