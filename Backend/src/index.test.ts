@@ -1,8 +1,8 @@
-import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate} from './index';
+import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
-import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId } from './TestingResponses';
+import { testSteamId, testFriendsList, testRecentGames, testPlayerSummary, testGameDetails, supabaseTestSteamId, test1SqlResult, test4SqlResult } from './TestingResponses';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -286,3 +286,78 @@ describe('PUT /themepreference', () => {
     expect(response.status).toBe(200);
   })
 })
+
+test('Delay Works and does lock you out', async () => {
+    const selectResult = await pool.query('SELECT "code" FROM "Lockout"');
+    const row = selectResult.rows[0];
+    const currentStatus = row.code;
+  
+    if (currentStatus === 1) {
+        const result1 = await manageLockout();
+        expect(result1).toBe("You are presently locked out, please try again later");
+      }else if (currentStatus === 0){
+        const result0 = await manageLockout()
+        expect(result0).toBeNull
+    }
+
+    if(currentStatus === 0){
+        await pool.query('UPDATE "Lockout" SET "code" = 1', []);
+        const result1 = await manageLockout()
+        expect(result1).toBe("You are presently locked out, please try again later")
+        await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+        const result0 = await manageLockout()
+        expect(result0).toBeNull
+    }
+});
+
+
+test('updateUserRelations', async () => {
+  const testProfiles = [
+    { steamId: '111', username: 'testing111', avatarHash: 'hash111' },
+    { steamId: '222', username: 'testing222', avatarHash: 'hash222' },
+    { steamId: '333', username: 'testing333', avatarHash: 'hash333' }
+  ];
+
+  await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = ANY($1::bigint[])', [
+    testProfiles.map(p => BigInt(p.steamId))
+  ]);
+
+  for (const profile of testProfiles) {
+    await pool.query(
+      'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3)',
+      [BigInt(profile.steamId), profile.username, profile.avatarHash]
+    );
+  }
+
+  const ourSteamId = '222';
+  const relatedSteamIds = ['111', '333'];
+  await updateUserRelations(ourSteamId, relatedSteamIds);
+
+  const relationsResult = await pool.query(
+    'SELECT "user1", "user2", "status" FROM "User_Relations" WHERE ("user1" = $1 OR "user2" = $1) ORDER BY "user1"',
+    [BigInt(ourSteamId)]
+  );
+
+  const actualRelations = relationsResult.rows.map(row => ({
+    user1: BigInt(row.user1),
+    user2: BigInt(row.user2),
+    status: row.status
+  }));
+
+  expect(actualRelations).toEqual([
+    { user1: 111n, user2: 222n, status: 3 },
+    { user1: 222n, user2: 333n, status: 3 }
+  ]);
+
+  await pool.query('DELETE FROM "Profiles" WHERE "steam_id" = ANY($1::bigint[])', [
+    testProfiles.map(p => BigInt(p.steamId))
+  ]);
+});
+
+test('getFinalResults', async () => {
+  const results1 = await getFinalResults(BigInt(1));
+  expect(results1).toEqual(test1SqlResult)
+
+  const results2 = await getFinalResults(BigInt(4));
+  expect(results2).toEqual(test4SqlResult);
+});
