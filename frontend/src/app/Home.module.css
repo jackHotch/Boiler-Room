@@ -31,7 +31,7 @@
 
 .hero {
     position: relative;
-    height: 70vh;
+    height: 30vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -61,20 +61,36 @@
     margin-bottom: 20px;
 }
 
-.exploreButton {
+.loginButton {
     background-color: var(--bg-accent);
     color: var(--text-primary);
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 18px;
+    margin: 10px;
 }
 
-.exploreButton:hover {
+.exploreButton {
+    background-color: var(--bg-accent-secondary);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 10px;
+}
+
+.loginButton:hover {
   background-color: var(--bg-accent-secondary);
 }
 
+.exploreButton:hover {
+    background-color: var(--bg-accent);
+}
+
 .featuredGames {
+    height: 10%;
     padding: 50px 20px;
     text-align: center;
 }
