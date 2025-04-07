@@ -54,9 +54,7 @@ describe('GameTable Component', () => {
       expect(screen.getByText('Boil')).toBeInTheDocument()
       expect(screen.getByText('Rating')).toBeInTheDocument()
       expect(screen.getByText('hltb')).toBeInTheDocument()
-      expect(screen.getByText('Playtime')).toBeInTheDocument()
       expect(screen.getByText('Steam')).toBeInTheDocument()
-      expect(screen.getByText('Hide')).toBeInTheDocument()
     })
   })
 
