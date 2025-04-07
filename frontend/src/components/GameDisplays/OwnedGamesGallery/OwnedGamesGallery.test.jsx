@@ -43,7 +43,7 @@ describe('OwnedGamesGallery', () => {
   test('renders loading state initially', () => {
     axios.get.mockImplementation(() => new Promise(() => {})) // Pending promise for loading state
     render(<OwnedGamesGallery />)
-    expect(screen.getByText('Jump Back In')).toBeInTheDocument()
+    expect(screen.getByText('Dive Back Into the Action')).toBeInTheDocument()
     expect(screen.getByText('Loading your games...')).toBeInTheDocument()
   })
 
@@ -52,7 +52,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
+      expect(screen.getByText('Dive Back Into the Action')).toBeInTheDocument()
     })
   })
 
@@ -61,7 +61,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
+      expect(screen.getByText('Dive Back Into the Action')).toBeInTheDocument()
       expect(screen.queryByText('Loading your games...')).not.toBeInTheDocument()
 
       // Check game titles and playtime
@@ -93,7 +93,7 @@ describe('OwnedGamesGallery', () => {
     render(<OwnedGamesGallery />)
 
     await waitFor(() => {
-      expect(screen.getByText('Jump Back In')).toBeInTheDocument()
+      expect(screen.getByText('Dive Back Into the Action')).toBeInTheDocument()
       expect(screen.getByText('No owned games to display')).toBeInTheDocument()
     })
   })
