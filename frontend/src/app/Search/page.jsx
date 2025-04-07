@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './Search.module.css'
 import GameTable from '@/components/GameDisplays/SearchTable/SearchTable'
-import axios, { all } from 'axios'
+import axios from 'axios'
 import { useSearchParams } from 'next/navigation'
 
 export default function Search() {
