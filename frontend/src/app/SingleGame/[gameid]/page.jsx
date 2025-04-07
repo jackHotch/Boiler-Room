@@ -52,12 +52,17 @@ const SingleGamePage = () => {
 
   //Trigger the Animation when the page loads
   useEffect(() => {
-    if (!game || game.metacritic_score == null) return; // guard clause
+   //if (!game || game.metacritic_score == null) return;// guard clause
     setTimeout(() => {
       setAnimatedOffset(getStrokeDashOffset(reviewRatio));
-      setAnimatedOffset1(getStrokeDashOffset(game.metacritic_score));
-    }, 300); // Added Delay for a smoother animation
-  }, [reviewRatio]); // Trigger animation when reviewRatio updates
+    }, 300);// Added Delay for a smoother animation
+
+   if (game?.metacritic_score == null) return;
+    setTimeout(() => {
+      setAnimatedOffset1(getStrokeDashOffset(game.metacritic_score))
+    }, 300);
+  }, 
+  [reviewRatio, game?.metacritic_score]); // Trigger animation when reviewRatio updates
 
 
   // Added a Function to determine the color of the progress bar
