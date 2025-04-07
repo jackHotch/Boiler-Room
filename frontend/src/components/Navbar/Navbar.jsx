@@ -19,7 +19,7 @@ export function Navbar() {
   const [showSteam, setShowSteam] = useState(false) // Track hover
   const [steamPFP, setPFP] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [theme] = useState(true)
+  const [theme, setTheme] = useState(true)
 
   if (pathname === '/' || pathname === '/LoginRedirect') return null
 
@@ -62,7 +62,6 @@ export function Navbar() {
 
   return (
     <div className={styles.container}>
-
       <Link className={styles.logoBackground} href='/Dashboard'>
         <img
           className={theme === 1 ? styles.logo : styles.logoDark}
