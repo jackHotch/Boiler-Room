@@ -105,7 +105,7 @@ export default function GameRecommendation() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let minBoilRating = parseFloat(event.target.minBoilRating.value) || -1;
+    let minBoilRating = parseFloat(event.target.minBoilRating.value) || 0;
     let minYear = event.target.minYear.value || '1970-01-01';
     let maxYear = event.target.maxYear.value || '2037-12-31';
     let platform = [
@@ -149,28 +149,30 @@ export default function GameRecommendation() {
     console.log("GameList:",gameList);
 
     console.log("Form Data Submitted:");
-    console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
+    
 
     
     // filter errors and feedback
     let errors = "";
-    if (minYear.length != 4 || maxYear.length != 4 || minYear < 1980 || maxYear < 1980 || 
-    minYear > new Date().getFullYear() || maxYear > new Date().getFullYear() || minYear > maxYear || 
-    maxHLTB < 0 || maxHLTB > 100 ||minBoilRating < 0 || minBoilRating > 100) 
-    { 
-      if (minYear.length != 4 || maxYear.length != 4) {errors += "Minimum/Maximum year is incorrect length - YYYY format.\n";}
-      if (minYear < 1980 || maxYear < 1980) {errors += "Minimum/Maximum year is too old - min = 1980.\n";}
-      if (minYear > new Date().getFullYear() || maxYear > new Date().getFullYear()) {errors += "Minimum/Maximum year is invalid - max year = current year.\n";}
+    if (minYear!='1970-01-01' && maxYear != '2037-12-31'){
       if (minYear > maxYear) {let swap = minYear; minYear = maxYear; maxYear = swap;} // swap minyear and maxyear if maxyear < minyear
-      if (maxHLTB < 0 || maxHLTB > 100) {errors += "How Long to beat score invalid - 1 to 100.\n";}
-      if (minBoilRating < 0 || minBoilRating > 100) {errors += "Boil Rating is invalid - 1 to 100.\n";}
-      // ALERT CALL HERE
-      window.alert("ERROR:\n" + errors);
-    } 
-    // else {
-      // QUERY HERE JOHN
-    // }
-  
+    }
+    if (minYear != '1970-01-01'){
+      if (minYear < 1980) {errors += "Minimum year is too old - min = 1980.\n";}
+      if (minYear > new Date().getFullYear()) {errors += "Minimum year is invalid - max year = current year.\n";}
+      minYear = minYear+'-01-01';
+    }
+    if (maxYear != '2037-12-31'){
+      if (maxYear < 1980) {errors += "Maximum year is too old - min = 1980.\n";}
+      if (maxYear > new Date().getFullYear()) {errors += "Maximum year is invalid - max year = current year.\n";}
+      maxYear = maxYear+'-12-31';
+    }
+
+    if (maxHLTB < 0 || maxHLTB > 10000) {errors += "How Long to beat score invalid - 1 to 10000.\n";}
+    if (minBoilRating < 0 || minBoilRating > 100) {errors += "Boil Rating is invalid - 1 to 100.\n";}
+    // ALERT CALL HERE
+    if (errors.length > 0){window.alert("ERROR:\n" + errors);}
+    console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
   };
 
   return (
@@ -188,7 +190,7 @@ export default function GameRecommendation() {
                 />
               </div>
               <div>
-                <label>Max How Long To Beat: </label>
+                <label>Max Time To Beat: </label>
                 <input 
                   className={styles.tf}
                   type="text"
