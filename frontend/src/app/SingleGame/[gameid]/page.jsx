@@ -54,7 +54,7 @@ const SingleGamePage = () => {
             alt='Redirect'
           />
         </a>
-        <h1 className={styles.gameTitle}>{game.name} |</h1>
+        <a className={styles.gameTitle}>{game.name} |</a>
 
         <div className={styles.price}>
           {game.price ? '$' + game.price : 'Not Available'}
@@ -127,9 +127,9 @@ const SingleGamePage = () => {
                   }}
                 ></circle>
               </svg>
-              <span className={styles.progressText}>
+              <a className={styles.progressText}>
                 {game.metacritic_score ? `${game.metacritic_score}%` : 'N/A'}
-              </span>
+              </a>
             </div>
           </div>
         </div>

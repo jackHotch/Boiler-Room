@@ -644,6 +644,7 @@ app.get('/gamesByName', async (req, res) => {
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
     )
+    console.log('Rows for search: ' + rows[0].name)
     res.json(rows)
   } catch (error) {
     console.error('Error fetching games:', error)
