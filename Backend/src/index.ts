@@ -685,7 +685,7 @@ app.get("/gamesByFilter", async (req, res) => {
       maxHLTB
     );
     const { rows } = await pool.query(
-      `SELECT g."name", g."header_image", g."description", g."boil_score", g."released"
+      `SELECT g."name", g."header_image", g."description", g."boil_score", g."released", g."game_id"
        FROM "Games" g
        JOIN "Game_Genres" gg ON gg.games = g.game_id 
        JOIN "Genres" gen ON gen.id = gg.genres
@@ -703,7 +703,7 @@ app.get("/gamesByFilter", async (req, res) => {
             WHERE g.game_id = ug.game_id
             AND ug.steam_id = $6)
           AND g.released BETWEEN $3 AND $4
-       Group BY g."name", g."header_image", g."description", g."boil_score", g."released"
+       Group BY g."name", g."header_image", g."description", g."boil_score", g."released", g."game_id"
        HAVING COUNT(DISTINCT gen.description) = array_length($1::text[],1)
        ORDER BY g."boil_score" DESC
        LIMIT 3;`,

@@ -44,8 +44,6 @@
   font-size: 12px;
   padding: 8px 12px;
   border-radius: 4px;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
   z-index: 1;
   text-align: right;
