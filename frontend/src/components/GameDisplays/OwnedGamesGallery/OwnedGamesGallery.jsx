@@ -37,7 +37,10 @@ const OwnedGamesGallery = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Jump Back In</h1>
+        <a className={styles.sectionHeader}>Dive Back Into the Action</a>
+        <a className={styles.subHeader}>
+          Pick up where you left off in these recent games
+        </a>
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -46,7 +49,10 @@ const OwnedGamesGallery = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Jump Back In</h1>
+        <a className={styles.sectionHeader}>Dive Back Into the Action</a>
+        <a className={styles.subHeader}>
+          Pick up where you left off in these recent games
+        </a>
         <p className={styles.errorText}>{error}Something went Wrong</p>
       </div>
     )
@@ -55,7 +61,10 @@ const OwnedGamesGallery = () => {
   return (
     <div>
       <div className={styles.scrollContainer}>
-       <h1 className={styles.sectionHeader}>Jump Back In</h1>
+        <a className={styles.sectionHeader}>Dive Back Into the Action</a>
+        <a className={styles.subHeader}>
+          Pick up where you left off in these recent games
+        </a>
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (
             ownedGames.map((game) => (

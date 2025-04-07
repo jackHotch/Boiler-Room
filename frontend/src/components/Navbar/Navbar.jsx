@@ -26,6 +26,18 @@ export function Navbar() {
   useEffect(() => {
     async function fetchProfileData() {
       try {
+        const theme = await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND + '/themepreference',
+          {
+            withCredentials: true,
+          }
+        )
+      } catch (err) {
+        console.error(err)
+      }
+      setTheme(theme)
+
+      try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND}/steam/getdisplayinfo`,
           { withCredentials: true }
@@ -50,6 +62,7 @@ export function Navbar() {
 
   return (
     <div className={styles.container}>
+
       <Link className={styles.logoBackground} href='/Dashboard'>
         <img
           className={theme === 1 ? styles.logo : styles.logoDark}

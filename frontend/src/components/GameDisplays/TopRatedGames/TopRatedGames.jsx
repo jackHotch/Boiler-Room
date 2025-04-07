@@ -34,7 +34,10 @@ const TopRatedGames = () => {
   if (loading) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Try These Highly Rated Titles Next</h1>
+        <a className={styles.sectionHeader}>Discover These Top-Rated Gems</a>
+        <a className={styles.subHeader}>
+          You already own these highly reviewed titles—dive in and experience the hype!
+        </a>{' '}
         <p className={styles.loadingText}>Loading your games...</p>
       </div>
     )
@@ -43,7 +46,10 @@ const TopRatedGames = () => {
   if (error) {
     return (
       <div className={styles.scrollContainer}>
-        <h1>Try These Highly Rated Titles Next</h1>
+        <a className={styles.sectionHeader}>Discover These Top-Rated Gems</a>
+        <a className={styles.subHeader}>
+          You already own these highly reviewed titles—dive in and experience the hype!
+        </a>{' '}
         <p className={styles.errorText}>{error}</p>
       </div>
     )
@@ -52,7 +58,10 @@ const TopRatedGames = () => {
   return (
     <div>
       <div className={styles.scrollContainer}>
-              <h1 className={styles.sectionHeader}>Try These Highly Rated Titles Next</h1>
+        <a className={styles.sectionHeader}>Discover These Top-Rated Gems</a>
+        <a className={styles.subHeader}>
+          You already own these highly reviewed titles—dive in and experience the hype!
+        </a>
 
         <div className={styles.gridContainer}>
           {ownedGames.length > 0 ? (

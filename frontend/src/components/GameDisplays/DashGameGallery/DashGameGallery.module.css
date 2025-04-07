@@ -53,11 +53,15 @@
     
 .gameCategory {
     margin-top: 5px;
-    font-size: 1.7rem;
+    font-size: 30px;
+    margin-bottom: 15px;
     font-weight: bold;
+    font-variant: small-caps;
 }
 
 .gameName{
-    font-size: 20px;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-}
+    font-size: 30px;
+    padding-top: 10px;
+    margin: 5px 5px 0px 5px;
+    color: var(--text-bw);
+    cursor: default;}

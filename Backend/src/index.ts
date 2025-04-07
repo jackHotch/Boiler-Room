@@ -47,12 +47,12 @@ app.use(
   })
 )
 
-app.use(function(req, res, next) {
-  res.set('credentials', 'include');
-  res.set('Access-Control-Allow-Credentials', true);
-  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  next();
-});
+app.use(function (req, res, next) {
+  res.set('credentials', 'include')
+  res.set('Access-Control-Allow-Credentials', true)
+  res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  next()
+})
 
 app.use(
   cors({
@@ -375,19 +375,18 @@ app.get('/steam/logout', (req, res) => {
 })
 
 // Return steam id if logged in, else null
-app.get("/steam/logininfo", async (req, res) => {
+app.get('/steam/logininfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId) {
-
     return res.json({
-      steamId: req.session.steamId
+      steamId: req.session.steamId,
     })
   } else {
     return res.json({
       steamId: null,
     })
   }
-});
+})
 
 // Used for fetching display card info after login
 app.get('/steam/getdisplayinfo', async (req, res) => {
@@ -509,7 +508,6 @@ app.get('/games/:gameid', async (req, res) => {
       let day = rows[0].released.split('-')[2]
       rows[0].released = `${monthMap[Number(month)]} ${day}, ${year}`
     }
-    //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ['Unknown']
     return res.status(200).json(rows[0])
   } catch (error) {
@@ -542,11 +540,15 @@ app.get('/featuredgames', async (req, res) => {
 app.get('/usergames', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT ug."steam_id", g."game_id", ug."total_played", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
-      FROM "Games" g 
-      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
-      WHERE ug."steam_id" = $1 
-      ORDER BY g."boil_score" DESC NULLS LAST`,
+      `SELECT ug."steam_id", g."game_id", ug."total_played", g."name", g."header_image", g."released",
+       r."total", r."positive", r."negative", r."description" AS recommendation_description, 
+       g."metacritic_score", g."hltb_score", g."boil_score", ug."hide"
+        FROM "Games" g 
+        JOIN "User_Games" ug ON g."game_id" = ug."game_id"
+        LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
+        WHERE ug."steam_id" = $1 
+        ORDER BY g."boil_score" DESC NULLS LAST;
+`,
       [req.session.steamId]
     )
 
@@ -635,7 +637,7 @@ app.get('/gamesByName', async (req, res) => {
     const { name } = req.query // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score"
+      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score", "boil_score"
        FROM "Games" 
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
@@ -1096,6 +1098,40 @@ app.put('/themepreference', async (req, res) => {
     }
   } else {
     return res.status(401).json({ error: 'No steam id' })
+  }
+})
+
+app.put('/hidegame', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  console.log('steamId:', steamId) // Debug log
+  let hide = req.body.hide
+  const gameId = req.body.gameId
+  console.log('hide:', hide, 'gameId:', gameId)
+
+  if (!steamId) {
+    return res.status(401).json({ error: 'No Steam ID provided' })
+  }
+
+  if (hide !== 1 && hide !== 0) {
+    return res.status(400).json({ error: 'Invalid hide value, must be 0 or 1' })
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE "User_Games" SET hide = $1 WHERE steam_id = $2 AND game_id = $3',
+      [hide, steamId, gameId]
+    )
+
+    console.log('Rows affected:', result.rowCount) // Debug log
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'No matching game found for this user' })
+    }
+
+    return res.status(200).json({ success: true, message: 'Game visibility updated' })
+  } catch (err) {
+    console.error('Database error:', err)
+    return res.status(500).json({ error: 'Internal server error' })
   }
 })
 
