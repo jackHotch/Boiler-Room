@@ -3,10 +3,10 @@
  flex-direction: column;
  align-items: center;
  width: 100vw;
- min-height: calc(100vh - 83.5px);
  color: var(--text-primary);
  padding-bottom: 16px;
  gap: 8px;
+ min-width: 100vw;
 }
 
 .list_of_friends {
@@ -18,16 +18,23 @@
 }
 
 .friend_info {
-  background-color: var(--bg-light);
-  padding: 16px;
+  padding: 25px;
   border-radius: 12px;
-  width: 50%;
+}
+
+.friend_steam_link {
+  text-decoration: none;
+  display: block;
+  max-width: min-content;
+  margin-bottom: 16px;
 }
 
 .username {
-  font-size: 1.4rem;
+  font-size: 35px;
   font-weight: bold;
   color: var(--text-primary);
+  margin: 0;
+  width: max-content;
 }
 
 .recent_game_list {
@@ -57,4 +64,16 @@
   max-width: 200px;
   margin-bottom: 8px;
   border-radius: 10px;
+}
+
+.no_recent_games_message {
+  color: var(--text-secondary);
+}
+
+.loading_message {
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
 }

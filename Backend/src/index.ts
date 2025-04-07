@@ -54,6 +54,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
@@ -284,6 +285,9 @@ export async function insertProfile(steamId: bigint) {
     const avatar = response.data.response.players[0]?.avatarhash; //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname;
 
+    await delay();
+
+
     await pool.query(
       //insert those things along with the steamID to our database
       'INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash") VALUES ($1, $2, $3) RETURNING *',
@@ -319,8 +323,10 @@ app.get("/steam/playersummary", async (req, res) => {
       }
     );
 
-    const username = response.data.response.players[0]?.personaname;
-    const userImage = response.data.response.players[0]?.avatarfull;
+    await delay();
+
+    const username = response.data.response.players[0]?.personaname
+    const userImage = response.data.response.players[0]?.avatarfull
 
     if (username) {
       res.status(200).json({ username: username, userImage: userImage });
@@ -351,8 +357,11 @@ app.get("/steam/recentgames", async (req, res) => {
       }
     );
 
-    const games = data.response.games?.slice(0, 3) || [];
-    res.status(200).send(games);
+
+    await delay();
+    
+    const games = data.response.games?.slice(0, 3) || []
+    res.status(200).send(games)
   } catch (error) {
     console.error("Error fetching Steam data:", error);
     res.redirect(process.env.FRONTEND_URL);
@@ -375,32 +384,18 @@ app.get("/steam/logout", (req, res) => {
 });
 
 // Return steam id if logged in, else null
-app.get("/steam/logininfo", async (req, res) => {
+app.get('/steam/logininfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
   if (req.session.steamId) {
     return res.json({
       steamId: req.session.steamId,
-    });
+    })
   } else {
     return res.json({
       steamId: null,
     });
   }
-});
-
-// Return steam id if logged in, else null
-app.get("/steam/logininfo", async (req, res) => {
-  // If Steam ID and name are in the session, return them
-  if (req.session.steamId) {
-    return res.json({
-      steamId: req.session.steamId,
-    });
-  } else {
-    return res.json({
-      steamId: null,
-    });
-  }
-});
+})
 
 // Used for fetching display card info after login
 app.get("/steam/getdisplayinfo", async (req, res) => {
@@ -425,8 +420,10 @@ app.get("/steam/friendsList", async (req, res) => {
     const API_KEY = process.env.STEAM_API_KEY;
     const data = await axios.get(
       `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
-    );
-    return res.status(200).json(data.data.friendslist.friends);
+
+    )
+    await delay();
+    return res.status(200).json(data.data.friendslist.friends)
   } else {
     console.log("no steam id");
     res.sendStatus(400);
@@ -526,21 +523,46 @@ app.get("/games/:gameid", async (req, res) => {
     //if (rows[0].recommendations == 'depreciated') rows[0].recommendations = 'Unavailable'
     rows[0].platform = platformMap[rows[0].platform] || ["Unknown"];
     return res.status(200).json(rows[0]);
+
   } catch (error) {
     console.error("Database error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
 
+app.get('/featuredgames', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT "game_id", "description", "name", "header_image", "metacritic_score", "hltb_score", "boil_score" 
+      FROM "Games" 
+      WHERE "game_id" IN
+        (SELECT "game_id"
+        FROM "Games" 
+        ORDER BY "boil_score" DESC NULLS LAST
+        LIMIT 500)
+      ORDER BY RANDOM() LIMIT 3`
+    )
+
+    res.json(rows)
+  } catch (error) {
+    console.error('Database error:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 // Created Backend route to access the games table from database
 app.get("/usergames", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT ug."steam_id", g."game_id", ug."total_played", g."description", g."name", g."header_image", g."metacritic_score", g."hltb_score", g."boil_score" 
-      FROM "Games" g 
-      JOIN "User_Games" ug ON g."game_id" = ug."game_id" 
-      WHERE ug."steam_id" = $1 
-      ORDER BY g."boil_score" DESC NULLS LAST`,
+      `SELECT ug."steam_id", g."game_id", ug."total_played", g."name", g."header_image", g."released",
+       r."total", r."positive", r."negative", r."description" AS recommendation_description, 
+       g."metacritic_score", g."hltb_score", g."boil_score", ug."hide"
+        FROM "Games" g 
+        JOIN "User_Games" ug ON g."game_id" = ug."game_id"
+        LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
+        WHERE ug."steam_id" = $1 
+        ORDER BY g."boil_score" DESC NULLS LAST;
+`,
       [req.session.steamId]
     );
 
@@ -580,9 +602,9 @@ app.get("/ownedGames", async (req, res) => {
           key: KEY,
         },
       }
-    );
-
-    const data = gameResponse.data;
+    )
+    await delay();
+    const data = gameResponse.data
     if (!data.response || !data.response.games) {
       return res
         .status(404)
@@ -634,7 +656,7 @@ app.get("/gamesByName", async (req, res) => {
     const { name } = req.query; // Get the search term from query parameters
 
     const { rows } = await pool.query(
-      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score"
+      `SELECT "name", "header_image", "game_id", "metacritic_score", "hltb_score", "boil_score"
        FROM "Games" 
        WHERE name ILIKE $1`,
       [`%${name}%`] // Use parameterized query with wildcards for partial match
@@ -727,12 +749,8 @@ app.get("/userGameSpecs", async (req, res) => {
 });
 
 export async function insertGames(steamId: bigint) {
-  // Theres going to be a lot of commented out console logs here because I had to hunt stuff down
   try {
-    //console.log(`Starting insertGames for steamId: ${steamId}`);
-    //console.log('Fetching games from Steam API...');
-    const response = await axios.get(
-      //make our game request
+    const response = await axios.get( //make our game request
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
         params: {
@@ -747,7 +765,6 @@ export async function insertGames(steamId: bigint) {
     //console.log('Steam API response:', response.data);
 
     const games = response.data.response.games; // the games we get are saved here
-    // TODO figure why it breaks here
 
     if (!games || games.length === 0) {
       //if the length is 0, user has no games
@@ -758,15 +775,12 @@ export async function insertGames(steamId: bigint) {
     const gameIds = games.map((game) => game.appid); // Maps all the app.ids to a new array
     //console.log('Game IDs from Steam API:', gameIds);
     //console.log('Data type of game IDs from Steam API:', typeof gameIds[0]);
+    const gameIds = games.map(game => game.appid); // Maps all the app.ids to a new array
 
-    //console.log('Fetching existing games from the database...');
     const existingGames = await pool.query(
       'SELECT "game_id" FROM "Games" WHERE "game_id" = ANY($1)',
       [gameIds]
     ); //uses that array to get all of the existing games from the steam database
-
-    //console.log('Existing games in database:', existingGames.rows);
-    //console.log('Data type of game IDs in database:', typeof existingGames.rows[0]?.game_id);
 
     //make a new set of string of gameIds
     const existingGameIds = new Set(
@@ -779,6 +793,7 @@ export async function insertGames(steamId: bigint) {
       existingGameIds.has(String(game.appid))
     );
     //console.log('Valid games (existing in database):', validGames);
+
 
     if (validGames.length === 0) {
       //another check here just in case
@@ -800,16 +815,12 @@ export async function insertGames(steamId: bigint) {
       ])
       .flat();
 
-    //console.log('Batch insert/update values:', values);
-
     const placeholders = validGames // Makes a fun dynamic array to batch query up games
       .map(
         (_, index) =>
           `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`
       )
       .join(",");
-
-    //console.log('Placeholders for batch query:', placeholders);
 
     const query = `
       INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
@@ -818,7 +829,7 @@ export async function insertGames(steamId: bigint) {
       DO UPDATE SET "total_played" = EXCLUDED."total_played"
     `; //insert our games and on conflict (already exists) update total play time
 
-    //console.log('Constructed batch query:', query);
+    const result = await pool.query(query, values);
 
     //console.log('Executing batch query...');
     const result = await pool.query(query, values);
@@ -828,14 +839,355 @@ export async function insertGames(steamId: bigint) {
     //console.log(`Inserted/Updated ${validGames.length} rows.`);
 
     return { success: true, message: "Games inserted/updated successfully." };
+
   } catch (error) {
     console.error("Error in insertGames:", error);
     throw new Error("Internal Server Error");
   }
 }
 
-app.get("/themepreference", async (req, res) => {
-  const steamId = req.query.steamid || req.session.steamId;
+
+app.get('/friendsListInfo', async (req, res) => {
+  const steamId = req.query.steamId || req.session.steamId
+  try {
+    const forced = req.query.forced === 'true';
+    const result = await loadFriends(steamId, forced);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error in /friendsListInfo:', error);
+    res.status(500).json({ error: 'Failed to load friends' });
+  }
+});
+
+export async function delay() {
+  return new Promise( resolve => setTimeout(resolve, 2000) ); //set a 2 second delay for the API
+}
+
+export async function manageLockout(): Promise<string | null> {
+  const selectResult = await pool.query('SELECT "code" FROM "Lockout"'); //check lockout status
+  const row = selectResult.rows[0];
+  const currentStatus = row.code;
+
+  if (currentStatus === 1) { //if lockout is 1 then you cannot continue
+    return "You are presently locked out, please try again later";
+  } else if (currentStatus === 0) { //if it is 0 then you may start
+    console.log("Beginning friends querying");
+    await pool.query('UPDATE "Lockout" SET "code" = 1', []); //start by locking anyone else out
+    return null;
+  }
+}
+
+export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = false) {
+  const friendsResponse = await axios.get('http://api.steampowered.com/ISteamUser/GetFriendList/v0001/', {
+    params: {
+      steamid: steamId,
+      relationship: "friend",
+      key: process.env.STEAM_API_KEY
+    }
+  }); //starts by getting your friends list
+
+  //console.log(friendsResponse.data)
+
+  await delay();
+  const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString()).slice(0, 20);;
+  //console.log(steamIds)
+
+  if (forced) {
+    return steamIds; //if it is forced mode then we are updating EVERYTHING 
+  }
+
+  const relationsQuery = `
+    SELECT "user1", "user2" 
+    FROM "User_Relations" 
+    WHERE ("user1" = $1 AND "user2" = ANY($2)) 
+       OR ("user2" = $1 AND "user1" = ANY($2))
+  `;
+  const { rows: existingRelations } = await pool.query(relationsQuery, [steamId.toString(), steamIds]);
+
+  const existingRelatedIds = existingRelations.map(row => 
+    row.user1 === steamId.toString() ? row.user2 : row.user1
+  );
+
+  return steamIds.filter(id => !existingRelatedIds.includes(id)); //otherwise we are going to get accounts where there isnt a relation with you already
+}
+
+export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
+  const existingProfilesQuery = ` 
+    SELECT steam_id::text 
+    FROM "Profiles" 
+    WHERE steam_id = ANY($1::bigint[])
+  `; //double check that someone doesnt already have a profile
+  
+  const userIdsAsBigints = userIdsToCheck.map(id => BigInt(id));
+  
+  const { rows: existingProfiles } = await pool.query(existingProfilesQuery, [userIdsAsBigints]);
+  
+  const existingProfileIds = existingProfiles.map(row => row.steam_id);
+  const idsToFetch = userIdsToCheck.filter(id => !existingProfileIds.includes(id))
+
+  const newUserProfiles = []; //these are going to be the new accounts we need to setup
+  for (const steamId of idsToFetch) {
+    try {
+      const response = await axios.get(
+        `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`, {
+          params: {
+            key: process.env.STEAM_API_KEY,
+            steamids: steamId,
+          },
+        }
+      ); //get their account info
+
+      const avatar = response.data.response.players[0]?.avatarhash;
+      const userName = response.data.response.players[0]?.personaname;
+    
+      newUserProfiles.push({
+        steamId,
+        userName,
+        avatar
+      });
+    
+      await delay(); //always making sure we sleep
+    } catch (error) {
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+      console.error(`Error processing Steam ID ${steamId}:`, error.message);
+    }
+  }
+    
+  console.log (newUserProfiles)
+  if (newUserProfiles.length > 0) { //if there is anyone there we add them in
+    await pool.query(
+      `INSERT INTO "Profiles" ("steam_id", "username", "avatar_hash")
+      SELECT * FROM UNNEST($1::bigint[], $2::text[], $3::text[])`,
+      [
+        newUserProfiles.map(profile => BigInt(profile.steamId)),
+        newUserProfiles.map(profile => profile.userName),
+        newUserProfiles.map(profile => profile.avatar),
+      ]
+    );
+  }
+}
+
+export async function updateUserRelations(steamId: string, steamIds: string[]) {
+  const ourSteamId = steamId; //now we need to update our user relations
+  const relationsData = steamIds.map(currentSteamId => {
+    const user1 = BigInt(currentSteamId) < BigInt(ourSteamId) ? currentSteamId : ourSteamId;
+    const user2 = BigInt(currentSteamId) > BigInt(ourSteamId) ? currentSteamId : ourSteamId;
+    const status = 3;
+    return [user1, user2, status];
+  });
+  
+  if (relationsData.length > 0) { //if there is anyone to add, add them
+    await pool.query(
+      `INSERT INTO "User_Relations" ("user1", "user2", "status")
+      SELECT * FROM UNNEST($1::bigint[], $2::bigint[], $3::int[])
+      ON CONFLICT DO NOTHING`,
+      [
+        relationsData.map(row => BigInt(row[0])),
+        relationsData.map(row => BigInt(row[1])),
+        relationsData.map(row => row[2]),
+      ]
+    );
+  }
+}
+
+export async function processAndStoreGames(userIdsToCheck: string[]) {
+  console.log(`Starting processAndStoreGames with ${userIdsToCheck.length} users:`, userIdsToCheck);
+  
+  // Initial insert for all games
+  console.log('Starting initial insertGames for all users');
+  userIdsToCheck.forEach(steamId => {
+    //console.log(`Calling insertGames for SteamID: ${steamId}`);
+    const steamIdBigInt = BigInt(steamId);
+    insertGames(steamIdBigInt);
+  });
+
+  for (const steamId of userIdsToCheck) {
+    const steamIdBigInt = BigInt(steamId);
+    //console.log(`\n=== Processing Steam ID: ${steamIdBigInt} (${typeof steamIdBigInt}) ===`);
+    
+    try {
+      // API Request
+      //console.log(`Making API request for SteamID ${steamId}`);
+      const { data } = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`, {
+        params: {
+          key: process.env.STEAM_API_KEY,
+          steamid: steamId,
+          format: 'json',
+        },
+      });
+      //console.log('API Response:', JSON.stringify(data, null, 2));
+
+      await delay();
+      //console.log('Delay completed');
+
+      // Check response structure
+      if (!data.response) {
+        console.log(`No response object for Steam ID ${steamId}`);
+        continue;
+      }
+      
+      if (!data.response.games || !Array.isArray(data.response.games)) {
+        console.log(`No games array found for Steam ID ${steamId}`);
+        //console.log('Full response:', JSON.stringify(data.response, null, 2));
+        continue;
+      }
+
+      console.log(`Found ${data.response.games.length} recently played games`);
+      
+      // Transform game data
+      const recentlyPlayedGames = data.response.games.map(game => {
+        const transformed = {
+          steamId: steamIdBigInt.toString(),
+          gameId: game.appid.toString(),
+          playtime2Weeks: game.playtime_2weeks || 0,
+          playtimeForever: game.playtime_forever || 0,
+        };
+        //console.log(`Game transformed:`, transformed);
+        return transformed;
+      });
+
+      const recentlyPlayedGameIds = recentlyPlayedGames.map(game => game.gameId.toString());
+      //console.log('Recently played game IDs:', recentlyPlayedGameIds);
+
+      // Check existing games in DB
+      //console.log(`Checking existing games in DB for SteamID ${steamId}`);
+      const existingUserGames = await pool.query(
+        'SELECT "game_id"::text FROM "User_Games" WHERE "steam_id" = $1',
+        [steamIdBigInt.toString()]
+      );
+      
+      //console.log(`Found ${existingUserGames.rows.length} existing games in DB`);
+      const existingGameIds = existingUserGames.rows.map(row => row.game_id.toString());
+      //console.log('Existing game IDs:', existingGameIds);
+
+      // Filter games to keep (intersection of recent and existing)
+      const gamesToKeep = recentlyPlayedGames.filter(game => 
+        existingGameIds.includes(game.gameId.toString())
+      );
+      //console.log(`Games to keep: ${gamesToKeep.length}`, gamesToKeep);
+
+      if (gamesToKeep.length === 0) {
+        console.log('No games to update. Skipping query execution for this user.');
+        continue; // Changed from 'return' to 'continue' to process other users
+      }
+      
+      // Prepare query values
+      const valuesPlaceholders = gamesToKeep
+        .map((_, index) => `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`)
+        .join(', ');
+      
+      const values = gamesToKeep.flatMap(game => [
+        game.gameId,
+        game.steamId,
+        game.playtimeForever,
+        game.playtime2Weeks,
+        1,
+      ]);
+      
+      //console.log('Prepared values:', values);
+      //console.log('Placeholders:', valuesPlaceholders);
+
+      const query = `
+        INSERT INTO "User_Games" ("game_id", "steam_id", "total_played", "last_2_weeks", "recency")
+        VALUES ${valuesPlaceholders}
+        ON CONFLICT ("game_id", "steam_id")
+        DO UPDATE SET
+          "total_played" = EXCLUDED."total_played",
+          "last_2_weeks" = EXCLUDED."last_2_weeks",
+          "recency" = EXCLUDED."recency";
+      `;
+      
+      //console.log('Executing query:', query);
+      
+      try {
+        const result = await pool.query(query, values);
+        //console.log(`Successfully updated ${result.rowCount} games for SteamID ${steamId}`);
+      } catch (err) {
+        await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+        console.error('Error updating User_Games:', err);
+        console.error('Failed query:', query);
+        console.error('Failed values:', values);
+      }
+    } catch (error) {
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+      console.error(`Error processing SteamID ${steamId}:`, error);
+    }
+  }
+  //console.log('Finished processing all users');
+}
+
+export async function getFinalResults(steamId: bigint) {
+  await pool.query('UPDATE "Lockout" SET "code" = 0', []); // we can finally release the lockout here
+
+  const finalQuery = `
+    WITH Friends AS (
+      SELECT 
+          CASE 
+              WHEN user1 = $1 THEN user2
+              ELSE user1
+          END AS friend_steam_id
+      FROM "User_Relations"
+      WHERE user1 = $1 OR user2 = $1
+    ),
+    FriendProfiles AS (
+        SELECT 
+            f.friend_steam_id,
+            p.username
+        FROM Friends f
+        JOIN "Profiles" p ON f.friend_steam_id = p.steam_id
+    ),
+    RecentGames AS (
+        SELECT 
+            ug.steam_id,
+            ug.game_id,
+            ug.last_2_weeks,
+            ROW_NUMBER() OVER (PARTITION BY ug.steam_id ORDER BY ug.last_2_weeks DESC) AS game_rank
+        FROM "User_Games" ug
+        JOIN Friends f ON ug.steam_id = f.friend_steam_id
+        WHERE ug.recency = 1
+    )
+    SELECT 
+        fp.friend_steam_id,
+        fp.username,
+        COALESCE(rg.game_id, -1) AS game_id,
+        COALESCE(rg.last_2_weeks, 0) AS last_2_weeks,
+        g.name AS title
+    FROM FriendProfiles fp
+    LEFT JOIN RecentGames rg ON fp.friend_steam_id = rg.steam_id AND rg.game_rank <= 3
+    LEFT JOIN "Games" g ON rg.game_id = g.game_id
+    ORDER BY fp.friend_steam_id, COALESCE(rg.game_rank, 1);
+  `; //big long query that gets all of the recently played games
+
+  const finalResult = await pool.query(finalQuery, [steamId]);
+  //console.log('Final query result:', finalResult.rows);
+  return finalResult.rows;
+}
+
+export async function loadFriends(steamId: bigint, forced: boolean = false) {
+  console.log("Checking lockout status") //some console logging is kept since this takes a while
+  const lockoutMessage = await manageLockout(); //we get out lockout message
+  if (lockoutMessage) return lockoutMessage; //if we get one we return the message
+
+  try { //otherwise we go through all of our steps
+    console.log("Getting your friends list")
+    const userIdsToCheck = await fetchAndProcessFriends(steamId, forced);
+    console.log("Checking your friends out")
+    await fetchAndStoreProfiles(userIdsToCheck);
+    console.log("Creating relations")
+    await updateUserRelations(steamId.toString(), userIdsToCheck);
+    console.log("Looking at their games")
+    await processAndStoreGames(userIdsToCheck);
+    console.log("Cleaning up")
+    return await getFinalResults(steamId);
+  } catch (error) { 
+      await pool.query('UPDATE "Lockout" SET "code" = 0', []);
+      console.error('Error in loadFriends:', error);
+      throw error;
+  }
+}
+
+app.get('/themepreference', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
   if (steamId) {
     try {
       const { rows } = await pool.query(
@@ -872,6 +1224,40 @@ app.put("/themepreference", async (req, res) => {
   }
 });
 
+app.put('/hidegame', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  console.log('steamId:', steamId) // Debug log
+  let hide = req.body.hide
+  const gameId = req.body.gameId
+  console.log('hide:', hide, 'gameId:', gameId)
+
+  if (!steamId) {
+    return res.status(401).json({ error: 'No Steam ID provided' })
+  }
+
+  if (hide !== 1 && hide !== 0) {
+    return res.status(400).json({ error: 'Invalid hide value, must be 0 or 1' })
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE "User_Games" SET hide = $1 WHERE steam_id = $2 AND game_id = $3',
+      [hide, steamId, gameId]
+    )
+
+    console.log('Rows affected:', result.rowCount) // Debug log
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'No matching game found for this user' })
+    }
+
+    return res.status(200).json({ success: true, message: 'Game visibility updated' })
+  } catch (err) {
+    console.error('Database error:', err)
+    return res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 export async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
@@ -889,6 +1275,8 @@ export async function checkAccount(steamId) {
       }
     );
 
+    await delay();
+
     if (Object.keys(gameResponse.data.response).length > 0) {
       retVal += 2;
     }
@@ -905,6 +1293,8 @@ export async function checkAccount(steamId) {
       }
     );
 
+    await delay();
+    
     if (Object.keys(friendsResponse.data).length > 0) {
       retVal += 1;
     }
@@ -972,4 +1362,5 @@ const renderMessagePage = (message) => {
   `;
 };
 
-export default app;
+
+export default app

@@ -1,0 +1,249 @@
+.header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-light);
+}
+
+.navContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navList {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.navLink {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.hero {
+    position: relative;
+    height: 30vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heroOverlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heroContent {
+    text-align: center;
+    z-index: 2;
+}
+
+.heroTitle {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.heroSubtitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.loginButton {
+    background-color: var(--bg-accent);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 10px;
+}
+
+.exploreButton {
+    background-color: var(--bg-accent-secondary);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 10px;
+}
+
+.loginButton:hover {
+  background-color: var(--bg-accent-secondary);
+}
+
+.exploreButton:hover {
+    background-color: var(--bg-accent);
+}
+
+.featuredGames {
+    height: 10%;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.sectionTitle {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.gamesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.gameCard {
+    background-color: var(--bg-light);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.gameImage {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.gameTitle {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.gameDescription {
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    color: var(--text-secondary);
+}
+
+.imageWrapper {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
+  position: relative;
+  width: fit-content;
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.3s ease-in-out;
+  overflow: hidden; /* Ensure the overlay stays within bounds */
+}
+
+
+
+.imageWrapper:hover .gameImage {
+  filter: brightness(0.5) blur(1px);
+}
+
+.gameTitle {
+    position: absolute;
+    top: 35%; 
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for the element's own size to truly center */
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    padding: 8px 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    line-height: 1.2;
+    z-index: 1;
+    text-align: center;
+    max-width: fit-content;
+  
+  }
+
+  .redirectImage {
+    padding-left: 8px;
+    top: 30%;
+    position: absolute;
+    height: 16px;
+    filter: invert(1);
+  }
+
+  .gameStats {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.75rem 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #f0f0f0;
+  }
+  
+  .stat {
+    background-color: #1e1e1e;
+    padding: 0.4rem 0.75rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  
+  .tooltipWrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: 6px;
+    cursor: pointer;
+  }
+  
+  .questionMark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #444;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    line-height: 1;
+    vertical-align: middle;
+    transform: translateY(-1px);
+  }
+  
+  .tooltipText {
+    visibility: hidden;
+    width: 200px;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 0.6rem;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 0.9rem; /* 🔥 was 0.75rem */
+    line-height: 1.4;
+  }
+  
+  .tooltipWrapper:hover .tooltipText {
+    visibility: visible;
+    opacity: 1;
+  }

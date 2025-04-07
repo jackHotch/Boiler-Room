@@ -6,52 +6,103 @@ import DashGameGallery from '@/components/GameDisplays/DashGameGallery/DashGameG
 import GameTable from '@/components/GameDisplays/GameTable/GameTable'
 import OwnedGamesGallery from '@/components/GameDisplays/OwnedGamesGallery/OwnedGamesGallery'
 import TopRatedGames from '@/components/GameDisplays/TopRatedGames/TopRatedGames'
-import axios, { getAdapter } from 'axios'
+import axios from 'axios'
 
 export default function Dashboard() {
-  let acclaimedClassic
-  let quickPick
-  let hiddenGem
+  const [games, setGames] = useState([])
+  const [featuredGamesArray, setFeaturedGamesArray] = useState([])
 
-  //Function to check for login and redirect
-  //to error page if not logged in
-  if (!process.env.JEST_WORKER_ID) {
-    checkLogin()
-  }
-  async function checkLogin() {
+  const fetchGames = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
-        { withCredentials: true }
-      )
-      if (!response.data.steamId) {
-        //redirect to error page if not logged in
-          window.location.href = '/LoginRedirect';
-      }
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/usergames`, {
+        withCredentials: true,
+      })
+      setGames(response.data)
     } catch (error) {
-      window.location.href = '/LoginRedirect';
+      console.error('Error fetching games:', error)
     }
   }
-
-  const [games, setGames] = useState([])
 
   useEffect(() => {
-
-    const fetchGames = async () => {
+    const checkLogin = async () => {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/usergames', {
-          withCredentials: true,
-        }) // Use the backend port
-        const games = response.data
-        setGames(games)
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
+          { withCredentials: true }
+        )
+        if (!response.data.steamId) {
+          window.location.href = '/LoginRedirect'
+        }
       } catch (error) {
-        console.error('Error fetching game images:', error)
+        window.location.href = '/LoginRedirect'
       }
     }
-    fetchGames()
-  }, []) // Single dependency array
+    if (!process.env.JEST_WORKER_ID) {
+      checkLogin()
+    }
+  }, []) // Runs once on mount
 
-  const featuredGames = games.slice(0,3)
+  useEffect(() => {
+    fetchGames()
+  }, []) // Fetch games
+
+  useEffect(() => {
+    if (games.length > 0) {
+      setFeaturedGamesArray(featuredGames(games))
+    }
+  }, [games]) // Re-run when `games` updates
+
+  const featuredGames = (games) => {
+    if (!games || games.length === 0) {
+      console.error('No games available!')
+      return []
+    }
+
+    // Filter out games without hltb_score or metacritic_score
+    const validGames = games
+      .filter((game) => game.hltb_score !== null && game.metacritic_score !== null)
+      .filter((game) => game.hide == 0)
+
+    if (validGames.length === 0) {
+      console.error('No valid games with both hltb_score and metacritic_score!')
+      return []
+    }
+
+    const sortedGames = [...validGames].sort((a, b) => b.positive - a.positive)
+    const currentYear = new Date().getFullYear()
+
+    // Find an acclaimed classic (a game that is at least 5 years old)
+    const acclaimedClassic =
+      sortedGames.find((game) => {
+        if (!game.released) return false
+        const releaseYear = parseInt(game.released.split('-')[0], 10)
+        return currentYear - releaseYear >= 5
+      }) || null
+
+    // Find a quick pick (highest-rated game that is under 15 hours to complete)
+    const quickPick =
+      sortedGames
+        .filter((game) => game.hltb_score < 15)
+        .sort((a, b) => b.positive - a.positive)[0] || null
+
+    // Find a hidden gem: game with the lowest total reviews but the highest positive review percentage
+    // Note: We may switch out with a hand picked table of games later
+    const hiddenGem =
+      sortedGames
+        .filter((game) => game.positive + game.negative > 0) // Ensure it has reviews
+        .sort((a, b) => {
+          const aTotalReviews = a.positive + a.negative
+          const bTotalReviews = b.positive + b.negative
+
+          // Sort first by total reviews (ascending), then by positive percentage (descending)
+          return (
+            aTotalReviews - bTotalReviews ||
+            b.positive / bTotalReviews - a.positive / aTotalReviews
+          )
+        })[0] || null
+
+    return [quickPick, acclaimedClassic, hiddenGem]
+  }
 
   const featuredCategories = [
     { label: 'Quick Pick' },
@@ -62,10 +113,9 @@ export default function Dashboard() {
   return (
     <div className={styles.container}>
       <section className={styles.featuredGames}>
-        <DashGameGallery games={featuredGames} categories={featuredCategories} />
+        <DashGameGallery games={featuredGamesArray} categories={featuredCategories} />
       </section>
 
-      <hr />
       <section className={styles.JumpBackIn}>
         <OwnedGamesGallery />
       </section>
@@ -73,8 +123,9 @@ export default function Dashboard() {
       <section className={styles.TopRatedGames}>
         <TopRatedGames />
       </section>
+
       <section className={styles.GameTable}>
-        <GameTable games={games} /> {/*change value of games when available*/}
+        <GameTable games={games} onGamesUpdate={() => fetchGames()} />
       </section>
     </div>
   )

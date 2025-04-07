@@ -10,6 +10,7 @@
   --danger: #ff4d4d;
   --danger-secondary: #cc0000;
   --text-bw: #000000;
+  --logo-bw: invert(100%);
 }
 
 .dark {
@@ -24,11 +25,13 @@
   --danger: #ff4d4d;
   --danger-secondary: #cc0000;
   --text-bw: #ffffff;
+  --logo-bw: invert(0%);
 }
 
 body {
     padding:0;
     margin:0;
-    background-color: var(--bg-primary);
-    font-family: Arial, sans-serif;
+    background: radial-gradient(circle, var(--bg-light) 0%, var(--bg-dark) 100%);
+
+        font-family: Arial, sans-serif;
 }

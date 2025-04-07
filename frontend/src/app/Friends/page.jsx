@@ -4,6 +4,7 @@ import styles from './Friends.module.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
+import { FriendsRecentGames } from '@/components/GameDisplays/FriendsRecentGames/FriendsRecentGames'
 
 export default function Friends() {
   //Function to check for login and redirect
@@ -19,142 +20,83 @@ export default function Friends() {
       )
       if (!response.data.steamId) {
         //redirect to error page if not logged in
-          window.location.href = '/LoginRedirect';
+        window.location.href = '/LoginRedirect'
       }
     } catch (error) {
-      window.location.href = '/LoginRedirect';
+      window.location.href = '/LoginRedirect'
     }
   }
 
   const [friendsInfo, setFriendsInfo] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [loggedIn, setLoggedIn] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  async function checkIfUserLoggedIn() {
-    try {
-      await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary', {
-        withCredentials: true,
-      })
-      return true
-    } catch (err) {
-      return false
-    }
-  }
-
-  async function fetchFriendsList() {
-    try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND + '/steam/friendsList',
-        {
-          withCredentials: true,
+  function formatData(data) {
+    return data.reduce(
+      (acc, { username, game_id, last_2_weeks, title, friend_steam_id }) => {
+        let user = acc.find((user) => user.username === username)
+        if (!user) {
+          user = { username: username, steamId: friend_steam_id, games: [] }
+          acc.push(user)
         }
-      )
 
-      return response.data
-    } catch (error) {
-      console.error('Error fetching Steam ID:', error)
-    }
-  }
-
-  async function fetchFriendsRecentGames(friendsList) {
-    const friendsInfoList = []
-    for (const friend of friendsList) {
-      try {
-        const username = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/playersummary',
-          {
-            withCredentials: true,
-            params: {
-              steamid: friend.steamid,
-            },
-          }
-        )
-
-        const recentGames = await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND + '/steam/recentGames',
-          {
-            withCredentials: true,
-            params: {
-              steamid: friend.steamid,
-            },
-          }
-        )
-
-        friendsInfoList.push({
-          username: username.data.username,
-          recentGames: recentGames.data,
+        user.games.push({
+          gameId: parseInt(game_id),
+          playtime: parseInt(last_2_weeks),
+          title: title,
         })
-      } catch (error) {
-        console.error('Error Fetching Friends Info:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    return friendsInfoList
+
+        return acc
+      },
+      []
+    )
   }
 
   useEffect(() => {
     async function fetchData() {
-      if (await checkIfUserLoggedIn()) {
-        const friendsList = await fetchFriendsList()
-        const friendsInfoList = await fetchFriendsRecentGames(friendsList)
-        setFriendsInfo(friendsInfoList)
-      } else {
-        setLoggedIn(false)
-      }
+      setLoading(true)
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND + '/friendsListInfo',
+        {
+          withCredentials: true,
+        }
+      )
+      setLoading(false)
+      const formattedData = formatData(response.data)
+      setFriendsInfo(formattedData)
     }
 
     fetchData()
   }, [])
 
-  if (!loggedIn) {
-    return <h1 className={styles.title}>Not Logged In</h1>
-  }
-
   return (
     <div className={styles.container}>
       <h1>Your Friends</h1>
       <div className={styles.list_of_friends}>
-        {loading
-          ? 'Fetching Friends Data...'
-          : friendsInfo?.map((friend, key) => {
-              return (
-                <div className={styles.friend_info} key={key}>
+        {loading ? (
+          <div className={styles.loading_message}>
+            <span>Please wait while we fetch your friends data</span>
+            <span>This could take a while if it's your first time visiting</span>
+            <span>!!Please don't refresh!!</span>
+          </div>
+        ) : (
+          friendsInfo?.map((friend, key) => {
+            return (
+              <div className={styles.friend_info} key={key}>
+                <a
+                  className={styles.friend_steam_link}
+                  target='_blank'
+                  href={`https://steamcommunity.com/profiles/${friend.steamId}`}
+                >
                   <h4 className={styles.username}>{friend.username}</h4>
+                </a>
 
-                  <span className={styles.recently_played_label}>
-                    Recently Played Games
-                  </span>
-                  <div className={styles.recent_game_list}>
-                    {friendsInfo.recentGames?.length != 0 ? (
-                      friend.recentGames?.map((game, key) => {
-                        return (
-                          <div className={styles.recent_game} key={key}>
-                            <Link href={`SingleGame/${game.appid}`}>
-                              <img
-                                className={styles.image}
-                                src={
-                                  'https://steamcdn-a.akamaihd.net/steam/apps/' +
-                                  game.appid +
-                                  '/library_600x900_2x.jpg'
-                                }
-                                alt={game.name}
-                              />
-                            </Link>
-                            <span>
-                              {Math.round(game.playtime_2weeks / 60)} hours in last 2
-                              weeks
-                            </span>
-                          </div>
-                        )
-                      })
-                    ) : (
-                      <span>No Games Played</span>
-                    )}
-                  </div>
+                <div className={styles.recent_game_list}>
+                  <FriendsRecentGames games={friend.games} />
                 </div>
-              )
-            })}
+              </div>
+            )
+          })
+        )}
       </div>
     </div>
   )

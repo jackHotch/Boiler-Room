@@ -2,17 +2,57 @@
 
 import { useState, useEffect } from 'react'
 import styles from './GameTable.module.css'
+import axios from 'axios'
 
-const GameTable = ({ games }) => {
+async function hideGame(game_id, hideValue) {
+  try {
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_BACKEND}/hidegame`,
+      {
+        gameId: Number(game_id),
+        hide: Number(hideValue),
+      },
+      {
+        withCredentials: true,
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error hiding game:', error)
+    throw error
+  }
+}
+
+const GameTable = ({ games, steamId, onGamesUpdate }) => {
   const ROWS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = useState(1)
   const [filteredGames, setFilteredGames] = useState([])
-  const [sortBy, setSortBy] = useState('title')
-  const [sortOrder, setSortOrder] = useState('asc')
+  const [sortBy, setSortBy] = useState('boil')
+  const [sortOrder, setSortOrder] = useState('desc')
+  const [showHidden, setShowHidden] = useState(false)
 
   useEffect(() => {
-    sortGames('title')
-  }, [games])
+    filterGames()
+  }, [games, showHidden, sortBy, sortOrder]) // Depend on sortBy and sortOrder
+
+  const filterGames = () => {
+    let sortedGames = [...games]
+
+    sortedGames.sort((a, b) => {
+      const comparison = compareValues(a, b, sortBy)
+      return sortOrder === 'asc' ? comparison : -comparison
+    })
+
+    const visibleGames = sortedGames.filter((game) => game.hide === 0)
+    const hiddenGames = sortedGames.filter((game) => game.hide === 1)
+    const updatedFilteredGames = showHidden ? hiddenGames : visibleGames
+
+    const newTotalPages = Math.ceil(updatedFilteredGames.length / ROWS_PER_PAGE)
+    setFilteredGames(updatedFilteredGames)
+
+    // Keep the current page unless it's out of bounds
+    setCurrentPage((prevPage) => Math.min(prevPage, newTotalPages) || 1)
+  }
 
   const totalPages = Math.ceil(filteredGames.length / ROWS_PER_PAGE)
   const indexOfLastGame = currentPage * ROWS_PER_PAGE
@@ -39,7 +79,6 @@ const GameTable = ({ games }) => {
         return (a.hltb_score ?? Infinity) - (b.hltb_score ?? Infinity)
       case 'boil':
         return (a.boil_score ?? 0) - (b.boil_score ?? 0)
-
       default:
         return 0
     }
@@ -47,16 +86,28 @@ const GameTable = ({ games }) => {
 
   const sortGames = (criteria) => {
     const newOrder = sortBy === criteria && sortOrder === 'desc' ? 'asc' : 'desc'
-
-    const sortedGames = [...games].sort((a, b) => {
-      const comparison = compareValues(a, b, criteria)
-      return newOrder === 'asc' ? comparison : -comparison
-    })
-
     setSortBy(criteria)
     setSortOrder(newOrder)
-    setFilteredGames(sortedGames)
-    setCurrentPage(1)
+    filterGames() // Reapply sorting and filtering
+  }
+
+  const handleHideGame = async (game_id, currentHideValue) => {
+    const newHideValue = currentHideValue === 0 ? 1 : 0 // Toggle the hide value
+
+    try {
+      await hideGame(game_id, newHideValue)
+
+      if (onGamesUpdate) {
+        const prevPage = currentPage // Store current page
+        await onGamesUpdate() // Fetch updated games
+
+        // Ensure the page stays the same unless it’s out of bounds
+        const newTotalPages = Math.ceil(filteredGames.length / ROWS_PER_PAGE)
+        setCurrentPage(prevPage > newTotalPages ? newTotalPages : prevPage)
+      }
+    } catch (error) {
+      console.error('Failed to update game visibility:', error)
+    }
   }
 
   return (
@@ -76,7 +127,6 @@ const GameTable = ({ games }) => {
             Sort by Metacritic{' '}
             {sortBy === 'metacritic' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
-
           <button
             onClick={() => sortGames('timePlayed')}
             className={sortBy === 'timePlayed' ? styles.activeFilter : ''}
@@ -84,7 +134,6 @@ const GameTable = ({ games }) => {
             Sort by Playtime{' '}
             {sortBy === 'timePlayed' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
-
           <button
             onClick={() => sortGames('length')}
             className={sortBy === 'length' ? styles.activeFilter : ''}
@@ -92,12 +141,17 @@ const GameTable = ({ games }) => {
             Sort by Time to Beat{' '}
             {sortBy === 'length' && (sortOrder === 'asc' ? '⬆' : '⬇')}
           </button>
-
           <button
             onClick={() => sortGames('boil')}
             className={sortBy === 'boil' ? styles.activeFilter : ''}
           >
             Sort by BOIL {sortBy === 'boil' && (sortOrder === 'asc' ? '⬆' : '⬇')}
+          </button>
+          <button
+            onClick={() => setShowHidden(!showHidden)}
+            className={showHidden ? styles.activeFilter : ''}
+          >
+            {showHidden ? 'Show Visible Games' : 'Show Hidden Games'}
           </button>
         </div>
 
@@ -118,11 +172,12 @@ const GameTable = ({ games }) => {
         <thead>
           <tr className={styles.headerRow}>
             <th className={styles.titleColumn}>Title</th>
-            <th>Rating</th>
-            <th>Playtime</th>
-            <th>Time to Beat</th>
             <th>Boil</th>
-            <th>Steam Page</th>
+            <th>Rating</th>
+            <th>hltb</th>
+            <th>Playtime</th>
+            <th>Steam</th>
+            <th>{showHidden ? 'Show' : 'Hide'}</th>
           </tr>
         </thead>
         <tbody>
@@ -140,12 +195,12 @@ const GameTable = ({ games }) => {
                   </a>
                 </div>
               </td>
-              <td>{game.metacritic_score ?? 'N/A'}</td>
-              <td>
-                {game.hltb_score ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}
-              </td>
-              <td>{game.hltb_score ? `${game.hltb_score} Hrs` : 'N/A'}</td>
               <td>{game.boil_score ?? 'N/A'}</td>
+              <td>{game.metacritic_score ?? 'N/A'}</td>
+              <td>{game.hltb_score ? `${game.hltb_score} Hrs` : 'N/A'}</td>
+              <td>
+                {game.total_played ? `${Math.floor(game.total_played / 60)} Hrs` : 'N/A'}
+              </td>
               <td>
                 <a href={`https://store.steampowered.com/app/${game.game_id}`}>
                   <img
@@ -154,6 +209,14 @@ const GameTable = ({ games }) => {
                     alt='Steam'
                   />
                 </a>
+              </td>
+              <td>
+                <button
+                  onClick={() => handleHideGame(game.game_id, game.hide)}
+                  className={styles.hideButton}
+                >
+                  {game.hide === 0 ? '-' : '+'}
+                </button>
               </td>
             </tr>
           ))}

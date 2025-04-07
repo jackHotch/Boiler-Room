@@ -151,7 +151,26 @@ export default function GameRecommendation() {
     console.log("Form Data Submitted:");
     console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
 
-   
+    
+    // filter errors and feedback
+    let errors = "";
+    if (minYear.length != 4 || maxYear.length != 4 || minYear < 1980 || maxYear < 1980 || 
+    minYear > new Date().getFullYear() || maxYear > new Date().getFullYear() || minYear > maxYear || 
+    maxHLTB < 0 || maxHLTB > 100 ||minBoilRating < 0 || minBoilRating > 100) 
+    { 
+      if (minYear.length != 4 || maxYear.length != 4) {errors += "Minimum/Maximum year is incorrect length - YYYY format.\n";}
+      if (minYear < 1980 || maxYear < 1980) {errors += "Minimum/Maximum year is too old - min = 1980.\n";}
+      if (minYear > new Date().getFullYear() || maxYear > new Date().getFullYear()) {errors += "Minimum/Maximum year is invalid - max year = current year.\n";}
+      if (minYear > maxYear) {let swap = minYear; minYear = maxYear; maxYear = swap;} // swap minyear and maxyear if maxyear < minyear
+      if (maxHLTB < 0 || maxHLTB > 100) {errors += "How Long to beat score invalid - 1 to 100.\n";}
+      if (minBoilRating < 0 || minBoilRating > 100) {errors += "Boil Rating is invalid - 1 to 100.\n";}
+      // ALERT CALL HERE
+      window.alert("ERROR:\n" + errors);
+    } 
+    // else {
+      // QUERY HERE JOHN
+    // }
+  
   };
 
   return (
@@ -169,7 +188,7 @@ export default function GameRecommendation() {
                 />
               </div>
               <div>
-                <label>Max HLTB: </label>
+                <label>Max How Long To Beat: </label>
                 <input 
                   className={styles.tf}
                   type="text"
