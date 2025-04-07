@@ -25,7 +25,7 @@ export function Navbar() {
 
   useEffect(() => {
     async function fetchProfileData() {
-       try {
+      try {
         const theme = await axios.get(
           process.env.NEXT_PUBLIC_BACKEND + '/themepreference',
           {
@@ -62,7 +62,7 @@ export function Navbar() {
   return (
     <div className={styles.container}>
       <Link className={theme === 1 ? styles.logo : styles.logoDark} href='/Dashboard'>
-        <img className={styles.logo} src='BRLogo.png' width={250} />
+        <img className={styles.logo} src='/BRLogo.png' width={250} alt='BoilerRoom' />
       </Link>
 
       <div className={styles.nav_options}>
