@@ -1398,6 +1398,24 @@ app.get('/resyncHelper', async (req, res) => {
   }
 });
 
+app.get('/resyncHelper', async (req, res) => {
+  const steamId = req.query.steamId || req.session.steamId;
+  
+  if (!steamId) {
+    return res.status(400).json({ error: 'steamId is required' });
+  }
+
+  try {
+    const forced = req.query.forced === 'true';
+    await loadFriends(steamId, forced);
+    await insertGames(steamId);
+    res.json({ success: true, message: 'Resync completed' });
+  } catch (error) {
+    console.error('Error in /resyncHelper:', error);
+    res.status(500).json({ error: 'Failed to resync data' });
+  }
+});
+
 export async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
