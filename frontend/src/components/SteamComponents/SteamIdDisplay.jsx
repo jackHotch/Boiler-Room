@@ -4,6 +4,15 @@ import axios from 'axios'
 import styles from './SteamIdDisplay.module.css'
 import Link from 'next/link'
 
+const resyncHelper = () => {
+  try {
+    const response = axios.get(process.env.NEXT_PUBLIC_BACKEND + '/resyncHelper');
+    return(response)
+  } catch (error) {
+    
+  }
+}
+
 const handleLogin = () => {
   window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
 }
@@ -68,9 +77,9 @@ function SteamProfile() {
         </p>
       </div>
       <div className={styles.buttonContainer}>
-        <Link className={styles.profileButton} href='/Account'>
-          Profile
-        </Link>
+        <button className={styles.profileButton} onClick={resyncHelper}>
+          Re-Sync Account
+        </button>
         <button className={styles.steamLogout} onClick={handleLogout}>
           Logout
         </button>

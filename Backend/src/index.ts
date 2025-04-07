@@ -597,8 +597,10 @@ app.get('/ownedGames', async (req, res) => {
       {
         params: {
           steamid: steamId,
+          key: process.env.STEAM_API_KEY,
+          format: 'json',
           include_appinfo: true,
-          key: KEY,
+          include_played_free_games: true,
         },
       }
     )
@@ -866,10 +868,29 @@ export async function insertGames(steamId: bigint, friend: boolean = true) {
   }
 }
 
-app.get("/friendsListInfo", async (req, res) => {
-  const steamId = req.query.steamId || req.session.steamId;
+
+app.get('/resyncHelper', async (req, res) => {
+  const steamId = req.query.steamId || req.session.steamId
   try {
-    const forced = req.query.forced === "true";
+    const forced = req.query.forced === 'true';
+    await loadFriends(steamId, forced);
+  } catch (error) {
+    console.error('Error in /resyncHelper:', error);
+    res.status(500).json({ error: 'Failed to load friends' });
+  }
+
+  try{
+    insertGames(steamId)
+  }catch (error) {
+    console.error('Error in /resyncHelper:', error);
+    res.status(500).json({ error: 'Failed to load friends' });
+  }
+});
+
+app.get('/friendsListInfo', async (req, res) => {
+  const steamId = req.query.steamId || req.session.steamId
+  try {
+    const forced = req.query.forced === 'false';
     const result = await loadFriends(steamId, forced);
     res.status(200).json(result);
   } catch (error) {
@@ -1395,8 +1416,10 @@ export async function checkAccount(steamId) {
       {
         params: {
           steamid: steamId,
+          key: process.env.STEAM_API_KEY,
+          format: 'json',
           include_appinfo: true,
-          key: KEY,
+          include_played_free_games: true,
         },
       }
     );
