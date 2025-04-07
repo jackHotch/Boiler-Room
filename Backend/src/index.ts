@@ -704,9 +704,6 @@ export async function insertGames(steamId: bigint) {
 
 app.get('/friendsListInfo', async (req, res) => {
   const steamId = req.query.steamId || req.session.steamId
-  //const steamId = BigInt("76561199154033472"); //me
-  // const steamId = BigInt("76561199509790498"); //Jack
-  //const steamId = BigInt("76561198047476018"); //Matt
   try {
     const forced = req.query.forced === 'true';
     const result = await loadFriends(steamId, forced);
@@ -744,11 +741,11 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
     }
   }); //starts by getting your friends list
 
-  console.log(friendsResponse.data)
+  //console.log(friendsResponse.data)
 
   await delay();
   const steamIds = friendsResponse.data.friendslist.friends.map(friend => friend.steamid.toString()).slice(0, 20);;
-  console.log(steamIds)
+  //console.log(steamIds)
 
   if (forced) {
     return steamIds; //if it is forced mode then we are updating EVERYTHING 
@@ -854,18 +851,18 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
   // Initial insert for all games
   console.log('Starting initial insertGames for all users');
   userIdsToCheck.forEach(steamId => {
-    console.log(`Calling insertGames for SteamID: ${steamId}`);
+    //console.log(`Calling insertGames for SteamID: ${steamId}`);
     const steamIdBigInt = BigInt(steamId);
     insertGames(steamIdBigInt);
   });
 
   for (const steamId of userIdsToCheck) {
     const steamIdBigInt = BigInt(steamId);
-    console.log(`\n=== Processing Steam ID: ${steamIdBigInt} (${typeof steamIdBigInt}) ===`);
+    //console.log(`\n=== Processing Steam ID: ${steamIdBigInt} (${typeof steamIdBigInt}) ===`);
     
     try {
       // API Request
-      console.log(`Making API request for SteamID ${steamId}`);
+      //console.log(`Making API request for SteamID ${steamId}`);
       const { data } = await axios.get(`https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`, {
         params: {
           key: process.env.STEAM_API_KEY,
@@ -873,10 +870,10 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
           format: 'json',
         },
       });
-      console.log('API Response:', JSON.stringify(data, null, 2));
+      //console.log('API Response:', JSON.stringify(data, null, 2));
 
       await delay();
-      console.log('Delay completed');
+      //console.log('Delay completed');
 
       // Check response structure
       if (!data.response) {
@@ -886,7 +883,7 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
       
       if (!data.response.games || !Array.isArray(data.response.games)) {
         console.log(`No games array found for Steam ID ${steamId}`);
-        console.log('Full response:', JSON.stringify(data.response, null, 2));
+        //console.log('Full response:', JSON.stringify(data.response, null, 2));
         continue;
       }
 
@@ -900,29 +897,29 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
           playtime2Weeks: game.playtime_2weeks || 0,
           playtimeForever: game.playtime_forever || 0,
         };
-        console.log(`Game transformed:`, transformed);
+        //console.log(`Game transformed:`, transformed);
         return transformed;
       });
 
       const recentlyPlayedGameIds = recentlyPlayedGames.map(game => game.gameId.toString());
-      console.log('Recently played game IDs:', recentlyPlayedGameIds);
+      //console.log('Recently played game IDs:', recentlyPlayedGameIds);
 
       // Check existing games in DB
-      console.log(`Checking existing games in DB for SteamID ${steamId}`);
+      //console.log(`Checking existing games in DB for SteamID ${steamId}`);
       const existingUserGames = await pool.query(
         'SELECT "game_id"::text FROM "User_Games" WHERE "steam_id" = $1',
         [steamIdBigInt.toString()]
       );
       
-      console.log(`Found ${existingUserGames.rows.length} existing games in DB`);
+      //console.log(`Found ${existingUserGames.rows.length} existing games in DB`);
       const existingGameIds = existingUserGames.rows.map(row => row.game_id.toString());
-      console.log('Existing game IDs:', existingGameIds);
+      //console.log('Existing game IDs:', existingGameIds);
 
       // Filter games to keep (intersection of recent and existing)
       const gamesToKeep = recentlyPlayedGames.filter(game => 
         existingGameIds.includes(game.gameId.toString())
       );
-      console.log(`Games to keep: ${gamesToKeep.length}`, gamesToKeep);
+      //console.log(`Games to keep: ${gamesToKeep.length}`, gamesToKeep);
 
       if (gamesToKeep.length === 0) {
         console.log('No games to update. Skipping query execution for this user.');
@@ -942,8 +939,8 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
         1,
       ]);
       
-      console.log('Prepared values:', values);
-      console.log('Placeholders:', valuesPlaceholders);
+      //console.log('Prepared values:', values);
+      //console.log('Placeholders:', valuesPlaceholders);
 
       const query = `
         INSERT INTO "User_Games" ("game_id", "steam_id", "total_played", "last_2_weeks", "recency")
@@ -955,11 +952,11 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
           "recency" = EXCLUDED."recency";
       `;
       
-      console.log('Executing query:', query);
+      //console.log('Executing query:', query);
       
       try {
         const result = await pool.query(query, values);
-        console.log(`Successfully updated ${result.rowCount} games for SteamID ${steamId}`);
+        //console.log(`Successfully updated ${result.rowCount} games for SteamID ${steamId}`);
       } catch (err) {
         await pool.query('UPDATE "Lockout" SET "code" = 0', []);
         console.error('Error updating User_Games:', err);
@@ -971,7 +968,7 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
       console.error(`Error processing SteamID ${steamId}:`, error);
     }
   }
-  console.log('Finished processing all users');
+  //console.log('Finished processing all users');
 }
 
 export async function getFinalResults(steamId: bigint) {
@@ -1017,7 +1014,7 @@ export async function getFinalResults(steamId: bigint) {
   `; //big long query that gets all of the recently played games
 
   const finalResult = await pool.query(finalQuery, [steamId]);
-  console.log('Final query result:', finalResult.rows);
+  //console.log('Final query result:', finalResult.rows);
   return finalResult.rows;
 }
 
