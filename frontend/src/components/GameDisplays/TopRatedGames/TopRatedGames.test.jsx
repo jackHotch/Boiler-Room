@@ -51,7 +51,7 @@ describe('TopRatedGames', () => {
   test('renders loading state initially', () => {
     axios.get.mockImplementation(() => new Promise(() => {})) // Pending promise for loading state
     render(<TopRatedGames />)
-    expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
+    expect(screen.getByText('Discover These Top-Rated Gems')).toBeInTheDocument()
     expect(screen.getByText('Loading your games...')).toBeInTheDocument()
   })
 
@@ -60,7 +60,7 @@ describe('TopRatedGames', () => {
     render(<TopRatedGames />)
 
     await waitFor(() => {
-      expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
+      expect(screen.getByText('Discover These Top-Rated Gems')).toBeInTheDocument()
       expect(
         screen.getByText('Failed to load owned games. Please log in with Steam.')
       ).toBeInTheDocument()
@@ -72,7 +72,7 @@ describe('TopRatedGames', () => {
     render(<TopRatedGames />)
 
     await waitFor(() => {
-      expect(screen.getByText('Try These Highly Rated Titles Next')).toBeInTheDocument()
+      expect(screen.getByText('Discover These Top-Rated Gems')).toBeInTheDocument()
       expect(screen.getByText('No owned games to display')).toBeInTheDocument()
     })
   })

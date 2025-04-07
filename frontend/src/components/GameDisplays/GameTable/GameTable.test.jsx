@@ -26,6 +26,7 @@ const mockGames = [
     hltb_score: 10,
     boil_score: 50,
     header_image: 'https://example.com/game1.jpg',
+    hide: 0,
   },
   {
     game_id: '67890',
@@ -34,6 +35,7 @@ const mockGames = [
     hltb_score: 15,
     boil_score: 60,
     header_image: 'https://example.com/game2.jpg',
+    hide: 0,
   },
 ]
 
@@ -49,11 +51,12 @@ describe('GameTable Component', () => {
     // Use waitFor to ensure the DOM is fully updated
     await waitFor(() => {
       expect(screen.getByText('Title')).toBeInTheDocument()
-      expect(screen.getByText('Rating')).toBeInTheDocument()
-      expect(screen.getByText('Playtime')).toBeInTheDocument()
-      expect(screen.getByText('Time to Beat')).toBeInTheDocument()
       expect(screen.getByText('Boil')).toBeInTheDocument()
-      expect(screen.getByText('Steam Page')).toBeInTheDocument()
+      expect(screen.getByText('Rating')).toBeInTheDocument()
+      expect(screen.getByText('hltb')).toBeInTheDocument()
+      expect(screen.getByText('Playtime')).toBeInTheDocument()
+      expect(screen.getByText('Steam')).toBeInTheDocument()
+      expect(screen.getByText('Hide')).toBeInTheDocument()
     })
   })
 
@@ -75,7 +78,6 @@ describe('GameTable Component', () => {
       expect(gameLinks).toHaveLength(mockGames.length)
       expect(gameLinks[0]).toHaveAttribute('href')
       expect(gameLinks[1]).toHaveAttribute('href')
-
     })
   })
 })
