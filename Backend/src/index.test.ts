@@ -1,4 +1,4 @@
-import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
+import app, { insertGames, insertProfile, closeServer, checkAccount, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
