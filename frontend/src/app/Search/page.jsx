@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import styles from './Search.module.css'
-import GameTable from '@/components/GameDisplays/GameTable/GameTable'
-import axios, { all } from 'axios'
+import GameTable from '@/components/GameDisplays/SearchTable/SearchTable'
+import axios from 'axios'
 import { useSearchParams } from 'next/navigation'
 
 export default function Search() {
@@ -21,6 +21,7 @@ export default function Search() {
         )
 
         setGames(response.data)
+        console.log('Fetched games:', response.data[0].name)
       } catch (error) {
         console.error('Error fetching games:', error)
       }

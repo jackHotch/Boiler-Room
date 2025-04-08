@@ -79,12 +79,6 @@ export default function Dashboard() {
         return currentYear - releaseYear >= 5
       }) || null
 
-    // Find a quick pick (highest-rated game that is under 15 hours to complete)
-    const quickPick =
-      sortedGames
-        .filter((game) => game.hltb_score < 15)
-        .sort((a, b) => b.positive - a.positive)[0] || null
-
     // Find a hidden gem: game with the lowest total reviews but the highest positive review percentage
     // Note: We may switch out with a hand picked table of games later
     const hiddenGem =
@@ -100,6 +94,28 @@ export default function Dashboard() {
             b.positive / bTotalReviews - a.positive / aTotalReviews
           )
         })[0] || null
+
+    // Find a quick pick (highest-rated game that is under 15 hours to complete)
+    const sorted = sortedGames.sort((a, b) => {
+      if (b.positive === a.positive) {
+        return a.hltb_score - b.hltb_score // lower hltb_score wins tie
+      }
+      return b.positive - a.positive // higher positive score first
+    })
+
+    let quickPick = null
+
+    for (let i = 0; i < sorted.length; i++) {
+      const candidate = sorted[i]
+
+      if (
+        candidate.game_id !== acclaimedClassic.game_id &&
+        candidate.game_id !== hiddenGem.game_id
+      ) {
+        quickPick = candidate
+        break
+      }
+    }
 
     return [quickPick, acclaimedClassic, hiddenGem]
   }

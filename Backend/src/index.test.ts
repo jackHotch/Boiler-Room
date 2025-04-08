@@ -1,4 +1,4 @@
-import app, { insertGames, insertProfile, closeServer, checkAccount, hltbUpdate, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
+import app, { insertGames, insertProfile, closeServer, checkAccount, manageLockout, fetchAndStoreProfiles, updateUserRelations, processAndStoreGames, getFinalResults} from './index';
 import axios from 'axios';
 import { Pool } from 'pg';
 import request from 'supertest';
@@ -360,4 +360,51 @@ test('getFinalResults', async () => {
 
   const results2 = await getFinalResults(BigInt(4));
   expect(results2).toEqual(test4SqlResult);
+});
+
+// Test suite for GET /gamesByFilter
+describe("GET /gamesByFilter", () => {
+  it("returns filtered game recommendations", async () => {
+    const testUserFilter = [
+      {
+        name: "Portal 2",
+        header_image: "img.png",
+        description: "A game",
+        boil_score: 9,
+        released: "2011-04-19",
+      },
+    ]
+    // Mock axios GET response
+    mockedAxios.get.mockResolvedValueOnce({ data: testUserFilter });
+
+    const response = await mockedAxios.get('/gamesByFilter')
+
+    // Assertions
+    expect(response.data).toEqual(testUserFilter)
+  });
+});
+
+// Test suite for GET /userGameSpecs
+describe("GET /userGameSpecs", () => {
+  it("returns user stats", async () => {
+    const testUserSpecs = [
+      {
+        most_common_genre: "Action",
+        genre_count: 5,
+        most_common_platform: 4,
+        avg_hltb: 10,
+      },
+    ]
+    // Mock the pg query result
+    mockedAxios.get.mockResolvedValue({
+      status: 200,
+      data: testUserSpecs,
+    });
+
+    const response = await mockedAxios.get(`/userGameSpecs?steamid=${testSteamId}`)
+
+    // Assertions
+    expect(response.status).toBe(200);
+    expect(response.data).toEqual(testUserSpecs);
+  });
 });
