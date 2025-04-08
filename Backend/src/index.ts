@@ -858,6 +858,7 @@ export async function insertGames(steamId: bigint, friend: boolean = true) {
 app.get('/resyncHelper', async (req, res) => {
   const steamId = req.query.steamId || req.session.steamId
   try {
+    console.log("Syncing friends")
     const forced = req.query.forced === 'true';
     await loadFriends(steamId, forced);
   } catch (error) {
@@ -866,11 +867,13 @@ app.get('/resyncHelper', async (req, res) => {
   }
 
   try{
+    console.log("Syncing games")
     insertGames(steamId)
   }catch (error) {
     console.error('Error in /resyncHelper:', error);
     res.status(500).json({ error: 'Failed to load friends' });
   }
+  console.log("Finished resyncing")
 });
 
 app.get('/friendsListInfo', async (req, res) => {
