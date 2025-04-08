@@ -4,30 +4,6 @@ import axios from 'axios'
 import styles from './SteamIdDisplay.module.css'
 import Link from 'next/link'
 
-const resyncHelper = async () => {
-  try {
-    const userSteamId = localStorage.getItem('steamId') || steamId;
-    
-    if (!userSteamId) {
-      console.error('No steamId found');
-      return;
-    }
-
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/resyncHelper`, {
-      params: {
-        steamId: userSteamId,
-        forced: true
-      }
-    });
-    
-    console.log('Resync successful:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error in resyncHelper:', error);
-    throw error;
-  }
-}
-
 const handleLogin = () => {
   window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/steam` // This will trigger the backend to redirect to Steam
 }
@@ -40,6 +16,35 @@ function SteamProfile() {
   const [steamName, setSteamName] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [resyncLoading, setResyncLoading] = useState(false)
+
+  const resyncHelper = async () => {
+    try {
+      const userSteamId = localStorage.getItem('steamId') || steamId
+
+      if (!userSteamId) {
+        console.error('No steamId found')
+        return
+      }
+      setResyncLoading(true)
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND}/resyncHelper`,
+        {
+          params: {
+            steamId: userSteamId,
+            forced: true,
+          },
+        }
+      )
+      setResyncLoading(false)
+
+      console.log('Resync successful:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('Error in resyncHelper:', error)
+      throw error
+    }
+  }
 
   useEffect(() => {
     async function fetchProfileData() {
@@ -92,8 +97,13 @@ function SteamProfile() {
         </p>
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.profileButton} onClick={resyncHelper}>
-          Re-Sync Account
+        <button
+          className={styles.profileButton}
+          onClick={resyncHelper}
+          disabled={resyncLoading}
+          style={{ cursor: resyncLoading ? 'not-allowed' : 'default' }}
+        >
+          {resyncLoading ? 'Loading...' : 'Re-Sync Account'}
         </button>
         <button className={styles.steamLogout} onClick={handleLogout}>
           Logout
