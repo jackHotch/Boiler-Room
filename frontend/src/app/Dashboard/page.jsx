@@ -96,17 +96,23 @@ export default function Dashboard() {
         })[0] || null
 
     // Find a quick pick (highest-rated game that is under 15 hours to complete)
-    let quickPick
-    for (let i = 0; i < sortedGames.length; i++) {
-      quickPick = sortedGames
-        .sort((a, b) => b.positive - a.positive)
-        .sort((a, b) => b.hltb_score - a.hltb_score)[i]
-      console.log(quickPick)
+    const sorted = sortedGames.sort((a, b) => {
+      if (b.positive === a.positive) {
+        return a.hltb_score - b.hltb_score // lower hltb_score wins tie
+      }
+      return b.positive - a.positive // higher positive score first
+    })
+
+    let quickPick = null
+
+    for (let i = 0; i < sorted.length; i++) {
+      const candidate = sorted[i]
 
       if (
-        quickPick.game_id != acclaimedClassic.game_id ||
-        quickPick.game_id != acclaimedClassic.game_id
+        candidate.game_id !== acclaimedClassic.game_id &&
+        candidate.game_id !== hiddenGem.game_id
       ) {
+        quickPick = candidate
         break
       }
     }
