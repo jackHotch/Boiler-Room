@@ -7,7 +7,6 @@ import { CookieMessage } from '@/components/CookieMessage/CookieMessage'
 import { Searchbar } from '@/components/Navbar/Searchbar/Searchbar'
 import LandingGames from '@/components/GameDisplays/LandingGames/LandingGames'
 
-
 const LandingPage = () => {
   const [games, setGames] = useState([])
   const footerRef = useRef(null)
@@ -15,7 +14,9 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND + '/featuredgames') // Use the backend port
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND + '/featuredgames'
+        ) // Use the backend port
 
         // Ensure the response is JSON
         const contentType = response.headers.get('content-type')
@@ -40,17 +41,9 @@ const LandingPage = () => {
             <img className={styles.logo} src='BRLogo.png' width={250} />
             <nav>
               <ul className={styles.navList}>
-              <Searchbar />
+                <Searchbar />
                 <li>
                   <ThemeToggle />
-                </li>
-                <li>
-                  <a
-                    href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}
-                    className={styles.navLink}
-                  >
-                    Sign In With Steam
-                  </a>
                 </li>
               </ul>
             </nav>
@@ -62,20 +55,18 @@ const LandingPage = () => {
             <div className={styles.heroContent}>
               <h2 className={styles.heroTitle}>Welcome to Boiler Room</h2>
               <p className={styles.heroSubtitle}>
-                Boil down your backlog, optimize your gametime, discover and rediscover highly-rated games that fit your schedule 
+                Boil down your backlog, optimize your gametime, discover and rediscover
+                highly-rated games that fit your schedule
               </p>
-                  <a
-                    href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}
-                    className={styles.loginButton}
-                  >
-                    Sign In With Steam
-                  </a>
-                  <a
-                    href='/Search'
-                    className={styles.exploreButton}
-                  >
-                    Explore Games
-                  </a>
+              <a
+                href={process.env.NEXT_PUBLIC_BACKEND + '/auth/steam'}
+                className={styles.loginButton}
+              >
+                Sign In With Steam
+              </a>
+              <a href='/Search' className={styles.exploreButton}>
+                Explore Games
+              </a>
             </div>
           </div>
         </section>

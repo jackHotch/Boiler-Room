@@ -2,8 +2,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg-accent);
+  background-color: var(--bg-primary);
   border: none;
   border-radius: 4px;
   padding: 6px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.darkButton{
+  filter: invert(1);
+}
+
+.button:hover {
+  background-color: var(--bg-accent);
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0px 0px 4px var(--text-primary); /* Slightly stronger shadow on hover */
+}
+
+.button:active {
+  transform: scale(0.95);
+  transition: all 0.25s ease-in-out;
+}
+
+.button:focus {
+  outline: none;
 }

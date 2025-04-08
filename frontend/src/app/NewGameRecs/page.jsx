@@ -317,7 +317,7 @@ export default function GameRecommendation() {
             </button>
           </form>
         </div>
-        <div className={styles.sectionTitle}>Handpicked For You</div>
+        <div className={styles.sectionTitle}>TItles Handpicked For You</div>
         <div className={styles.gamesGrid}>
           {/* Recommended games */}
           {gameList.length > 0 ? (

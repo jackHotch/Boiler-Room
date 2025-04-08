@@ -5,21 +5,31 @@
   position: relative;
   width: 100%;
   padding: 20px 0;
-  background-color: var(--bg-dark);
   border-radius: 15px;
   max-width: 1400px;
   padding-top: 2px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  margin-top: 2%;
+
 }
 
 .recommendedGames {
   padding: 50px 20px;
   text-align: center;
+  flex-direction: column;
 }
 
 .sectionTitle {
-  font-size: 30px;
-  margin-top: 30px;
+  display: inline-block;
+  font-variant: small-caps;
+  text-align: start;
+  font-size: 55px;
+  padding-top: 15px;
+  margin: 15px;
+  margin-bottom: 0;
+  border-radius: 15px;
+  align-self: flex-start;
+  font-weight: 700;
+  color: var(--text-bw);
 }
 
 .gameCard{
@@ -29,6 +39,7 @@
 }
 
 .boil_score {
+  position: relative;
   font-family: Arial, sans-serif;
   font-size: 12px;
   padding: 10px;
@@ -37,6 +48,7 @@
   transition: opacity 0.3s ease-in-out;
   z-index: 1;
   text-align: left;
+  left: 10px;
 }
 
 .gameImage{
@@ -47,18 +59,19 @@
 }
 
 .gamesGrid {
+  background-color: var(--bg-dark);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
   max-width: 1200px;
-  margin: 0;
   align-items: start;
-  padding: 5%;
+  margin-top: 15px;
+  padding: 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  padding: 0 20px;
+  border-radius: 8px;
 }
 
 .gameCard {
@@ -73,7 +86,6 @@
 }
 
 .imageWrapper{
-  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
   position: relative;
   width: fit-content;
   text-decoration: none;
@@ -156,7 +168,7 @@
 }
 
 .filters {
-  background-color: var(--bg-light);
+  background: linear-gradient(270deg, var(--bg-dark), var(--bg-primary));
   padding: 20px;
   border-radius: 12px;
   display: flex;

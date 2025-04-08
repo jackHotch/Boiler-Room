@@ -71,6 +71,11 @@
     margin: 10px;
 }
 
+.loginButton:hover {
+    background-color: var(--bg-accent-secondary);
+    
+}
+
 .exploreButton {
     background-color: var(--bg-accent-secondary);
     color: var(--text-primary);

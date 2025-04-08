@@ -96,6 +96,7 @@
   align-self: flex-start;
   font-weight: 700;
   color: var(--text-bw);
+  transition: color 0.25s ease-in; 
 }
 
 .subHeader{
