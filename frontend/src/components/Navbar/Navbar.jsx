@@ -21,8 +21,6 @@ export function Navbar() {
   const [loading, setLoading] = useState(true)
   const [theme] = useState(true)
 
-  if (pathname === '/' || pathname === '/LoginRedirect') return null
-
   useEffect(() => {
     async function fetchProfileData() {
       try {
@@ -47,6 +45,8 @@ export function Navbar() {
 
     fetchProfileData()
   }, [])
+
+  if (pathname === '/' || pathname === '/LoginRedirect') return null
 
   return (
     <div className={styles.container}>
