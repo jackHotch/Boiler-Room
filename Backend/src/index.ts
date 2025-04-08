@@ -174,7 +174,7 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
 
 export async function insertProfile(steamId: bigint) {
   try {
-    //firstly we check to make sure we dont have a profiel already
+    //firstly we check to make sure we dont have a profile already
     const { rows: existingRows } = await pool.query(
       'SELECT * FROM "Profiles" WHERE "steam_id" = $1',
       [steamId]
@@ -183,6 +183,11 @@ export async function insertProfile(steamId: bigint) {
     if (existingRows.length > 0) {
       return false //if we do, throw a false and move on
     }
+
+    await pool.query(
+      'INSERT INTO "Buffer_Profiles" ("steam_id") VALUES ($1)',
+      [steamId]
+    )
 
     const response = await axios.get(
       //otherwise get some information
@@ -637,7 +642,6 @@ app.get('/userGameSpecs', async (req, res) => {
 export async function insertGames(steamId: bigint) {
   try {
     const response = await axios.get(
-      //make our game request
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
         params: {
@@ -648,76 +652,98 @@ export async function insertGames(steamId: bigint) {
           include_played_free_games: true,
         },
       }
-    )
-    //console.log('Steam API response:', response.data);
+    );
 
-    const games = response.data.response.games // the games we get are saved here
+    const games = response.data.response.games;
 
     if (!games || games.length === 0) {
-      //if the length is 0, user has no games
-      console.log('No games found for this user.')
-      return { success: false, message: 'No games found for this user.' }
-    } //likely redundant since other areas should check for this
+      console.log('No games found for this user.');
+      return { success: false, message: 'No games found for this user.' };
+    }
 
-    //console.log('Game IDs from Steam API:', gameIds);
-    //console.log('Data type of game IDs from Steam API:', typeof gameIds[0]);
-    const gameIds = games.map((game) => game.appid) // Maps all the app.ids to a new array
+    const gameIds = games.map((game) => game.appid);
 
+    // Get existing games from our database
     const existingGames = await pool.query(
       'SELECT "game_id" FROM "Games" WHERE "game_id" = ANY($1)',
       [gameIds]
-    ) //uses that array to get all of the existing games from the steam database
+    );
 
-    //make a new set of string of gameIds
-    const existingGameIds = new Set(existingGames.rows.map((row) => String(row.game_id)))
-    //console.log('Existing game IDs:', existingGameIds);
+    const existingGameIds = new Set(existingGames.rows.map((row) => String(row.game_id)));
 
-    //get a string array of only games both user has and are in our database
-    const validGames = games.filter((game) => existingGameIds.has(String(game.appid)))
-    //console.log('Valid games (existing in database):', validGames);
+    // Filter valid games for User_Games (existing in our database)
+    const validGames = games.filter((game) => existingGameIds.has(String(game.appid)));
 
-    if (validGames.length === 0) {
-      //another check here just in case
-      console.log('No valid games found to insert/update.')
-      console.log(
-        'This means none of the games returned by the Steam API exist in the Games table.'
-      )
-      return {
-        success: false,
-        message: 'No valid games found to insert/update.',
-      }
+    // Filter games for Buffer_Games:
+    // 1. Not in our database
+    // 2. Don't have content_descriptorids 1, 3, or 4
+    const bufferGames = games.filter((game) => {
+      const isNotInDatabase = !existingGameIds.has(String(game.appid));
+      const hasInvalidContent = game.content_descriptorids && 
+        game.content_descriptorids.some(id => [1, 3, 4].includes(id));
+      return isNotInDatabase && !hasInvalidContent;
+    });
+
+    // Process User_Games insertion if there are valid games
+    if (validGames.length > 0) {
+      const userGamesValues = validGames
+        .map((game, index) => [
+          game.appid,
+          steamId,
+          game.playtime_forever || 0,
+        ])
+        .flat();
+
+      const userGamesPlaceholders = validGames
+        .map((_, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`)
+        .join(',');
+
+      const userGamesQuery = `
+        INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
+        VALUES ${userGamesPlaceholders}
+        ON CONFLICT ("game_id", "steam_id")
+        DO UPDATE SET "total_played" = EXCLUDED."total_played"
+      `;
+
+      await pool.query(userGamesQuery, userGamesValues);
+      console.log(`Inserted/Updated ${validGames.length} rows in User_Games.`);
     }
 
-    const values = validGames // Makes a flatmap array of all the valid to enter user games
-      .map((game, index) => [
-        game.appid,
-        steamId,
-        game.playtime_forever || 0, //default playtime of 0
-      ])
-      .flat()
+    // Process Buffer_Games insertion if there are buffer games
+    if (bufferGames.length > 0) {
+      const bufferValues = bufferGames
+        .map((game) => game.appid)
+        .flat();
 
-    const placeholders = validGames // Makes a fun dynamic array to batch query up games
-      .map((_, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`)
-      .join(',')
+      const bufferPlaceholders = bufferGames
+        .map((_, index) => `($${index + 1})`)
+        .join(',');
 
-    const query = `
-      INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
-      VALUES ${placeholders}
-      ON CONFLICT ("game_id", "steam_id")
-      DO UPDATE SET "total_played" = EXCLUDED."total_played"
-    ` //insert our games and on conflict (already exists) update total play time
+      const bufferQuery = `
+        INSERT INTO "Buffer_Games" ("game_id")
+        VALUES ${bufferPlaceholders}
+        ON CONFLICT ("game_id") DO NOTHING
+      `;
 
-    //console.log('Executing batch query...');
-    const result = await pool.query(query, values)
+      await pool.query(bufferQuery, bufferValues);
+      console.log(`Inserted ${bufferGames.length} rows into Buffer_Games.`);
+    }
 
-    console.log('Batch query result:', result)
+    if (validGames.length === 0 && bufferGames.length === 0) {
+      console.log('No valid games found to insert');
+      return {
+        success: false,
+        message: 'No valid games found to insert',
+      };
+    }
 
-    //console.log(`Inserted/Updated ${validGames.length} rows.`);
-
-    return { success: true, message: 'Games inserted/updated successfully.' }
+    return { 
+      success: true, 
+      message: `Processed ${validGames.length} user games successfully.` 
+    };
   } catch (error) {
-    console.error('Error in insertGames:', error)
-    throw new Error('Internal Server Error')
+    console.error('Error in insertGames:', error);
+    throw new Error('Internal Server Error');
   }
 }
 
