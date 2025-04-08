@@ -739,7 +739,7 @@ export async function insertGames(steamId: bigint) {
 
     return { 
       success: true, 
-      message: `Processed ${validGames.length} user games successfully.` 
+      message: `Games inserted/updated successfully.` 
     };
   } catch (error) {
     console.error('Error in insertGames:', error);
