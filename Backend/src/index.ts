@@ -185,7 +185,7 @@ export async function insertProfile(steamId: bigint) {
     }
 
     await pool.query(
-      'INSERT INTO "Buffer_Profiles" ("steam_id") VALUES ($1)',
+      'INSERT INTO "Buffer_Profiles" ("steam_id") VALUES ($1) ON CONFLICT ("steam_id") DO NOTHING',
       [steamId]
     )
 
