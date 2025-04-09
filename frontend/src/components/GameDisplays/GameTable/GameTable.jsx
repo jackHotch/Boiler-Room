@@ -189,7 +189,7 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
                 howlongtobeat.com{' '}
               </span>
             </th>
-            <th clasName={styles.hltbColumn}>
+            <th className={styles.hltbColumn}>
               hltb
               <strong className={styles.questionMark}> ?</strong>
               <span className={styles.hlttbTooltipText}>

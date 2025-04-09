@@ -491,19 +491,19 @@ app.get("/games/:gameid", async (req, res) => {
 
     // Create API response for Review Color
     if (rows[0].positive && rows[0].total) {
-      let positive = Number(rows[0].positive);
-      let total = Number(rows[0].total);
-      let ratio = total > 0 ? (positive / total) * 100 : 0;
+      let positive = Number(rows[0].positive)
+      let total = Number(rows[0].total)
+      let ratio = total > 0 ? (positive / total) * 100 : 0
 
       if (ratio >= 70) {
-        rows[0].review_color = "green";
+        rows[0].review_color = 'green'
       } else if (ratio >= 40) {
-        rows[0].review_color = "yellow";
+        rows[0].review_color = 'yellow'
       } else {
-        rows[0].review_color = "red";
+        rows[0].review_color = 'red'
       }
     }
-    console.log("Query result for gameid:", gameid, rows); // Debugging log
+    console.log('Query result for gameid:', gameid, rows) // Debugging log
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "Game not found" });
@@ -768,91 +768,84 @@ export async function insertGames(steamId: bigint, friend: boolean = true) {
           include_played_free_games: true,
         },
       }
-    );
+    )
 
-    const games = response.data.response.games;
+    const games = response.data.response.games
 
     if (!games || games.length === 0) {
-      console.log("No games found for this user.");
-      return { success: false, message: "No games found for this user." };
+      console.log('No games found for this user.')
+      return { success: false, message: 'No games found for this user.' }
     }
 
-    const gameIds = games.map((game) => game.appid);
+    const gameIds = games.map((game) => game.appid)
 
     // Get existing games from our database
     const existingGames = await pool.query(
       'SELECT "game_id" FROM "Games" WHERE "game_id" = ANY($1)',
       [gameIds]
-    );
+    )
 
-    const existingGameIds = new Set(
-      existingGames.rows.map((row) => String(row.game_id))
-    );
+    const existingGameIds = new Set(existingGames.rows.map((row) => String(row.game_id)))
 
     // Filter valid games for User_Games (existing in our database)
-    const validGames = games.filter((game) =>
-      existingGameIds.has(String(game.appid))
-    );
+    const validGames = games.filter((game) => existingGameIds.has(String(game.appid)))
 
     // Filter games for Buffer_Games:
     // 1. Not in our database
     // 2. Don't have content_descriptorids 1, 3, or 4
     const bufferGames = games.filter((game) => {
-      const isNotInDatabase = !existingGameIds.has(String(game.appid));
+      const isNotInDatabase = !existingGameIds.has(String(game.appid))
       const hasInvalidContent =
         game.content_descriptorids &&
-        game.content_descriptorids.some((id) => [1, 3, 4].includes(id));
-      return isNotInDatabase && !hasInvalidContent;
-    });
+        game.content_descriptorids.some((id) => [1, 3, 4].includes(id))
+      return isNotInDatabase && !hasInvalidContent
+    })
 
     // Process User_Games insertion if there are valid games
     if (validGames.length > 0) {
       const userGamesValues = validGames
         .map((game, index) => [game.appid, steamId, game.playtime_forever || 0])
-        .flat();
+        .flat()
 
       const userGamesPlaceholders = validGames
-        .map(
-          (_, index) =>
-            `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`
-        )
-        .join(",");
+        .map((_, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`)
+        .join(',')
 
       const userGamesQuery = `
         INSERT INTO "User_Games" ("game_id", "steam_id", "total_played")
         VALUES ${userGamesPlaceholders}
         ON CONFLICT ("game_id", "steam_id")
         DO UPDATE SET "total_played" = EXCLUDED."total_played"
-      `;
+      `
 
-      await pool.query(userGamesQuery, userGamesValues);
-      console.log(`Inserted/Updated ${validGames.length} rows in User_Games.`);
+      await pool.query(userGamesQuery, userGamesValues)
+      console.log(`Inserted/Updated ${validGames.length} rows in User_Games.`)
     }
 
     // Process Buffer_Games insertion if there are buffer games
     if (bufferGames.length > 0) {
-      const bufferValues = bufferGames.map((game) => game.appid).flat();
+      const bufferValues = bufferGames.map((game) => game.appid).flat()
 
       const bufferPlaceholders = bufferGames
         .map((_, index) => `($${index + 1})`)
-        .join(",");
+        .join(',')
 
       const bufferQuery = `
         INSERT INTO "Buffer_Games" ("game_id")
         VALUES ${bufferPlaceholders}
         ON CONFLICT ("game_id") DO NOTHING
-      `;
+      `
 
-      await pool.query(bufferQuery, bufferValues);
-      console.log(`Inserted ${bufferGames.length} rows into Buffer_Games.`);
+      await pool.query(bufferQuery, bufferValues)
+      console.log(`Inserted ${bufferGames.length} rows into Buffer_Games.`)
     }
 
     if (validGames.length === 0 && bufferGames.length === 0) {
-      console.log("No valid games found to insert");
+      console.log('No valid games found to insert')
       return {
         success: false,
-        message: "No valid games found to insert",
-      };
+        message: 'No valid games found to insert',
+      }
     }
 
     return {
