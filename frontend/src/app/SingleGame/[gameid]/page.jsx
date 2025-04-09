@@ -32,15 +32,13 @@ const SingleGamePage = () => {
       fetchGame()
     }
   }, [gameid])
- 
-   // Start the Progress Bar fully Empty
-   const [animatedOffset, setAnimatedOffset] = useState(314);
-   const [animatedOffset2, setAnimatedOffset1] = useState(314);
 
-  
-  // Ensure that game is not null before accessing its properties 
-  let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0;
+  // Start the Progress Bar fully Empty
+  const [animatedOffset, setAnimatedOffset] = useState(314)
+  const [animatedOffset2, setAnimatedOffset1] = useState(314)
 
+  // Ensure that game is not null before accessing its properties
+  let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0
 
   // Circular Progress Function
   const getStrokeDashOffset = (score) => {
@@ -49,30 +47,25 @@ const SingleGamePage = () => {
     return circumference - (score / 100) * circumference
   }
 
-
   //Trigger the Animation when the page loads
   useEffect(() => {
-   //if (!game || game.metacritic_score == null) return;// guard clause
+    //if (!game || game.metacritic_score == null) return;// guard clause
     setTimeout(() => {
-      setAnimatedOffset(getStrokeDashOffset(reviewRatio));
-    }, 300);// Added Delay for a smoother animation
+      setAnimatedOffset(getStrokeDashOffset(reviewRatio))
+    }, 300) // Added Delay for a smoother animation
 
-   if (game?.metacritic_score == null) return;
+    if (game?.metacritic_score == null) return
     setTimeout(() => {
       setAnimatedOffset1(getStrokeDashOffset(game.metacritic_score))
-    }, 300);
-  }, 
-  [reviewRatio, game?.metacritic_score]); // Trigger animation when reviewRatio updates
-
+    }, 300)
+  }, [reviewRatio, game?.metacritic_score]) // Trigger animation when reviewRatio updates
 
   // Added a Function to determine the color of the progress bar
-  const getStrokeColor = (reviewRatio) =>{
-      if (reviewRatio >= 70) return 'Green';
-      if (reviewRatio >= 40) return 'Yellow';
-      return 'Red';
+  const getStrokeColor = (reviewRatio) => {
+    if (reviewRatio >= 70) return 'Green'
+    if (reviewRatio >= 40) return 'Yellow'
+    return 'Red'
   }
-
-  
 
   return error ? (
     <div className={styles.error}>{error}</div>
@@ -117,14 +110,16 @@ const SingleGamePage = () => {
           <div className={styles.gameSummary}>
             {game.description ? game.description : 'No description available.'}
           </div>
-          <div className={styles.platforms}>
-            <strong>Platforms</strong>
+          <div className={styles.reviews}>
+            <strong>Steam Reviews</strong>
+            <strong className={styles.questionMark}> ?</strong>
             <br />
             <br />
             {game.platform ? game.platform : 'N/A'}
           </div>
           <div className={styles.hltb_score}>
             <strong>How Long to Beat</strong>
+            <strong className={styles.questionMark}> ?</strong>
             <span className={styles.tooltipText}>
               <strong>
                 The Average of the <br></br>Main Story & Main Story + Extras <br></br>
@@ -146,7 +141,7 @@ const SingleGamePage = () => {
                 Negative Reviews: {game.negative}
               </strong>
             </span>
-            
+
             <div className={styles.circleContainer}>
               <svg className={styles.progressRing} width='120' height='120'>
                 <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
@@ -166,7 +161,7 @@ const SingleGamePage = () => {
                 {reviewRatio ? `${reviewRatio}%` : 'N/A'}
               </span>
             </div>
-            {(game.recommendation_description)}
+            {game.recommendation_description}
           </div>
           <div className={styles.metacritic_score}>
             <strong>Metacritic Score</strong>

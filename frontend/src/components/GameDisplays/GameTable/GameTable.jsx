@@ -172,9 +172,31 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
         <thead>
           <tr className={styles.headerRow}>
             <th className={styles.titleColumn}>Title</th>
-            <th>Boil</th>
-            <th>Rating</th>
-            <th>hltb</th>
+            <th className={styles.boilColumn}>
+              Boil
+              <strong className={styles.questionMark}> ?</strong>
+              <span className={styles.tooltipText}>
+                <strong>Rating that prioritizes highly rated, shorter games.</strong>
+                howlongtobeat.com{' '}
+              </span>
+            </th>
+
+            <th className={styles.ratingColumn}>
+              Rating
+              <strong className={styles.questionMark}> ?</strong>
+              <span className={styles.ratingTooltipText}>
+                <strong>Rating that prioritizes highly rated, shorter games.</strong>
+                howlongtobeat.com{' '}
+              </span>
+            </th>
+            <th clasName={styles.hltbColumn}>
+              hltb
+              <strong className={styles.questionMark}> ?</strong>
+              <span className={styles.hlttbTooltipText}>
+                <strong>Rating that prioritizes highly rated, shorter games.</strong>
+                howlongtobeat.com{' '}
+              </span>
+            </th>
             <th>Playtime</th>
             <th>Steam</th>
             <th>{showHidden ? 'Show' : 'Hide'}</th>

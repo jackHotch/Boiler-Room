@@ -226,3 +226,56 @@
   background: var(--bg-light);
   box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.questionMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #444;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  line-height: 1;
+  vertical-align: middle;
+  transform: translateY(-1px);
+  margin-left: 8px;
+}
+
+.tooltipText, .ratingTooltipText, .hltbTooltipText {
+  visibility: hidden;
+  width: 100%;
+  bottom: 100%;
+  left: -2.5%;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  position: absolute;
+  z-index: 1;}
+  
+  .boilColumn, .ratingColumn, .hltbColumn {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+  
+  }
+
+ .boilColumn:hover .tooltipText{
+  visibility: visible;
+  opacity: 1; 
+ }
+
+.ratingColumn:hover .ratingTooltipText{
+  visibility: visible;
+  opacity: 1; 
+ }
+
+  .hltbColumn:hover .hltbTooltipText{
+    visibility: visible;
+    opacity: 1;
+    }

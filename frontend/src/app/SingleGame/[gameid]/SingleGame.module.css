@@ -288,3 +288,19 @@
   font-weight: bold;
   color: var(--text-primary);
 }
+.questionMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #444;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  line-height: 1;
+  vertical-align: middle;
+  transform: translateY(-1px);
+  margin-left: 8px;
+}
