@@ -220,7 +220,11 @@ export async function insertProfile(steamId: bigint) {
     const avatar = response.data.response.players[0]?.avatarhash //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname
 
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
 
     await pool.query(
       //insert those things along with the steamID to our database
@@ -257,7 +261,11 @@ app.get('/steam/playersummary', async (req, res) => {
       }
     )
 
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
 
     const username = response.data.response.players[0]?.personaname
     const userImage = response.data.response.players[0]?.avatarfull
@@ -291,7 +299,11 @@ app.get('/steam/recentgames', async (req, res) => {
       }
     )
 
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
 
     const games = data.response.games?.slice(0, 3) || []
     res.status(200).send(games)
@@ -355,7 +367,11 @@ app.get('/steam/friendsList', async (req, res) => {
     const data = await axios.get(
       `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
     )
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
     return res.status(200).json(data.data.friendslist.friends)
   } else {
     console.log('no steam id')
@@ -548,7 +564,11 @@ app.get('/ownedGames', async (req, res) => {
         },
       }
     )
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
     const data = gameResponse.data
     if (!data.response || !data.response.games) {
       return res.status(404).json({ error: 'No owned games found for this user.' })
@@ -802,8 +822,8 @@ app.get('/friendsListInfo', async (req, res) => {
   }
 })
 
-export async function delay() {
-  return new Promise((resolve) => setTimeout(resolve, 2000)) //set a 2 second delay for the API
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export async function manageLockout(): Promise<string | null> {
@@ -836,7 +856,11 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
 
   //console.log(friendsResponse.data)
 
-  await delay()
+  for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
   const steamIds = friendsResponse.data.friendslist.friends
     .map((friend) => friend.steamid.toString())
     .slice(0, 5)
@@ -902,7 +926,11 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
         avatar,
       })
 
-      await delay() //always making sure we sleep
+      for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done'); //always making sure we sleep
     } catch (error) {
       await pool.query('UPDATE "Lockout" SET "code" = 0', [])
       console.error(`Error processing Steam ID ${steamId}:`, error.message)
@@ -984,7 +1012,11 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
       )
       //console.log('API Response:', JSON.stringify(data, null, 2));
 
-      await delay()
+      for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
       //console.log('Delay completed');
 
       // Check response structure
@@ -1261,7 +1293,11 @@ export async function checkAccount(steamId) {
       }
     )
 
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
 
     if (Object.keys(gameResponse.data.response).length > 0) {
       retVal += 2
@@ -1279,7 +1315,11 @@ export async function checkAccount(steamId) {
       }
     )
 
-    await delay()
+    for (let i = 0; i < 2; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
 
     if (Object.keys(friendsResponse.data).length > 0) {
       retVal += 1
