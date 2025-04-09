@@ -70,7 +70,7 @@ export default function Friends() {
 
   return (
     <div className={styles.container}>
-      <h1>Your Friends</h1>
+      <h1 className={styles.pageTitle}>Your Friends</h1>
       <div className={styles.list_of_friends}>
         {loading ? (
           <div className={styles.loading_message}>

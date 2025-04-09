@@ -1,6 +1,5 @@
 .container{
- display: flex;
- flex-direction: column;
+ display: grid;
  text-align: center;
  color: var(--text-primary);
  padding-bottom: 16px;
@@ -8,18 +7,23 @@
  overflow: hidden;
 }
 
+.pageTitle{
+  font-size: 36px;
+  font-variant: small-caps;
+}
+
 .list_of_friends {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   align-items: center;
   gap: 16px;
-  width: 100%;
+  width: fit-content;
   margin: 0 auto;
 }
 
 .friend_info {
-  padding: 25px;
+  width: 100%;
   border-radius: 12px;
+  
 }
 
 .friend_steam_link {
@@ -30,11 +34,19 @@
 }
 
 .username {
+  padding-left: 35px;
   font-size: 35px;
   font-weight: bold;
+  font-variant: small-caps;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 auto;
   width: max-content;
+  transition: all .25s ease-in-out;
+}
+
+.username:hover{
+  transform: scale(1.05) translateY(-2px);
+  transition: all .25s ease-in-out;
 }
 
 .recent_game_list {
@@ -42,7 +54,7 @@
   margin-top: 8px;
   gap: 8px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   justify-content: center;
 }
 
@@ -50,10 +62,8 @@
   padding: 8px;
   border-radius: 8px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   text-decoration: none;
-  flex-direction: column;
 }
 
 .recently_played_label {
