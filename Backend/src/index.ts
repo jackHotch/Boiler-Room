@@ -653,13 +653,15 @@ app.get('/userGameSpecs', async (req, res) => {
   }
 })
 
-export async function insertGames(steamId: bigint) {
+export async function insertGames(steamId: bigint, friend: boolean = true) {
+  const useKey = friend ? process.env.FRIENDS_API_KEY : process.env.STEAM_API_KEY;
+
   try {
     const response = await axios.get(
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
         params: {
-          key: process.env.STEAM_API_KEY,
+          key: useKey,
           steamid: steamId,
           format: 'json',
           include_appinfo: true,
@@ -810,7 +812,7 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
   await delay()
   const steamIds = friendsResponse.data.friendslist.friends
     .map((friend) => friend.steamid.toString())
-    .slice(0, 20)
+    .slice(0, 5)
   //console.log(steamIds)
 
   if (forced) {
@@ -932,7 +934,8 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
   userIdsToCheck.forEach((steamId) => {
     //console.log(`Calling insertGames for SteamID: ${steamId}`);
     const steamIdBigInt = BigInt(steamId)
-    insertGames(steamIdBigInt)
+    const friends = true
+    insertGames(steamIdBigInt, friends)
   })
 
   for (const steamId of userIdsToCheck) {
