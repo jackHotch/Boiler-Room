@@ -119,33 +119,33 @@ export default function GameRecommendation() {
     console.log("Genres.join:",genre.join(","));
     if (platform.length === 0) platform = [4, 2, 1];
 
-    try{
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND + "/gamesByFilter",
-        {
-          withCredentials: true,
-          params: 
-          {minBoilRating, 
-          minYear, 
-          maxYear, 
-          platform, 
-          genre, 
-          maxHLTB,
-          steamId} 
-        }       
-      )
+    // try{
+    //   const response = await axios.get(
+    //     process.env.NEXT_PUBLIC_BACKEND + "/gamesByFilter",
+    //     {
+    //       withCredentials: true,
+    //       params: 
+    //       {minBoilRating, 
+    //       minYear, 
+    //       maxYear, 
+    //       platform, 
+    //       genre, 
+    //       maxHLTB,
+    //       steamId} 
+    //     }       
+    //   )
 
-      // Ensure the response is JSON
-      const contentType = response.headers['content-type'];
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server did not return JSON');
-      }                                                             ///////////////////////////////////////////////////      
+    //   // Ensure the response is JSON
+    //   const contentType = response.headers['content-type'];
+    //   if (!contentType || !contentType.includes('application/json')) {
+    //     throw new Error('Server did not return JSON');
+    //   }                                                             ///////////////////////////////////////////////////      
 
-      setGameList(response.data); // Store game list in state
+    //   setGameList(response.data); // Store game list in state
 
-    } catch (err){
-      console.error(err);
-    }
+    // } catch (err){
+    //   console.error(err);
+    // }
     console.log("GameList:",gameList);
 
     console.log("Form Data Submitted:");
@@ -172,6 +172,35 @@ export default function GameRecommendation() {
     if (minBoilRating < 0 || minBoilRating > 100) {errors += "Boil Rating is invalid - 1 to 100.\n";}
     // ALERT CALL HERE
     if (errors.length > 0){window.alert("ERROR:\n" + errors);}
+    else {
+      try{
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND + "/gamesByFilter",
+          {
+            withCredentials: true,
+            params: 
+            {minBoilRating, 
+            minYear, 
+            maxYear, 
+            platform, 
+            genre, 
+            maxHLTB,
+            steamId} 
+          }       
+        )
+  
+        // Ensure the response is JSON
+        const contentType = response.headers['content-type'];
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server did not return JSON');
+        }                                                             ///////////////////////////////////////////////////      
+  
+        setGameList(response.data); // Store game list in state
+  
+      } catch (err){
+        console.error(err);
+      }
+    }
     console.log({ minBoilRating, minYear, maxYear, platform, maxHLTB, genre});
   };
 
