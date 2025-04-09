@@ -1,7 +1,6 @@
 import pg from 'pg'
 import dotenv from 'dotenv'
 
-
 export const { Pool } = pg
 dotenv.config()
 

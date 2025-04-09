@@ -4,7 +4,7 @@ const express = require('express')
 const session = require('express-session')
 import axios from 'axios'
 import dotenv from 'dotenv'
-import { lockoutMiddleware, releaseLockout } from './middleware/lockoutMiddleware';
+const { lockoutMiddleware, releaseLockout } = require('./middleware/lockoutMiddleware');
 
 export const { Pool } = pg //Jonathan added the export, not sure if this will create other problems
 const port = 8080
