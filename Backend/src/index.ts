@@ -4,6 +4,7 @@ const express = require('express')
 const session = require('express-session')
 import axios from 'axios'
 import dotenv from 'dotenv'
+const { lockoutMiddleware, releaseLockout } = require('./middleware/lockoutMiddleware');
 
 export const { Pool } = pg //Jonathan added the export, not sure if this will create other problems
 const port = 8080
@@ -257,32 +258,35 @@ app.get('/steam/playersummary', async (req, res) => {
 })
 
 // Get three most recent games from steam id
-app.get('/steam/recentgames', async (req, res) => {
-  const steamId = req.query.steamid || req.session.steamId
-  const key = process.env.STEAM_API_KEY
+app.get('/steam/recentgames', 
+  lockoutMiddleware, 
+  async (req, res, next) => {
+    try {
+      const steamId = req.query.steamid || req.session.steamId;
+      const key = process.env.STEAM_API_KEY;
 
-  try {
-    const { data } = await axios.get(
-      `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`,
-      {
-        params: {
-          key: key,
-          steamid: steamId,
+      const { data } = await axios.get(
+        `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`,
+        { params: {
+           key, 
+           steamid: steamId, 
+           format: 'json' } }
+      );
 
-          format: 'json',
-        },
-      }
-    )
+      await delay();
+      const games = data.response.games?.slice(0, 3) || [];
+      res.status(200).send(games);
+    } catch (error) {
+      next(error); // Pass to error handler
+    }
+  },
 
-    await delay()
-
-    const games = data.response.games?.slice(0, 3) || []
-    res.status(200).send(games)
-  } catch (error) {
-    console.error('Error fetching Steam data:', error)
-    res.redirect(process.env.FRONTEND_URL)
+  releaseLockout, // This will always run after the main handler
+  (error, req, res, next) => { // Error handler
+    console.error('Error in recentgames:', error);
+    res.redirect(process.env.FRONTEND_URL);
   }
-})
+);
 
 // "Logout" i.e. remove steam id and name from session storage
 app.get('/steam/logout', (req, res) => {
@@ -330,20 +334,38 @@ app.get('/steam/getdisplayinfo', async (req, res) => {
 })
 
 // Get the entrie friends list from steam
-app.get('/steam/friendsList', async (req, res) => {
-  const steamId = req.query.steamid || req.session.steamId
-  if (steamId) {
-    const API_KEY = process.env.STEAM_API_KEY
-    const data = await axios.get(
-      `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
-    )
-    await delay()
-    return res.status(200).json(data.data.friendslist.friends)
-  } else {
-    console.log('no steam id')
-    res.sendStatus(400)
+app.get('/steam/friendsList',
+  lockoutMiddleware,
+  async (req, res, next) => {
+    try {
+      const steamId = req.query.steamid || req.session.steamId;
+      if (!steamId) {
+        console.log('no steam id');
+        return res.sendStatus(400);
+      }
+
+      const { data } = await axios.get(
+        `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/`,
+        { params: { 
+          key: process.env.STEAM_API_KEY, 
+          steamid: steamId, 
+          relationship: 'friend' 
+        } 
+      }
+      );
+
+      await delay();
+      res.status(200).json(data.friendslist.friends);
+    } catch (error) {
+      next(error);
+    }
+  },
+  releaseLockout,
+  (error, req, res, next) => {
+    console.error('Error in friendsList:', error);
+    res.sendStatus(500);
   }
-})
+);
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
@@ -500,60 +522,59 @@ app.get('/usergames', async (req, res) => {
   }
 })
 
-app.get('/ownedGames', async (req, res) => {
-  console.log('Session Object:', req.session)
-  console.log('Steam ID:', req.session.steamId)
-
-  if (!req.session.steamId) {
-    console.log('No Steam Id Found in Session - /ownedGames')
-    return res.status(401).json({ error: 'No Steam ID found. Please log in.' })
-  }
-
-  const steamId = req.session.steamId
-  const KEY = process.env.STEAM_API_KEY
-  if (!KEY) {
-    console.error('STEAM_API_KEY is not set in environment variables')
-    return res
-      .status(500)
-      .json({ error: 'Server configuration error: Missing Steam API key.' })
-  }
-
-  try {
-    console.log('Making Steam API Request with steamId:', steamId)
-    const gameResponse = await axios.get(
-      'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
-      {
-        params: {
-          steamid: steamId,
-          include_appinfo: true,
-          key: KEY,
-        },
+app.get('/ownedGames',
+  lockoutMiddleware,
+  async (req, res, next) => {
+    try {
+      console.log('Session Object:', req.session);
+      if (!req.session.steamId) {
+        console.log('No Steam Id Found in Session');
+        return res.status(401).json({
+           error: 'No Steam ID found. Please log in.' 
+          });
       }
-    )
-    await delay()
-    const data = gameResponse.data
-    if (!data.response || !data.response.games) {
-      return res.status(404).json({ error: 'No owned games found for this user.' })
+
+      const KEY = process.env.STEAM_API_KEY;
+      if (!KEY) {
+        console.error('STEAM_API_KEY missing');
+        return res.status(500).json({ error: 'Server configuration error.' });
+      }
+
+      const { data } = await axios.get(
+        'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
+        { params: { 
+          steamid: req.session.steamId, 
+          include_appinfo: true, 
+          key: KEY 
+        } }
+      );
+
+      await delay();
+      if (!data.response?.games) {
+        return res.status(404).json({ error: 'No owned games found.' });
+      }
+
+      const ownedGames = data.response.games.map(game => ({
+        id: game.appid,
+        title: game.name,
+        header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+        playtime_forever: game.playtime_forever || 0,
+        playtime_2weeks: game.playtime_2weeks || 0,
+      }));
+
+      res.json(ownedGames);
+    } catch (error) {
+      next(error);
+    } finally {
+      // Release the lockout in the finally block to ensure it always runs
+      releaseLockout(req, res, next);
     }
-
-    const ownedGames = data.response.games.map((game) => ({
-      id: game.appid,
-      title: game.name,
-      header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
-      playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
-      playtime_2weeks: game.playtime_2weeks || 0,
-    }))
-
-    return res.json(ownedGames)
-  } catch (error) {
-    console.error(
-      'Error fetching owned games from Steam API:',
-      error.message,
-      error.response?.data
-    )
-    return res.status(500).json({ error: 'Failed to fetch owned games from Steam API.' })
+  },
+  (error, req, res, next) => {
+    console.error('Error in ownedGames:', error.message, error.response?.data);
+    res.status(500).json({ error: 'Failed to fetch owned games.' });
   }
-})
+);
 
 //Request to allow for searching for a game by name
 app.get('/gamesByName', async (req, res) => {
@@ -787,7 +808,7 @@ export async function manageLockout(): Promise<string | null> {
     return 'You are presently locked out, please try again later'
   } else if (currentStatus === 0) {
     //if it is 0 then you may start
-    console.log('Beginning friends querying')
+    console.log('Beginning querying')
     await pool.query('UPDATE "Lockout" SET "code" = 1', []) //start by locking anyone else out
     return null
   }
@@ -1108,26 +1129,38 @@ export async function getFinalResults(steamId: bigint) {
 }
 
 export async function loadFriends(steamId: bigint, forced: boolean = false) {
-  console.log('Checking lockout status') //some console logging is kept since this takes a while
-  const lockoutMessage = await manageLockout() //we get out lockout message
-  if (lockoutMessage) return lockoutMessage //if we get one we return the message
+  const mockReq = { steamId };
+  const mockRes = {
+    statusCode: 200,
+    json: (data: any) => data,
+    status: (code: number) => ({ json: (data: any) => data })
+  };
 
   try {
-    //otherwise we go through all of our steps
-    console.log('Getting your friends list')
-    const userIdsToCheck = await fetchAndProcessFriends(steamId, forced)
-    console.log('Checking your friends out')
-    await fetchAndStoreProfiles(userIdsToCheck)
-    console.log('Creating relations')
-    await updateUserRelations(steamId.toString(), userIdsToCheck)
-    console.log('Looking at their games')
-    await processAndStoreGames(userIdsToCheck)
-    console.log('Cleaning up')
-    return await getFinalResults(steamId)
+    await lockoutMiddleware(mockReq as any, mockRes as any, async () => {});
+
+    console.log('Getting your friends list');
+    const userIdsToCheck = await fetchAndProcessFriends(steamId, forced);
+    
+    console.log('Checking your friends out');
+    await fetchAndStoreProfiles(userIdsToCheck);
+    
+    console.log('Creating relations');
+    await updateUserRelations(steamId.toString(), userIdsToCheck);
+    
+    console.log('Looking at their games');
+    await processAndStoreGames(userIdsToCheck);
+    
+    console.log('Cleaning up');
+    const results = await getFinalResults(steamId);
+
+    await releaseLockout(mockReq as any, mockRes as any, () => {});
+    return results;
+
   } catch (error) {
-    await pool.query('UPDATE "Lockout" SET "code" = 0', [])
-    console.error('Error in loadFriends:', error)
-    throw error
+    await releaseLockout(mockReq as any, mockRes as any, () => {});
+    console.error('Error in loadFriends:', error);
+    throw error;
   }
 }
 
