@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 export function ThemeInitializer() {
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
-  const unauthenticatedUrls = ['/', '/LoginRedirect', 'Search', /^\/SingleGame\/\d+$/]
+  const unauthenticatedUrls = ['/', '/LoginRedirect', /^\/Search/, /^\/SingleGame/]
 
   function matchesAnyPattern(str, patterns) {
     return patterns.some((pattern) => {
