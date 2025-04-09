@@ -553,9 +553,9 @@ app.get("/featuredgames", async (req, res) => {
 app.get("/usergames", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT ug."steam_id", g."game_id", ug."total_played", g."name", g."header_image", g."released",
+      `SELECT ug."steam_id", g."game_id", ug."total_played", ug."hide", g."name", g."header_image", g."released",
        r."total", r."positive", r."negative", r."description" AS recommendation_description, 
-       g."metacritic_score", g."hltb_score", g."boil_score", ug."hide"
+       g."metacritic_score", g."hltb_score", g."boil_score"
         FROM "Games" g 
         JOIN "User_Games" ug ON g."game_id" = ug."game_id"
         LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"

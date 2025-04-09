@@ -185,11 +185,10 @@
   height: auto;
 }
 
-/* Column width adjustments */
-.gameTable td:nth-child(2), /* BOIL */
-.gameTable td:nth-child(3), /* Rating */
-.gameTable td:nth-child(4), /* HLTB */
-.gameTable td:nth-child(5)  /* Playtime */ {
+.gameTable td:nth-child(2),
+.gameTable td:nth-child(3),
+.gameTable td:nth-child(4),
+.gameTable td:nth-child(5) {
   width: 12%;
   min-width: 100px;
 }
@@ -201,8 +200,8 @@
 
 .hideButton {
   display: flex;
-  align-items: center; /* Vertically center the content */
-  justify-content: center; /* Horizontally center the content */
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 6px;
   font-size: 24px;
@@ -213,7 +212,7 @@
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  margin: 0 auto; /* Center the button within its container */
+  margin: 0 auto;
 }
 
 .hideButton:hover {
@@ -240,42 +239,43 @@
   border-radius: 50%;
   line-height: 1;
   vertical-align: middle;
-  transform: translateY(-1px);
   margin-left: 8px;
+  cursor: pointer;
 }
 
-.tooltipText, .ratingTooltipText, .hltbTooltipText {
+.tooltipText,
+.ratingTooltipText,
+.hltbTooltipText {
   visibility: hidden;
-  width: 100%;
-  bottom: 100%;
-  left: -2.5%;
+  opacity: 0;
+  width: fit-content;
+  max-width: 200px;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.75);
   padding: 10px;
   color: #fff;
   text-align: center;
   border-radius: 12px;
   position: absolute;
-  z-index: 1;}
-  
-  .boilColumn, .ratingColumn, .hltbColumn {
-      position: relative;
-      display: inline-block;
-      margin-left: 6px;
-      cursor: pointer;
-  
-  }
+  z-index: 10;
+  white-space: normal;
+  text-overflow: initial;
+  transition: visibility 0s, opacity 0.3s ease;
+}
 
- .boilColumn:hover .tooltipText{
+.boilColumn,
+.ratingColumn,
+.hltbColumn {
+  position: relative;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.boilColumn:hover .tooltipText,
+.ratingColumn:hover .ratingTooltipText,
+.hltbColumn:hover .hltbTooltipText {
   visibility: visible;
-  opacity: 1; 
- }
-
-.ratingColumn:hover .ratingTooltipText{
-  visibility: visible;
-  opacity: 1; 
- }
-
-  .hltbColumn:hover .hltbTooltipText{
-    visibility: visible;
-    opacity: 1;
-    }
+  opacity: 1;
+}

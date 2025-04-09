@@ -1,21 +1,24 @@
 .scrollContainer {
   margin: 0 auto;
-  min-width: calc(100vw - 50px);
   position: relative;
   width: 90%;
   padding: 20px 0;
-  background-color: var(--bg-dark);
   border-radius: 15px;
   max-width: 1400px;
   padding-top: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
+  height: fit-content;
 }
 
 .gridContainer {
-  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(5, minmax(300px, 1fr));
-  padding: 0 20px;
+  padding: 20px;
+  gap: 20px; /* Add spacing between cards */
+  width: 100%;
+  height: auto;
 }
 
 .imageWrapper {
@@ -27,7 +30,9 @@
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.3s ease-in-out;
-  overflow: hidden; /* Ensure the overlay stays within bounds */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Ensure content stacks vertically */
 }
 
 .imageWrapper:hover {
@@ -62,23 +67,25 @@
   text-align: left;
   padding: 15px;
   color: var(--text-bw);
-  width: inherit;
-  opacity: .6;
+  opacity: 0.6;
+  flex-grow: 1; /* Allow the info section to take available space */
 }
 
 .imageWrapper:active {
   filter: brightness(2);
 }
 
-/* Overlay effect */
 .imageWrapper::after {
-  position: relative;
+  position: absolute; /* Fix positioning to be absolute */
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.75);
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   border-radius: 8px;
+  content: '';
 }
 
 .imageWrapper:hover::after {
@@ -90,30 +97,26 @@
   text-align: left;
   font-variant: small-caps;
   padding: 30px;
-  padding-bottom: 0;
+  padding-bottom: 10px; /* Adjust padding for better spacing */
   padding-top: 0;
   border-radius: 15px;
   color: var(--text-bw);
 }
 
 .hoursPlayed {
-  position: absolute;
-  bottom: -50%;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  position: relative; /* Change to relative to prevent overlap */
   color: var(--text-primary);
   font-family: Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 14px; /* Reduce font size to fit better */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-  padding: 8px 12px;
+  padding: 8px 0px;
   border-radius: 4px;
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
   z-index: 1;
-  text-align: bottom;
-  max-width: 80%;
+  text-align: left;
+  max-width: 100%; /* Ensure it fits within the card */
 }
 
 .redirectImage {
@@ -126,9 +129,9 @@
 
 .gameTitle {
   position: absolute;
-  top: 35%; 
-  left: 50%; 
-  transform: translate(-50%, -50%); 
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: white;
   font-family: Arial, sans-serif;
   font-size: 18px;
@@ -142,7 +145,6 @@
   z-index: 1;
   text-align: center;
   max-width: fit-content;
-
 }
 
 .imageWrapper:hover .gameTitle {

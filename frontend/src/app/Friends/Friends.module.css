@@ -5,6 +5,7 @@
  padding-bottom: 16px;
  gap: 8px;
  overflow: hidden;
+
 }
 
 .pageTitle{
@@ -13,17 +14,18 @@
 }
 
 .list_of_friends {
+  
   display: grid;
   align-items: center;
   gap: 16px;
-  width: fit-content;
+  width: 100%;
   margin: 0 auto;
 }
 
 .friend_info {
-  width: 100%;
+  width: 40%;
   border-radius: 12px;
-  
+  margin: 0 auto;
 }
 
 .friend_steam_link {
@@ -32,21 +34,48 @@
   max-width: min-content;
   margin-bottom: 16px;
 }
-
+/* Existing styles for .username and .redirectImage */
 .username {
-  padding-left: 35px;
+  display: inline-block;
   font-size: 35px;
   font-weight: bold;
   font-variant: small-caps;
   color: var(--text-primary);
   margin: 0 auto;
   width: max-content;
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
 
-.username:hover{
+.username:hover {
   transform: scale(1.05) translateY(-2px);
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+
+.redirectImage {
+  height: 40px;
+  position: relative;
+  display: inline-block;
+  justify-self: center;
+  align-self: center;
+  vertical-align: middle;
+  transition: transform 0.25s ease-in-out; /* Updated transition property */
+  padding: 5px;
+}
+
+/* Add styles for .friend_steam_link to align image and text horizontally */
+.friend_steam_link {
+  display: flex;
+  align-items: center; /* Vertically center the image and text */
+  gap: 10px; /* Add spacing between the image and text */
+  text-decoration: none; /* Ensure the link has no underline */
+}
+
+
+
+.redirectImage:hover{
+  cursor: pointer;
+  scale: 1.1;
+  transition: .25s scale;
 }
 
 .recent_game_list {
@@ -54,7 +83,7 @@
   margin-top: 8px;
   gap: 8px;
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
   justify-content: center;
 }
 
@@ -64,6 +93,8 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  margin: 0 auto;
+
 }
 
 .recently_played_label {
