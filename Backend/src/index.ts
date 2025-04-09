@@ -417,6 +417,20 @@ app.get('/games/:gameid', async (req, res) => {
       12: 'December',
     }
 
+  // Create API response for Review Color
+  if (rows[0].positive && rows[0].total) {
+    let positive = Number(rows[0].positive);
+    let total = Number(rows[0].total);
+    let ratio = total > 0 ? (positive / total) * 100 : 0;
+
+    if (ratio >= 70) {
+        rows[0].review_color = "green";
+    } else if (ratio >= 40) {
+        rows[0].review_color = "yellow";
+    } else {
+        rows[0].review_color = "red";
+    }
+}
     console.log('Query result for gameid:', gameid, rows) // Debugging log
 
     if (rows.length === 0) {
