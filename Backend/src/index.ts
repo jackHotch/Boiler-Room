@@ -777,8 +777,16 @@ export async function insertGames(steamId: bigint, friend: boolean = true) {
       message: `Games inserted/updated successfully.` 
     };
   } catch (error) {
-    console.error('Error in insertGames:', error);
-    throw new Error('Internal Server Error');
+    if (error.response?.status === 429) {
+      console.warn('Rate limited encountered');
+      return { 
+        __handled429: true,
+        message: 'Rate limit exceeded' 
+      };
+    } else {
+      console.error('Error in insertGames:', error);
+      throw new Error('Internal Server Error');
+    }
   }
 }
 
