@@ -1210,6 +1210,16 @@ export async function checkAccount(steamId) {
   let retVal = 0
   const KEY = process.env.STEAM_API_KEY
 
+  const { rows: existingRows } = await pool.query(
+    'SELECT * FROM "Profiles" WHERE "steam_id" = $1',
+    [steamId]
+  )
+
+  if (existingRows.length > 0) {
+    retVal = 3
+    return retVal;
+  }
+
   try {
     // Checking game details
     const gameResponse = await axios.get(
