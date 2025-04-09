@@ -143,34 +143,51 @@ app.get('/steam/validvisibility/:steamId', async (req, res) => {
 
 // Sets session variables for a given steam id
 app.get('/steam/setsession/:steamId', async (req, res) => {
-  const id = req.params.steamId
-  // Fetch the steamName asynchronously and store it in the session
-  const steamId = BigInt(req.params.steamId) //Set steamid to big Int
-  const result = await insertProfile(steamId) //Toss it to the insert profile function
-
-  if (result) {
-    //if we add a profile,
-    await insertGames(steamId) //insert games from that profile
-  }
-  // continue the set session work
-
+  const id = req.params.steamId;
+  const steamId = BigInt(id);
+  
   try {
+    // First check if profile exists in database
+    const { rows: existingRows } = await pool.query(
+      'SELECT username, avatar_hash FROM "Profiles" WHERE "steam_id" = $1',
+      [steamId]
+    );
+
+    if (existingRows.length > 0) {
+      // Profile exists - use data from database
+      const profile = existingRows[0];
+      req.session.steamId = id;
+      req.session.steamName = profile.username;
+      req.session.steamPFP = `https://avatars.steamstatic.com/${profile.avatar_hash}_full.jpg`;
+      
+      console.log('Steam ID Authenticated (from DB): ' + req.session.steamId);
+      return res.redirect(process.env.FRONTEND_URL + '/Dashboard');
+    }
+
+    // Profile doesn't exist - proceed with original flow
+    const result = await insertProfile(steamId);
+
+    if (result) {
+      await insertGames(steamId);
+    }
+
     const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
-      params: { steamid: id }, // Send the steamid in the request
-    })
+      params: { steamid: id },
+    });
 
-    req.session.steamId = id
-    req.session.steamName = response.data.username
-    req.session.steamPFP = response.data.userImage
+    req.session.steamId = id;
+    req.session.steamName = response.data.username;
+    req.session.steamPFP = response.data.userImage;
 
-    console.log('Steam ID Authenticated: ' + req.session.steamId)
-    res.redirect(process.env.FRONTEND_URL + '/Dashboard')
+    console.log('Steam ID Authenticated: ' + req.session.steamId);
+    res.redirect(process.env.FRONTEND_URL + '/Dashboard');
   } catch (error) {
-    console.error('Error fetching Steam username:', error)
-    // Only send one response, error occurs when redirecting back from login error
-    if (!res.headersSent) return res.status(500).send('Error fetching Steam username')
+    console.error('Error in steam/setsession:', error);
+    if (!res.headersSent) {
+      return res.status(500).send('Error processing Steam authentication');
+    }
   }
-})
+});
 
 export async function insertProfile(steamId: bigint) {
   try {
@@ -316,6 +333,7 @@ app.get('/steam/logininfo', async (req, res) => {
 // Used for fetching display card info after login
 app.get('/steam/getdisplayinfo', async (req, res) => {
   // If Steam ID and name are in the session, return them
+  
   if (req.session.steamId && req.session.steamName) {
     return res.json({
       steamId: req.session.steamId,
@@ -544,7 +562,9 @@ app.get('/ownedGames', async (req, res) => {
       playtime_2weeks: game.playtime_2weeks || 0,
     }))
 
+    console.log(ownedGames)
     return res.json(ownedGames)
+    
   } catch (error) {
     console.error(
       'Error fetching owned games from Steam API:',
@@ -1220,6 +1240,7 @@ export async function checkAccount(steamId) {
     return retVal;
   }
 
+  console.log("made it here")
   try {
     // Checking game details
     const gameResponse = await axios.get(
