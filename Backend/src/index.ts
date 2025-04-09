@@ -546,9 +546,11 @@ app.get('/ownedGames',
       res.json(ownedGames);
     } catch (error) {
       next(error);
+    } finally {
+      // Release the lockout in the finally block to ensure it always runs
+      releaseLockout(req, res, next);
     }
   },
-  releaseLockout,
   (error, req, res, next) => {
     console.error('Error in ownedGames:', error.message, error.response?.data);
     res.status(500).json({ error: 'Failed to fetch owned games.' });
