@@ -317,11 +317,11 @@ export default function GameRecommendation() {
             </button>
           </form>
         </div>
-        <div className={styles.sectionTitle}>TItles Handpicked For You</div>
+        <div className={styles.sectionTitle}>Titles Handpicked For You</div>
         <div className={styles.gamesGrid}>
           {/* Recommended games */}
           {gameList.length > 0 ? (
-            gameList.slice(0, 3).map((game, index) => (
+            gameList.slice(0, 4).map((game, index) => (
               <div key={index} className={styles.gameCard}>
                 <a
                   key={game.id}

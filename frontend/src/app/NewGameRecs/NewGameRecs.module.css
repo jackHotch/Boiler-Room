@@ -6,17 +6,22 @@
   width: 100%;
   padding: 20px 0;
   border-radius: 15px;
-  max-width: 1400px;
   padding-top: 2px;
   margin-top: 2%;
 
 }
 
 .recommendedGames {
+  width: fit-content;
   padding: 50px 20px;
   text-align: center;
   flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 90%;
 }
+
 
 .sectionTitle {
   display: inline-block;
@@ -36,6 +41,18 @@
   flex-direction: column;
   justify-content: flex-start;
   text-align: left;
+}
+
+.gamesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  align-items: start;
+  margin-top: 15px;
+  padding: 20px;
+  margin: 0 auto;
 }
 
 .boil_score {
