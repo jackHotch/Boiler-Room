@@ -1,10 +1,11 @@
 .scrollContainer {
   margin: 0 auto;
   position: relative;
-  width: 90%;
-  padding: 20px 0;
+  width: max-content;
+  padding: 20px;
+  padding-right: 45px;
   border-radius: 15px;
-  max-width: 1400px;
+  max-width: 1500px;
   padding-top: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));
@@ -14,7 +15,7 @@
 .gridContainer {
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(5, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
   padding: 20px;
   gap: 20px; /* Add spacing between cards */
   width: 100%;
@@ -168,6 +169,10 @@
 }
 
 .no_recent_games_message {
+  text-align: center;
+  font-size: 16px;
+  grid-column: 2;
+  left: 50%;
   color: var(--text-secondary);
   margin-left: 12px;
 }

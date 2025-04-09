@@ -708,9 +708,9 @@ app.get("/gamesByFilter", async (req, res) => {
        ORDER BY g."boil_score" DESC
        LIMIT 3;`,
       [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId, platform]
-    );
+    )
 
-    res.json(rows);
+    res.json(rows)
   } catch (error) {
     console.error("Error fetching games:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -5,7 +5,6 @@
  padding-bottom: 16px;
  gap: 8px;
  overflow: hidden;
-
 }
 
 .pageTitle{
@@ -23,21 +22,25 @@
 }
 
 .friend_info {
-  width: 40%;
+  display:block;
+  text-align: center;
+  width: 100%;
+  left: 50%;
   border-radius: 12px;
-  margin: 0 auto;
+  margin: auto 0;
 }
 
 .friend_steam_link {
   text-decoration: none;
   display: block;
-  max-width: min-content;
+  max-width: max-content;
   margin-bottom: 16px;
 }
 /* Existing styles for .username and .redirectImage */
 .username {
-  display: inline-block;
+  text-align: center;
   font-size: 35px;
+  position: relative;
   font-weight: bold;
   font-variant: small-caps;
   color: var(--text-primary);
@@ -109,6 +112,8 @@
 }
 
 .no_recent_games_message {
+  margin: 0 auto;
+  text-align: center;
   color: var(--text-secondary);
 }
 

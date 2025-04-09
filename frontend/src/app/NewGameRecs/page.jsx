@@ -144,6 +144,7 @@ export default function GameRecommendation() {
       event.target.option2.checked ? 1 : null,
     ].filter((option) => option !== null)
     let maxHLTB = parseInt(event.target.maxHLTB.value, 10) || 10000
+    console.log('userStats', userStats)
     let genre = selectedGenres.map((g) => g.value)
     console.log('Genres:', genre)
     console.log('Genres.join:', genre.join(','))
