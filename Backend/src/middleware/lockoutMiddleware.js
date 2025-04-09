@@ -18,7 +18,7 @@ export async function manageLockout() {
   if (currentStatus === 1) {
     return 'You are presently locked out, please try again later';
   } else if (currentStatus === 0) {
-    console.log('Beginning API operation');
+    console.log('Beginning API operation, lockout set');
     await pool.query('UPDATE "Lockout" SET "code" = 1');
     return null;
   }
@@ -39,6 +39,7 @@ export async function lockoutMiddleware(req, res, next) {
 
 export async function releaseLockout(req, res, next) {
   try {
+    console.log("API Lockout Released")
     await pool.query('UPDATE "Lockout" SET "code" = 0');
   } catch (error) {
     console.error('Error releasing lockout:', error);
