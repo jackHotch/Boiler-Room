@@ -35,6 +35,9 @@
   display: block;
   max-width: max-content;
   margin-bottom: 16px;
+  margin: 0 auto;
+  text-align: left;
+  padding-bottom: 15px;
 }
 /* Existing styles for .username and .redirectImage */
 .username {
