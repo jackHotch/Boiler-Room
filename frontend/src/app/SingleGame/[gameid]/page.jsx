@@ -184,6 +184,8 @@ const SingleGamePage = () => {
 
           <div className={styles.boil}>
             <strong>Boil Rating</strong>
+            <strong className={styles.questionMark}> ?</strong>
+
             <br />
             <br />
             <span className={styles.boil_score}>
