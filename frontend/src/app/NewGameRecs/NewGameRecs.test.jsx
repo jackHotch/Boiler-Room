@@ -27,7 +27,7 @@ beforeEach(() => {
 describe("NewGameRecs Component - UI Rendering", () => {
   it("renders the page title", async () => {
     render(<NewGameRecs />);
-    expect(await screen.findByText("Handpicked For You")).toBeInTheDocument();
+    expect(await screen.findByText("Titles Handpicked For You")).toBeInTheDocument();
   });
 
   it("renders the genre selection label", async () => {

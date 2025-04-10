@@ -172,7 +172,7 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
             <th className={styles.titleColumn}>Title</th>
             <th className={styles.boilColumn}>Boil</th>
             <th className={styles.ratingColumn}>Rating</th>
-            <th className={styles.hltbColumn}>HLTB</th>
+            <th className={styles.hltbColumn}>hltb</th>
             <th>Playtime</th>
             <th>Steam</th>
             <th>{showHidden ? 'Show' : 'Hide'}</th>

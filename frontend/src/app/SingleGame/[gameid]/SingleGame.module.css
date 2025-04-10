@@ -4,11 +4,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: fit-content;
   margin: auto;
   padding-top: 1.5%;
   padding-bottom: 10%;
-  scale: 1;
+  scale: 1.05;
+  height: fit-content;
 }
 
 /* Game Content */
@@ -18,7 +19,6 @@
   justify-content: center;
   gap: 20px;
   width: 100%;
-  max-width: 1000px;
 }
 
 /* Left Side */
@@ -29,7 +29,7 @@
   width: 100%;
   max-width: 320px;
   align-items: center;
-  grid-row: 1 / 3;
+  margin-right: 15px;
 }
 
 /* Game Title */
@@ -58,7 +58,7 @@
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
-  max-width: 280px;
+  max-width: 350px;
 }
 
 .imageContainer:hover {
@@ -98,7 +98,6 @@
 .releaseDate {
   margin-top: 10px;
   border: none;
-  background: var(--bg-dark);
   border-radius: 8px;
   padding: 12px;
   text-align: center;
@@ -114,7 +113,6 @@
   font-variant: small-caps;
   text-align: left;
   border: none;
-  background: var(--bg-dark);
   grid-column: 1 / 4;
   grid-row: 1 / 1;
 }
@@ -122,9 +120,9 @@
 
 .gameRight {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
 }
 
@@ -132,6 +130,7 @@
 .gameSummary,
 .hltb_score,
 .reviews,
+.boil,
 .platforms,
 .metacritic_score,
 .titlePrice,
@@ -150,6 +149,7 @@
 .hltb_score:hover,
 .reviews:hover,
 .platforms:hover,
+.boil:hover,
 .metacritic_score:hover ,
 .titlePrice:hover,
 .imageContainer:hover,
@@ -161,13 +161,15 @@
 /* Game Summary */
 .gameSummary {
   grid-column: 1 / 4;
-  text-align:justify;
+  grid-row: 2 / 2;
+  text-align: justify;
   min-height: 200px;
   max-height: 250px;
   overflow-y: auto;
   padding-bottom: 20px;
   white-space: normal;
   word-wrap: break-word;
+  font-size: 18px;
 }
 
 .button{
@@ -191,11 +193,26 @@
 }
 
 /* Right Side Grid Elements */
-.reviews { grid-column: 1 / 2; }
-.metacritic_score { grid-column: 2 / 3; }
-.platforms { grid-column: 1 / 2; }
-.hltb_score { grid-column: 2 / 3; }
+.reviews { grid-column: 3 / 3; grid-row: 3/3;}
+.metacritic_score { grid-column: 2 / 2;}
+.platforms {grid-column: 4 / 3;}
+.hltb_score {  grid-column: 1 / 3;
+  grid-row: 4 / 4;}
+.boil{grid-column: 1 / 1; grid-row: 3 / 3;}
 
+.boil .boil_score {
+  visibility: hidden;
+  width: 100%;
+  bottom: 100%;
+  left: -2.5%;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  position: absolute;
+  z-index: 1;
+}
 
 .reviews .numReviews{
   visibility: hidden;
@@ -215,10 +232,14 @@
   visibility: visible
 }
 
+.boil:hover .boil_score{
+  visibility: visible;
+}
+
 .hltb_score .tooltipText{
   visibility: hidden;
   width: 100%;
-  bottom: 100%;
+  bottom:-90%;
   left: -2.5%;
   background-color: rgba(0, 0, 0, 0.75);
   padding: 10px;
@@ -242,10 +263,6 @@
   .gameRight {
     grid-template-columns: 1fr;
     max-width: 100%;
-  }
-
-  .gameSummary {
-    grid-column: 1 / 2;
   }
 }
 .circleContainer {

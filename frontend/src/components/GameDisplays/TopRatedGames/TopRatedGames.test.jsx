@@ -88,7 +88,7 @@ describe('TopRatedGames', () => {
     })
   })
 
-  test('limits display to 24 games when more are returned', async () => {
+  test('limits display to 12 games when more are returned', async () => {
     const manyGames = Array(30)
       .fill()
       .map((_, i) => ({
@@ -102,7 +102,7 @@ describe('TopRatedGames', () => {
 
     await waitFor(() => {
       const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(40) // Should only show 40 games despite 15 returned
+      expect(images).toHaveLength(24) // Should only show 24 games despite 30 returned
     })
   })
 })

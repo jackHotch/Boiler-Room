@@ -20,7 +20,8 @@ const SingleGamePage = () => {
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Server did not return JSON')
         }
-        response.data.description = response.data.description.replaceAll('&quot;', '"')
+        response.data.description = response.data.description.replaceAll('"', '"')
+        response.data.description = response.data.description.replaceAll('&amp;', '&')
         setGame(response.data)
       } catch (error) {
         console.error('Error fetching game details:', error)
@@ -34,8 +35,9 @@ const SingleGamePage = () => {
   }, [gameid])
 
   // Start the Progress Bar fully Empty
-  const [animatedOffset, setAnimatedOffset] = useState(314)
-  const [animatedOffset2, setAnimatedOffset1] = useState(314)
+  const [animatedOffset, setAnimatedOffset] = useState(314) // For Steam Reviews
+  const [animatedOffset2, setAnimatedOffset2] = useState(314) // For Metacritic Score
+  const [animatedOffset3, setAnimatedOffset3] = useState(314) // For Boil Rating
 
   // Ensure that game is not null before accessing its properties
   let reviewRatio = game ? Math.round((game.positive / game.total) * 100) : 0
@@ -47,23 +49,27 @@ const SingleGamePage = () => {
     return circumference - (score / 100) * circumference
   }
 
-  //Trigger the Animation when the page loads
+  // Trigger the Animation when the page loads
   useEffect(() => {
-    //if (!game || game.metacritic_score == null) return;// guard clause
     setTimeout(() => {
       setAnimatedOffset(getStrokeDashOffset(reviewRatio))
     }, 300) // Added Delay for a smoother animation
 
     if (game?.metacritic_score == null) return
     setTimeout(() => {
-      setAnimatedOffset1(getStrokeDashOffset(game.metacritic_score))
+      setAnimatedOffset2(getStrokeDashOffset(game.metacritic_score))
     }, 300)
-  }, [reviewRatio, game?.metacritic_score]) // Trigger animation when reviewRatio updates
+
+    if (game?.boil_score == null) return
+    setTimeout(() => {
+      setAnimatedOffset3(getStrokeDashOffset(game.boil_score))
+    }, 300)
+  }, [reviewRatio, game?.metacritic_score, game?.boil_score]) // Trigger animation when reviewRatio updates
 
   // Added a Function to determine the color of the progress bar
-  const getStrokeColor = (reviewRatio) => {
-    if (reviewRatio >= 70) return 'Green'
-    if (reviewRatio >= 40) return 'Yellow'
+  const getStrokeColor = (score) => {
+    if (score >= 70) return 'Green'
+    if (score >= 40) return 'Yellow'
     return 'Red'
   }
 
@@ -102,11 +108,11 @@ const SingleGamePage = () => {
               />
             </a>
             <a className={styles.gameTitle}>{game.name} |</a>
-
             <div className={styles.price}>
               {game.price ? '$' + game.price : 'Not Available'}
             </div>
           </div>
+
           <div className={styles.gameSummary}>
             {game.description ? game.description : 'No description available.'}
           </div>
@@ -115,33 +121,14 @@ const SingleGamePage = () => {
             <strong className={styles.questionMark}> ?</strong>
             <br />
             <br />
-            {game.platform ? game.platform : 'N/A'}
-          </div>
-          <div className={styles.hltb_score}>
-            <strong>How Long to Beat</strong>
-            <strong className={styles.questionMark}> ?</strong>
-            <span className={styles.tooltipText}>
-              <strong>
-                The Average of the <br></br>Main Story & Main Story + Extras <br></br>
-              </strong>
-              howlongtobeat.com{' '}
-            </span>
-            <br />
-            <br />
-            {game.hltb_score ? `${Math.floor(game.hltb_score)} hours` : 'N/A'}
-          </div>
-          <div className={styles.reviews}>
-            <strong>Steam Reviews</strong>
-            <br></br>
-            <br></br>
             <span className={styles.numReviews}>
               <strong>
-                Total Reviews: {game.total} <br></br>
-                Positive Reviews: {game.positive} <br></br>
-                Negative Reviews: {game.negative}
+                Total Reviews: {game.total} <br />
+                Positive Reviews: {game.positive} <br />
+                Negative Reviews: {game.negative} <br />
+                {game.recommendation_description}
               </strong>
             </span>
-
             <div className={styles.circleContainer}>
               <svg className={styles.progressRing} width='120' height='120'>
                 <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
@@ -161,12 +148,12 @@ const SingleGamePage = () => {
                 {reviewRatio ? `${reviewRatio}%` : 'N/A'}
               </span>
             </div>
-            {game.recommendation_description}
           </div>
+
           <div className={styles.metacritic_score}>
             <strong>Metacritic Score</strong>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
             <div className={styles.circleContainer}>
               <svg className={styles.progressRing} width='120' height='120'>
                 <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
@@ -186,6 +173,56 @@ const SingleGamePage = () => {
                 {game.metacritic_score ? `${game.metacritic_score}%` : 'N/A'}
               </a>
             </div>
+          </div>
+
+          <div className={styles.platforms}>
+            <strong>Platforms</strong>
+            <br />
+            <br />
+            {game.platform ? game.platform : 'N/A'}
+          </div>
+
+          <div className={styles.boil}>
+            <strong>Boil Rating</strong>
+            <br />
+            <br />
+            <span className={styles.boil_score}>
+              <strong>Rating that prioritizes highly rated, shorter games.</strong>
+            </span>
+            <div className={styles.circleContainer}>
+              <svg className={styles.progressRing} width='120' height='120'>
+                <circle className={styles.progressRingBg} cx='60' cy='60' r='50'></circle>
+                <circle
+                  className={styles.progressRingCircle}
+                  cx='60'
+                  cy='60'
+                  r='50'
+                  style={{
+                    strokeDasharray: 314,
+                    strokeDashoffset: animatedOffset3,
+                    stroke: getStrokeColor(game.boil_score),
+                  }}
+                ></circle>
+              </svg>
+              <span className={styles.progressText}>
+                {game.boil_score ? `${game.boil_score}%` : 'N/A'}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.hltb_score}>
+            <strong>How Long to Beat</strong>
+            <strong className={styles.questionMark}> ?</strong>
+            <span className={styles.tooltipText}>
+              <strong>
+                The Average of the <br />
+                Main Story & Main Story + Extras <br />
+              </strong>
+              howlongtobeat.com{' '}
+            </span>
+            <br />
+            <br />
+            {game.hltb_score ? `${Math.floor(game.hltb_score)} hours` : 'N/A'}
           </div>
         </div>
       </div>

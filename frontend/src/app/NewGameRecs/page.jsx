@@ -322,7 +322,7 @@ export default function GameRecommendation() {
         <div className={styles.gamesGrid}>
           {/* Recommended games */}
           {gameList.length > 0 ? (
-            gameList.slice(0, 4).map((game, index) => (
+            gameList.slice(0, 10).map((game, index) => (
               <div key={index} className={styles.gameCard}>
                 <a
                   key={game.id}

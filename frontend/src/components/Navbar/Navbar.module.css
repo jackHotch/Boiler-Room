@@ -11,8 +11,8 @@
   border-radius: 25px;
   box-shadow: 0 0px 2px var(--text-primary);
   background:
-    radial-gradient(ellipse at bottom, var(--bg-dark), transparent),
-    radial-gradient(ellipse at top, var(--bg-primary), transparent);  transition: all 0.25s ease-in-out; 
+  radial-gradient(ellipse at bottom, var(--bg-dark), transparent),
+  radial-gradient(ellipse at top, var(--bg-primary), transparent);  transition: all 0.25s ease-in-out; 
 }
 
 .nav_options {
@@ -68,7 +68,7 @@
 }
 
 .logoDark {
-  margin-right: 30px;
+  padding: 5px;
   font-size: 32px;
   font-weight: bold;
   transition: all 0.25s ease-in-out; 

@@ -453,7 +453,7 @@ app.get("/games/:gameid", async (req, res) => {
     const { rows } = await pool.query(
       `SELECT g."name", g."header_image", g."description", g."hltb_score", 
        r."total", r."positive", r."negative", r."description" AS recommendation_description,
-       g."price", g."metacritic_score", g."released", g."platform"  
+       g."price", g."metacritic_score", g."released", g."platform", g."boil_score"
       FROM "Games" g
       LEFT JOIN "Game_Recommendations" r ON g."game_id" = r."game_id"
       WHERE g."game_id" = $1`,
@@ -706,7 +706,7 @@ app.get("/gamesByFilter", async (req, res) => {
        Group BY g."name", g."header_image", g."description", g."boil_score", g."released", g."game_id"
        HAVING COUNT(DISTINCT gen.description) = array_length($1::text[],1)
        ORDER BY g."boil_score" DESC
-       LIMIT 3;`,
+       LIMIT 9;`,
       [genre, minBoilRating, minYear, maxYear, maxHLTB, steamId, platform]
     )
 

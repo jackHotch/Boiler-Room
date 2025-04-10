@@ -19,7 +19,7 @@ const TopRatedGames = () => {
 
         // Sort games by playtime_forever in descending order (most played first)
         let sortedGames = games.sort((a, b) => b.playtime_forever - a.playtime_forever)
-        sortedGames = sortedGames.slice(0, 20)
+        sortedGames = sortedGames.slice(0, 12)
         setOwnedGames(sortedGames)
       } catch (error) {
         console.error('Error fetching owned games:', error.message, error.response?.data)
