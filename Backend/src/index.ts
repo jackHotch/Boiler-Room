@@ -220,11 +220,18 @@ export async function insertProfile(steamId: bigint) {
     const avatar = response.data.response.players[0]?.avatarhash //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname
 
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     await pool.query(
       //insert those things along with the steamID to our database
@@ -261,11 +268,18 @@ app.get('/steam/playersummary', async (req, res) => {
       }
     )
 
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     const username = response.data.response.players[0]?.personaname
     const userImage = response.data.response.players[0]?.avatarfull
@@ -299,10 +313,23 @@ app.get('/steam/recentgames', async (req, res) => {
       }
     )
 
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
+    const overallStart = Date.now();
+
+for (let i = 0; i < 2; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
+
+const overallEnd = Date.now();
+const totalElapsed = (overallEnd - overallStart) / 1000;
+console.log(`Total execution time: ${totalElapsed.toFixed(2)} seconds`);
+
     console.log('Done');
 
     const games = data.response.games?.slice(0, 3) || []
@@ -367,11 +394,18 @@ app.get('/steam/friendsList', async (req, res) => {
     const data = await axios.get(
       `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
     )
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
     return res.status(200).json(data.data.friendslist.friends)
   } else {
     console.log('no steam id')
@@ -564,10 +598,23 @@ app.get('/ownedGames', async (req, res) => {
         },
       }
     )
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
+    const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
+
+const overallEnd = Date.now();
+const totalElapsed = (overallEnd - overallStart) / 1000;
+console.log(`Total execution time: ${totalElapsed.toFixed(2)} seconds`);
+
     console.log('Done');
     const data = gameResponse.data
     if (!data.response || !data.response.games) {
@@ -856,11 +903,18 @@ export async function fetchAndProcessFriends(steamId: bigint, forced: boolean = 
 
   //console.log(friendsResponse.data)
 
-  for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+    const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
   const steamIds = friendsResponse.data.friendslist.friends
     .map((friend) => friend.steamid.toString())
     .slice(0, 5)
@@ -926,11 +980,18 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
         avatar,
       })
 
-      for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done'); //always making sure we sleep
+        const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+} //always making sure we sleep
     } catch (error) {
       await pool.query('UPDATE "Lockout" SET "code" = 0', [])
       console.error(`Error processing Steam ID ${steamId}:`, error.message)
@@ -1012,11 +1073,18 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
       )
       //console.log('API Response:', JSON.stringify(data, null, 2));
 
-      for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+        const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
       //console.log('Delay completed');
 
       // Check response structure
@@ -1293,12 +1361,17 @@ export async function checkAccount(steamId) {
       }
     )
 
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
 
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
     if (Object.keys(gameResponse.data.response).length > 0) {
       retVal += 2
     }
@@ -1315,11 +1388,18 @@ export async function checkAccount(steamId) {
       }
     )
 
-    for (let i = 0; i < 2; i++) {
-        console.log(`Waiting ${i} seconds...`);
-        await sleep(i * 1000);
-    }
-    console.log('Done');
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     if (Object.keys(friendsResponse.data).length > 0) {
       retVal += 1
