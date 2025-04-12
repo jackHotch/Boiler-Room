@@ -1,48 +1,83 @@
 .container {
   display: flex;
   justify-content: space-between;
+  margin: 1% auto;
   align-items: center;
   padding: 16px 24px;
   text-align: center;
   position: relative;
   z-index: 1231321;
-  height: 10%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.393);
-  background-color: var(--bg-light)
+  width: 90%;
+  border-radius: 25px;
+  box-shadow: 0 0px 2px var(--text-primary);
+  background:
+  radial-gradient(ellipse at bottom, var(--bg-dark), transparent),
+  radial-gradient(ellipse at top, var(--bg-primary), transparent);  transition: all 0.25s ease-in-out; 
 }
+
 .nav_options {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
 }
 
 .logoDark {
   filter: var(--logo-bw);
+  font-size: 32px;
+  font-weight: bold;
 }
 
 .links {
   display: flex;
+  background-color: var(--bg-primary);
   justify-content: center;
   align-items: center;
-  padding: 12px;
+  margin-left: 10px;
+  padding: 10px 16px;
   color: var(--text-primary);
-  border-radius: 8px;
+  border-radius: 12px;
   text-decoration: none;
-  text-align: center; /* Ensures text alignment */
-  min-width: 120px; /* Ensures enough space for text */
-  height: 30px; /* Adjust based on design */
-  line-height: 1;
-  background-color: var(--button-primary);
+  text-align: center;
+  min-width: 100px;
+  height: 26px;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease-in-out;
+  font-size: 14px;
+  font-weight: 500;
+  font-display: small-caps;
 }
 
-.logoBackground:hover, .links:hover {
-  background-color: var(--bg-primary);
+.links:hover {
+  background-color: var(--bg-accent);
+  border-color: var(--bg-accent); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  color: var(--text-primary);
+}
+
+.links:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.logoBackground:hover {
+  background-color: var(--bg-dark);
   border-radius: 8px;
 }
 
-.logo {
+.logoDark {
+  padding: 5px;
   font-size: 32px;
   font-weight: bold;
+  transition: all 0.25s ease-in-out; 
+}
+
+.logoDark:hover {
+  color: var(--bg-accent); 
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .account {
@@ -53,22 +88,23 @@
   align-items: center;
 }
 
-.pfp{
+.pfp {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
-  border: 2px solid white;
+  border: 2px solid var(--text-primary);
+  transition: all .25s ease-in-out;
 }
 
 .pfp:hover {
   border: 2px solid var(--bg-accent);
   cursor: pointer;
+  transition: all .25s ease-in-out;
 }
 
 .accountContainer {
   position: relative;
-  /* Needed for absolute positioning */
 }
 
 .accountContainer:hover .steamComponent {
@@ -79,5 +115,4 @@
   position: absolute;
   display: flex;
   padding: 10px;
-
 }

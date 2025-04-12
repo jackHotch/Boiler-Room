@@ -70,7 +70,7 @@ export default function Friends() {
 
   return (
     <div className={styles.container}>
-      <h1>Your Friends</h1>
+      <h1 className={styles.pageTitle}>Your Friends</h1>
       <div className={styles.list_of_friends}>
         {loading ? (
           <div className={styles.loading_message}>
@@ -87,6 +87,11 @@ export default function Friends() {
                   target='_blank'
                   href={`https://steamcommunity.com/profiles/${friend.steamId}`}
                 >
+                  <img
+                    src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png'
+                    className={styles.redirectImage}
+                    alt='Redirect'
+                  />
                   <h4 className={styles.username}>{friend.username}</h4>
                 </a>
 

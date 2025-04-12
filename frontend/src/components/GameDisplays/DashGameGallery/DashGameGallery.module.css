@@ -5,40 +5,39 @@
     padding: 40px;
     color: var(--text-bw);
     font-family: Arial, sans-serif;
-}
-    
+      opacity: 0.8;
+      background-size: 20px 20px;
+}    
 .gameContainer {
     flex-direction: column;
     text-align: center;
-    background: linear-gradient(230deg, var(--bg-dark), var(--bg-light));
-    border-radius: 8px;
+    background: radial-gradient(circle, var(--bg-light) 15%, var(--bg-dark) 100%);
+      transform: scale(1.05);    border-radius: 8px;
     padding: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 0px 2px var(--text-primary);
     filter: brightness(1);
     position: relative;
     scale: .8;
+    transition: all 0.25s ease-in-out;
+    box-shadow: 0px 10px 25px -15px var(--text-primary), 5px 22px 24px 5px rgba(0, 0, 0, 0);
+    border: 5px outset var(--bg-dark);
+    border-radius: 20px;
 }
     
 .gameContainer:nth-child(even) {
-  background: linear-gradient(115deg, var(--bg-dark), var(--bg-light));   
-  transform: scale(1.05);
   scale: .85;
 }
 
 .gameContainer:hover {
   transform: scale(1.075) translateY(-5px);
   filter: brightness(1.03);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(98, 153, 240, 0.3);
-  animation: subtleRotate 0.5s ease-in-out;
 }
     
 .gallery img {
     border: 1px solid var(--text-bw);
     border-radius: 8px;
     aspect-ratio: 2/3;
-    transition: transform 0.25s ease-in-out, filter 0.25s ease-in-out;
-    transition: scale 0.25s ease-in-out, filter 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out;
     cursor: pointer;
     box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.25);
     filter: brightness(1);
@@ -46,22 +45,33 @@
     
 .gameContainer img:hover {
     outline: 1px solid var(--bg-accent);
-    filter: brightness(1.1);
-    scale: 1.01;
-    transition: scale 0.25s ease-in-out, filter 0.25s ease-in-out;
+    filter: brightness(1.1) scale(1.05) translateY(-5px);
+    transition: all 0.25s ease-in-out;
 }
     
-.gameCategory {
+.gallery {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: var(--text-bw);
+    font-family: Arial, sans-serif;
+  }
+  
+  .gameCategory {
     margin-top: 5px;
     font-size: 30px;
     margin-bottom: 15px;
     font-weight: bold;
     font-variant: small-caps;
-}
-
-.gameName{
+    transition: color 0.25s ease-in-out; 
+  }
+  
+  .gameName {
     font-size: 30px;
     padding-top: 10px;
     margin: 5px 5px 0px 5px;
     color: var(--text-bw);
-    cursor: default;}
+    cursor: default;
+    transition: color 0.25s ease-in-out; 
+  }

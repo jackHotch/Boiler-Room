@@ -1,40 +1,191 @@
 .container {
   color: var(--text-primary);
   padding: 20px;
+  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  padding: 20px 0;
+  border-radius: 15px;
+  padding-top: 2px;
+  margin-top: 2%;
+
 }
 
 .recommendedGames {
+  width: fit-content;
   padding: 50px 20px;
   text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 90%;
 }
 
+
 .sectionTitle {
-  font-size: 30px;
-  margin-top: 30px;
+  display: inline-block;
+  font-variant: small-caps;
+  text-align: start;
+  font-size: 55px;
+  padding-top: 15px;
+  margin: 15px;
+  margin-bottom: 0;
+  border-radius: 15px;
+  align-self: flex-start;
+  font-weight: 700;
+  color: var(--text-bw);
+}
+
+.gameCard{
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .gamesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  align-items: start;
+  margin-top: 15px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.boil_score {
+  position: relative;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1;
+  text-align: left;
+  left: 10px;
+}
+
+.gameImage{
+  width: 100%;
+  height: auto;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.gamesGrid {
+  background-color: var(--bg-dark);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
   align-items: start;
+  margin-top: 15px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  border-radius: 8px;
 }
 
 .gameCard {
   background-color: var(--bg-light);
-  padding: 20px;
   border-radius: 10px;
-  height: 250px;
+  height: auto;
+  width: 350px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.imageWrapper{
+  position: relative;
+  width: fit-content;
+  text-decoration: none;
+  transition: transform 0.3s ease-in-out;
+  overflow: hidden;
+}
+.gameCard:hover{
+  transform: scale(1.025);
+}
+.imageWrapper:hover .gameImage {
+  filter: brightness(0.5) blur(1px);
+}
+
+.imageWrapper:active {
+  filter: brightness(2);
+}
+
+/* Overlay effect */
+.imageWrapper::after {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.imageWrapper:hover::after {
+  opacity: 1;
+}
+
+.redirectImage {
+  padding-left: 8px;
+  position: absolute;
+  height: 16px;
+  filter: invert(1);
+}
+
+.overlay{
+  top:90%;
+  left: 50%; /* Center horizontally */
+  position: absolute;
+
+  transform: translate(-50%, -50%); /* Adjust for the element's own size to truly center */
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  padding: 8px 12px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  line-height: 1.2;
+  z-index: 1;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay:hover {
+  opacity: 1;
+}
+.gameCardInfo {
+  text-align: left;
+  padding: 15px;
+  color: var(--text-bw);
+  width: inherit;
+  opacity: .6;
+}
+
+.gameTitle{
+  padding: 10px;
+
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 10px;
 }
 
 .filters {
-  background-color: var(--bg-light);
+  background: linear-gradient(270deg, var(--bg-dark), var(--bg-primary));
   padding: 20px;
   border-radius: 12px;
   display: flex;
@@ -153,3 +304,4 @@
 .customSelect :global(.reactSelect__option--is-focused) {
   background-color: rgba(255, 255, 255, 0.2) !important;
 }
+

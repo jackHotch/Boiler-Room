@@ -1,9 +1,9 @@
 .gameTableContainer {
   margin: 0 auto;
   padding: 20px;
-  background-color: var(--bg-dark);
+  background: linear-gradient(0deg, var(--bg-dark), var(--bg-primary));
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   overflow-x: auto;
   min-height: 800px;
   max-width: 1200px;
@@ -12,15 +12,16 @@
   align-items: flex-start;
   padding-bottom: 50px;
   position: relative;
+  margin-bottom: 5%;
 }
 
 .controls {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  padding: 0 10px;
+  padding: 10px;
   order: -1;
+  width: fit-content;
 }
 
 .filters {
@@ -85,7 +86,7 @@
   border-radius: 10px;
   overflow: hidden;
   table-layout: fixed;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 3px dashed var(--text-primary);
 }
 
 .gameTable th,
@@ -185,11 +186,10 @@
   height: auto;
 }
 
-/* Column width adjustments */
-.gameTable td:nth-child(2), /* BOIL */
-.gameTable td:nth-child(3), /* Rating */
-.gameTable td:nth-child(4), /* HLTB */
-.gameTable td:nth-child(5)  /* Playtime */ {
+.gameTable td:nth-child(2),
+.gameTable td:nth-child(3),
+.gameTable td:nth-child(4),
+.gameTable td:nth-child(5) {
   width: 12%;
   min-width: 100px;
 }
@@ -201,8 +201,8 @@
 
 .hideButton {
   display: flex;
-  align-items: center; /* Vertically center the content */
-  justify-content: center; /* Horizontally center the content */
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 6px;
   font-size: 24px;
@@ -213,7 +213,7 @@
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  margin: 0 auto; /* Center the button within its container */
+  margin: 0 auto;
 }
 
 .hideButton:hover {
@@ -225,4 +225,58 @@
   transform: scale(1);
   background: var(--bg-light);
   box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.questionMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #444;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.tooltipText,
+.ratingTooltipText,
+.hltbTooltipText {
+  visibility: hidden;
+  opacity: 0;
+  width: fit-content;
+  max-width: 200px;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  position: absolute;
+  z-index: 10;
+  white-space: normal;
+  text-overflow: initial;
+  transition: visibility 0s, opacity 0.3s ease;
+}
+
+.boilColumn,
+.ratingColumn,
+.hltbColumn {
+  position: relative;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.boilColumn:hover .tooltipText,
+.ratingColumn:hover .ratingTooltipText,
+.hltbColumn:hover .hltbTooltipText {
+  visibility: visible;
+  opacity: 1;
 }

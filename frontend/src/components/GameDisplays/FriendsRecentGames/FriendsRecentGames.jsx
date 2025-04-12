@@ -32,11 +32,11 @@ export function FriendsRecentGames({ games }) {
                   <div className={styles.gameCardInfo}>
                     <strong>{game.title}</strong>
                     <br />
-                    <small>
+                    <small className={styles.hoursPlayed}>
                       {game.playtime > 0
                         ? (game.playtime / 60).toFixed(2) + ' Hours Played Recently'
                         : "Huh? You haven't played this recently"}
-                    </small>{' '}
+                    </small>
                   </div>
                 </a>
               )

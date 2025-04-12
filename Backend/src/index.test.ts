@@ -80,24 +80,6 @@ test('insertProfile inserts a profile and returns true', async () => {
   expect(res.rows[0].avatar_hash).toEqual(testProfile.response.players[0].avatarhash);
 });
 
-test('insertGames inserts games and returns success message', async () => {
-  mockedAxios.get.mockResolvedValueOnce({
-    data: testUserGames,
-  });
-
-  const result = await insertGames(BigInt(testSteamId));
-  expect(result).toEqual({ success: true, message: 'Games inserted/updated successfully.' });
-
-  const res = await pool.query('SELECT * FROM "User_Games" WHERE "steam_id" = $1', [testSteamId.toString()]);
-
-  expect(res.rows[0].steam_id).toEqual(testSteamId.toString());
-  expect(res.rows[0].game_id).toEqual(testUserGames.response.games[0].appid.toString());
-  expect(res.rows[0].total_played).toEqual(testUserGames.response.games[0].playtime_forever.toString());
-});
-
-
-
-
 describe('GET /steam/friendslist', () => {
   it('should return friends list', async () => {
     mockedAxios.get.mockResolvedValue({

@@ -1,18 +1,28 @@
 .container {
-  background-color: white;
-  border-radius: 8px;
+  background-color: var(--bg-primary);
+  border-radius: 12px;
   padding: 12px;
   display: flex;
   align-items: center;
-  border: 1px solid black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  transition: all 0.25s ease-in-out;
 }
 
 .input {
   border: none;
-  width: 300px;
+  width: 250px;
   border-radius: 8px;
-  background-color: white;
-  color: black;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.25s ease-in-out;
 }
 
 .input:focus {
@@ -28,6 +38,7 @@
 }
 
 .container button {
-  background-color: white;
+  transition: all 0.25s ease-in-out;
+  background-color: var(--bg-primary);
   border: none;
 }

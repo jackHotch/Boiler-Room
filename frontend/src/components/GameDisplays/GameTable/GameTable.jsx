@@ -33,7 +33,7 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
 
   useEffect(() => {
     filterGames()
-  }, [games, showHidden, sortBy, sortOrder]) // Depend on sortBy and sortOrder
+  }, [games, showHidden, sortBy, sortOrder])
 
   const filterGames = () => {
     let sortedGames = [...games]
@@ -50,7 +50,6 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
     const newTotalPages = Math.ceil(updatedFilteredGames.length / ROWS_PER_PAGE)
     setFilteredGames(updatedFilteredGames)
 
-    // Keep the current page unless it's out of bounds
     setCurrentPage((prevPage) => Math.min(prevPage, newTotalPages) || 1)
   }
 
@@ -88,20 +87,19 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
     const newOrder = sortBy === criteria && sortOrder === 'desc' ? 'asc' : 'desc'
     setSortBy(criteria)
     setSortOrder(newOrder)
-    filterGames() // Reapply sorting and filtering
+    filterGames()
   }
 
   const handleHideGame = async (game_id, currentHideValue) => {
-    const newHideValue = currentHideValue === 0 ? 1 : 0 // Toggle the hide value
+    const newHideValue = currentHideValue === 0 ? 1 : 0
 
     try {
       await hideGame(game_id, newHideValue)
 
       if (onGamesUpdate) {
-        const prevPage = currentPage // Store current page
-        await onGamesUpdate() // Fetch updated games
+        const prevPage = currentPage
+        await onGamesUpdate()
 
-        // Ensure the page stays the same unless it’s out of bounds
         const newTotalPages = Math.ceil(filteredGames.length / ROWS_PER_PAGE)
         setCurrentPage(prevPage > newTotalPages ? newTotalPages : prevPage)
       }
@@ -172,9 +170,9 @@ const GameTable = ({ games, steamId, onGamesUpdate }) => {
         <thead>
           <tr className={styles.headerRow}>
             <th className={styles.titleColumn}>Title</th>
-            <th>Boil</th>
-            <th>Rating</th>
-            <th>hltb</th>
+            <th className={styles.boilColumn}>Boil</th>
+            <th className={styles.ratingColumn}>Rating</th>
+            <th className={styles.hltbColumn}>hltb</th>
             <th>Playtime</th>
             <th>Steam</th>
             <th>{showHidden ? 'Show' : 'Hide'}</th>

@@ -3,8 +3,7 @@
   position: relative;
   width: 100%;
   padding: 20px 0;
-  background-color: var(--bg-dark);
-  border-radius: 15px;
+  background: linear-gradient(180deg, var(--bg-dark), var(--bg-primary));  border-radius: 15px;
   max-width: 1400px;
   padding-top: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -44,8 +43,6 @@
   font-size: 12px;
   padding: 8px 12px;
   border-radius: 4px;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
   line-height: 1.2;
   z-index: 1;
   text-align: right;
@@ -98,6 +95,7 @@
   align-self: flex-start;
   font-weight: 700;
   color: var(--text-bw);
+  transition: color 0.25s ease-in; 
 }
 
 .subHeader{
