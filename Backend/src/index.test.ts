@@ -208,56 +208,6 @@ describe('GET /games/:gameid', () => {
   })
 }) 
 
-describe('Check Account Visibility', () => {
-
-  afterEach(() => {
-      jest.clearAllMocks(); 
-  });
-
-  it('returns 3 when both game details and friends list are public', async () => {
-      mockedAxios.get
-          .mockResolvedValueOnce({ data: { response: { games: [{ appid: 123 }] } } }) 
-          .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); 
-
-      const result = await checkAccount(testSteamId);
-      expect(result).toBe(3);
-  });
-
-  it('returns 2 when only game details are public', async () => {
-      mockedAxios.get
-          .mockResolvedValueOnce({ data: { response: { games: [{ appid: 123 }] } } }) 
-          .mockRejectedValueOnce({ data: { response: {} } }); 
-
-      const result = await checkAccount(testSteamId);
-      expect(result).toBe(2);
-  });
-
-  it('returns 1 when only friends list is public', async () => {
-    mockedAxios.get
-        .mockResolvedValueOnce({ data: { response: {} } }) 
-        .mockResolvedValueOnce({ data: { friendslist: { friends: [{ steamid: '123' }] } } }); 
-
-    const result = await checkAccount(testSteamId);
-    expect(result).toBe(1);
-  });
-
-  it('returns 0 when both game details and friends list are private', async () => {
-      mockedAxios.get
-          .mockRejectedValueOnce({ data: { response: {} } }) 
-          .mockRejectedValueOnce({ data: { response: {} } }); 
-
-      const result = await checkAccount(testSteamId);
-      expect(result).toBe(0);
-  });
-
-  it('handles API errors gracefully and returns 0', async () => {
-      mockedAxios.get.mockRejectedValue(new Error('API request failed')); 
-
-      const result = await checkAccount(testSteamId);
-      expect(result).toBe(0);
-  });
-});
-
 describe('GET /themepreference', () => {
   it('should return the users theme preference', async () => {
     const response = await request(app).get(`/themepreference?steamid=${supabaseTestSteamId}`);

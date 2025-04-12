@@ -144,37 +144,50 @@ app.get("/steam/validvisibility/:steamId", async (req, res) => {
 });
 
 // Sets session variables for a given steam id
-app.get("/steam/setsession/:steamId", async (req, res) => {
+app.get('/steam/setsession/:steamId', async (req, res) => {
   const id = req.params.steamId;
-  // Fetch the steamName asynchronously and store it in the session
-  const steamId = BigInt(req.params.steamId); //Set steamid to big Int
-  const result = await insertProfile(steamId); //Toss it to the insert profile function
-
-  if (result) {
-    //if we add a profile,
-    await insertGames(steamId); //insert games from that profile
-  }
-  // continue the set session work
-
+  const steamId = BigInt(id);
+  
   try {
-    const response = await axios.get(
-      process.env.BACKEND_URL + "/steam/playersummary",
-      {
-        params: { steamid: id }, // Send the steamid in the request
-      }
+    // First check if profile exists in database
+    const { rows: existingRows } = await pool.query(
+      'SELECT username, avatar_hash FROM "Profiles" WHERE "steam_id" = $1',
+      [steamId]
     );
+
+    if (existingRows.length > 0) {
+      // Profile exists - use data from database
+      const profile = existingRows[0];
+      req.session.steamId = id;
+      req.session.steamName = profile.username;
+      req.session.steamPFP = `https://avatars.steamstatic.com/${profile.avatar_hash}_full.jpg`;
+      
+      console.log('Steam ID Authenticated (from DB): ' + req.session.steamId);
+      return res.redirect(process.env.FRONTEND_URL + '/Dashboard');
+    }
+
+    // Profile doesn't exist - proceed with original flow
+    const result = await insertProfile(steamId);
+
+    if (result) {
+      await insertGames(steamId);
+    }
+
+    const response = await axios.get(process.env.BACKEND_URL + '/steam/playersummary', {
+      params: { steamid: id },
+    });
 
     req.session.steamId = id;
     req.session.steamName = response.data.username;
     req.session.steamPFP = response.data.userImage;
 
-    console.log("Steam ID Authenticated: " + req.session.steamId);
-    res.redirect(process.env.FRONTEND_URL + "/Dashboard");
+    console.log('Steam ID Authenticated: ' + req.session.steamId);
+    res.redirect(process.env.FRONTEND_URL + '/Dashboard');
   } catch (error) {
-    console.error("Error fetching Steam username:", error);
-    // Only send one response, error occurs when redirecting back from login error
-    if (!res.headersSent)
-      return res.status(500).send("Error fetching Steam username");
+    console.error('Error in steam/setsession:', error);
+    if (!res.headersSent) {
+      return res.status(500).send('Error processing Steam authentication');
+    }
   }
 });
 
@@ -209,7 +222,18 @@ export async function insertProfile(steamId: bigint) {
     const avatar = response.data.response.players[0]?.avatarhash; //isolate the 2 things we use
     const userName = response.data.response.players[0]?.personaname;
 
-    await delay();
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     await pool.query(
       //insert those things along with the steamID to our database
@@ -246,7 +270,18 @@ app.get("/steam/playersummary", async (req, res) => {
       }
     );
 
-    await delay();
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     const username = response.data.response.players[0]?.personaname;
     const userImage = response.data.response.players[0]?.avatarfull;
@@ -264,35 +299,49 @@ app.get("/steam/playersummary", async (req, res) => {
 
 // Get three most recent games from steam id
 
-app.get('/steam/recentgames', 
-  lockoutMiddleware, 
-  async (req, res, next) => {
-    try {
-      const steamId = req.query.steamid || req.session.steamId;
-      const key = process.env.STEAM_API_KEY;
+app.get('/steam/recentgames', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  const key = process.env.STEAM_API_KEY
 
-      const { data } = await axios.get(
-        `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`,
-        { params: {
-           key, 
-           steamid: steamId, 
-           format: 'json' } }
-      );
+  try {
+    const { data } = await axios.get(
+      `https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`,
+      {
+        params: {
+          key: key,
+          steamid: steamId,
 
-      await delay();
-      const games = data.response.games?.slice(0, 3) || [];
-      res.status(200).send(games);
-    } catch (error) {
-      next(error); // Pass to error handler
-    }
-  },
+          format: 'json',
+        },
+      }
+    )
 
-  releaseLockout, // This will always run after the main handler
-  (error, req, res, next) => { // Error handler
-    console.error('Error in recentgames:', error);
-    res.redirect(process.env.FRONTEND_URL);
+    const overallStart = Date.now();
+
+for (let i = 0; i < 2; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
+
+const overallEnd = Date.now();
+const totalElapsed = (overallEnd - overallStart) / 1000;
+console.log(`Total execution time: ${totalElapsed.toFixed(2)} seconds`);
+
+    console.log('Done');
+
+    const games = data.response.games?.slice(0, 3) || []
+    res.status(200).send(games)
+  } catch (error) {
+    console.error('Error fetching Steam data:', error)
+    res.redirect(process.env.FRONTEND_URL)
   }
-);
+})
 
 // "Logout" i.e. remove steam id and name from session storage
 app.get("/steam/logout", (req, res) => {
@@ -326,6 +375,7 @@ app.get("/steam/logininfo", async (req, res) => {
 // Used for fetching display card info after login
 app.get("/steam/getdisplayinfo", async (req, res) => {
   // If Steam ID and name are in the session, return them
+  
   if (req.session.steamId && req.session.steamName) {
     return res.json({
       steamId: req.session.steamId,
@@ -340,38 +390,31 @@ app.get("/steam/getdisplayinfo", async (req, res) => {
 });
 
 // Get the entrie friends list from steam
-app.get('/steam/friendsList',
-  lockoutMiddleware,
-  async (req, res, next) => {
-    try {
-      const steamId = req.query.steamid || req.session.steamId;
-      if (!steamId) {
-        console.log('no steam id');
-        return res.sendStatus(400);
-      }
+app.get('/steam/friendsList', async (req, res) => {
+  const steamId = req.query.steamid || req.session.steamId
+  if (steamId) {
+    const API_KEY = process.env.STEAM_API_KEY
+    const data = await axios.get(
+      `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}&relationship=friend`
+    )
+      const overallStart = Date.now();
 
-      const { data } = await axios.get(
-        `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/`,
-        { params: { 
-          key: process.env.STEAM_API_KEY, 
-          steamid: steamId, 
-          relationship: 'friend' 
-        } 
-      }
-      );
-
-      await delay();
-      res.status(200).json(data.friendslist.friends);
-    } catch (error) {
-      next(error);
-    }
-  },
-  releaseLockout,
-  (error, req, res, next) => {
-    console.error('Error in friendsList:', error);
-    res.sendStatus(500);
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
+    return res.status(200).json(data.data.friendslist.friends)
+  } else {
+    console.log('no steam id')
+    res.sendStatus(400)
   }
-);
+})
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
@@ -529,59 +572,78 @@ app.get("/usergames", async (req, res) => {
   }
 });
 
-app.get('/ownedGames',
-  lockoutMiddleware,
-  async (req, res, next) => {
-    try {
-      console.log('Session Object:', req.session);
-      if (!req.session.steamId) {
-        console.log('No Steam Id Found in Session');
-        return res.status(401).json({
-           error: 'No Steam ID found. Please log in.' 
-          });
-      }
+app.get('/ownedGames', async (req, res) => {
+  console.log('Session Object:', req.session)
+  console.log('Steam ID:', req.session.steamId)
 
-      const KEY = process.env.STEAM_API_KEY;
-      if (!KEY) {
-        console.error('STEAM_API_KEY missing');
-        return res.status(500).json({ error: 'Server configuration error.' });
-      }
-
-      const { data } = await axios.get(
-        'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
-        { params: { 
-          steamid: req.session.steamId, 
-          include_appinfo: true, 
-          key: KEY 
-        } }
-      );
-
-      await delay();
-      if (!data.response?.games) {
-        return res.status(404).json({ error: 'No owned games found.' });
-      }
-
-      const ownedGames = data.response.games.map(game => ({
-        id: game.appid,
-        title: game.name,
-        header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
-        playtime_forever: game.playtime_forever || 0,
-        playtime_2weeks: game.playtime_2weeks || 0,
-      }));
-
-      res.json(ownedGames);
-    } catch (error) {
-      next(error);
-    } finally {
-      // Release the lockout in the finally block to ensure it always runs
-      releaseLockout(req, res, next);
-    }
-  },
-  (error, req, res, next) => {
-    console.error('Error in ownedGames:', error.message, error.response?.data);
-    res.status(500).json({ error: 'Failed to fetch owned games.' });
+  if (!req.session.steamId) {
+    console.log('No Steam Id Found in Session - /ownedGames')
+    return res.status(401).json({ error: 'No Steam ID found. Please log in.' })
   }
-);
+
+  const steamId = req.session.steamId
+  const KEY = process.env.STEAM_API_KEY
+  if (!KEY) {
+    console.error('STEAM_API_KEY is not set in environment variables')
+    return res
+      .status(500)
+      .json({ error: 'Server configuration error: Missing Steam API key.' })
+  }
+
+  try {
+    console.log('Making Steam API Request with steamId:', steamId)
+    const gameResponse = await axios.get(
+      'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/',
+      {
+        params: {
+          steamid: steamId,
+          include_appinfo: true,
+          key: KEY,
+        },
+      }
+    )
+    const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
+
+const overallEnd = Date.now();
+const totalElapsed = (overallEnd - overallStart) / 1000;
+console.log(`Total execution time: ${totalElapsed.toFixed(2)} seconds`);
+
+    console.log('Done');
+    const data = gameResponse.data
+    if (!data.response || !data.response.games) {
+      return res.status(404).json({ error: 'No owned games found for this user.' })
+    }
+
+    const ownedGames = data.response.games.map((game) => ({
+      id: game.appid,
+      title: game.name,
+      header_image: `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg`,
+      playtime_forever: game.playtime_forever || 0, // Include playtime in minutes (default to 0 if not present)
+      playtime_2weeks: game.playtime_2weeks || 0,
+    }))
+    
+    return res.json(ownedGames)
+    
+  } catch (error) {
+    console.error(
+      'Error fetching owned games from Steam API:',
+      error.message,
+      error.response?.data
+    )
+    return res.status(500).json({ error: 'Failed to fetch owned games from Steam API.' })
+  }
+})
 
 
 //Request to allow for searching for a game by name
@@ -691,13 +753,15 @@ app.get("/userGameSpecs", async (req, res) => {
   }
 });
 
-export async function insertGames(steamId: bigint) {
+export async function insertGames(steamId: bigint, friend: boolean = true) {
+  const useKey = friend ? process.env.FRIENDS_API_KEY : process.env.STEAM_API_KEY;
+
   try {
     const response = await axios.get(
       `https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`,
       {
         params: {
-          key: process.env.STEAM_API_KEY,
+          key: useKey,
           steamid: steamId,
           format: "json",
           include_appinfo: true,
@@ -796,8 +860,16 @@ export async function insertGames(steamId: bigint) {
       message: `Games inserted/updated successfully.`,
     };
   } catch (error) {
-    console.error("Error in insertGames:", error);
-    throw new Error("Internal Server Error");
+    if (error.response?.status === 429) {
+      console.warn('Rate limited encountered');
+      return { 
+        __handled429: true,
+        message: 'Rate limit exceeded' 
+      };
+    } else {
+      console.error('Error in insertGames:', error);
+      throw new Error('Internal Server Error');
+    }
   }
 }
 
@@ -813,8 +885,8 @@ app.get("/friendsListInfo", async (req, res) => {
   }
 });
 
-export async function delay() {
-  return new Promise((resolve) => setTimeout(resolve, 2000)); //set a 2 second delay for the API
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export async function manageLockout(): Promise<string | null> {
@@ -852,10 +924,21 @@ export async function fetchAndProcessFriends(
 
   //console.log(friendsResponse.data)
 
-  await delay();
+    const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
   const steamIds = friendsResponse.data.friendslist.friends
     .map((friend) => friend.steamid.toString())
-    .slice(0, 20);
+    .slice(0, 5)
   //console.log(steamIds)
 
   if (forced) {
@@ -920,7 +1003,18 @@ export async function fetchAndStoreProfiles(userIdsToCheck: string[]) {
         avatar,
       });
 
-      await delay(); //always making sure we sleep
+        const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+} //always making sure we sleep
     } catch (error) {
       await pool.query('UPDATE "Lockout" SET "code" = 0', []);
       console.error(`Error processing Steam ID ${steamId}:`, error.message);
@@ -978,9 +1072,10 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
   console.log("Starting initial insertGames for all users");
   userIdsToCheck.forEach((steamId) => {
     //console.log(`Calling insertGames for SteamID: ${steamId}`);
-    const steamIdBigInt = BigInt(steamId);
-    insertGames(steamIdBigInt);
-  });
+    const steamIdBigInt = BigInt(steamId)
+    const friends = true
+    insertGames(steamIdBigInt, friends)
+  })
 
   for (const steamId of userIdsToCheck) {
     const steamIdBigInt = BigInt(steamId);
@@ -1001,7 +1096,18 @@ export async function processAndStoreGames(userIdsToCheck: string[]) {
       );
       //console.log('API Response:', JSON.stringify(data, null, 2));
 
-      await delay();
+        const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
       //console.log('Delay completed');
 
       // Check response structure
@@ -1278,6 +1384,17 @@ export async function checkAccount(steamId) {
   let retVal = 0;
   const KEY = process.env.STEAM_API_KEY;
 
+  const { rows: existingRows } = await pool.query(
+    'SELECT * FROM "Profiles" WHERE "steam_id" = $1',
+    [steamId]
+  )
+
+  if (existingRows.length > 0) {
+    retVal = 3
+    return retVal;
+  }
+
+  console.log("made it here")
   try {
     // Checking game details
     const gameResponse = await axios.get(
@@ -1291,8 +1408,16 @@ export async function checkAccount(steamId) {
       }
     );
 
-    await delay();
-
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
     if (Object.keys(gameResponse.data.response).length > 0) {
       retVal += 2;
     }
@@ -1309,7 +1434,18 @@ export async function checkAccount(steamId) {
       }
     );
 
-    await delay();
+      const overallStart = Date.now();
+
+for (let i = 0; i < 3; i++) {
+    const iterationStart = Date.now();
+    console.log(`Starting iteration ${i} at ${new Date(iterationStart).toISOString()}`);
+    
+    await sleep(i * 1000);
+    
+    const iterationEnd = Date.now();
+    const iterationElapsed = (iterationEnd - iterationStart) / 1000;
+    console.log(`Iteration ${i} completed in ${iterationElapsed.toFixed(2)} seconds`);
+}
 
     if (Object.keys(friendsResponse.data).length > 0) {
       retVal += 1;
