@@ -8,17 +8,17 @@
   margin: auto;
   padding-top: 1.5%;
   padding-bottom: 10%;
-  scale: 1.05;
-  height: fit-content;
+  scale: 1.0;
+  height: 100%;
 }
 
 /* Game Content */
 .gameContent {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
   width: 100%;
+  height: fit-content;
 }
 
 /* Left Side */
@@ -27,6 +27,7 @@
   flex-direction: column;
   gap: 5px;
   width: 100%;
+  min-width: 320px;
   max-width: 320px;
   align-items: center;
   margin-right: 15px;
@@ -103,7 +104,7 @@
   text-align: center;
   font-weight: bold;
   font-size: 18px;
-  width: 100%;
+  min-width: 280px;
   max-width: 280px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   font-variant: small-caps;
@@ -295,7 +296,7 @@
 .progressRingCircle {
   /*stroke: #4caf50; /* Default color */
   stroke-dasharray: 314; /* 2 * PI * r (r=50) */
-  transition: stroke 0.6s ease-in-out, stroke-dashoffset 0.6s ease-in-out;
+  transition: all 0.6s ease-in-out;
   
 }
 

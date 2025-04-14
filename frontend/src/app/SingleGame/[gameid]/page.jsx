@@ -20,7 +20,7 @@ const SingleGamePage = () => {
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Server did not return JSON')
         }
-        response.data.description = response.data.description.replaceAll('"', '"')
+        response.data.description = response.data.description.replaceAll('&quot;', '"')
         response.data.description = response.data.description.replaceAll('&amp;', '&')
         setGame(response.data)
       } catch (error) {
@@ -46,24 +46,24 @@ const SingleGamePage = () => {
   const getStrokeDashOffset = (score) => {
     const radius = 50
     const circumference = 2 * Math.PI * radius
-    return circumference - (score / 100) * circumference
+    let strokeDash = circumference - (score / 100) * circumference
+
+    return strokeDash
   }
 
   // Trigger the Animation when the page loads
   useEffect(() => {
     setTimeout(() => {
       setAnimatedOffset(getStrokeDashOffset(reviewRatio))
+      if (game.metacritic_score)
+        setAnimatedOffset2(getStrokeDashOffset(game.metacritic_score))
+
+      if (game.boil_score) setAnimatedOffset3(getStrokeDashOffset(game.boil_score))
     }, 300) // Added Delay for a smoother animation
 
-    if (game?.metacritic_score == null) return
-    setTimeout(() => {
-      setAnimatedOffset2(getStrokeDashOffset(game.metacritic_score))
-    }, 300)
+    setTimeout(() => {}, 300)
 
-    if (game?.boil_score == null) return
-    setTimeout(() => {
-      setAnimatedOffset3(getStrokeDashOffset(game.boil_score))
-    }, 300)
+    setTimeout(() => {}, 300)
   }, [reviewRatio, game?.metacritic_score, game?.boil_score]) // Trigger animation when reviewRatio updates
 
   // Added a Function to determine the color of the progress bar
