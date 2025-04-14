@@ -38,8 +38,8 @@ export const test1SqlResult = [
     "title": "Day of Defeat"
   },
   {
-    "friend_steam_id": "2",
-    "username": "test2",
+    "friend_steam_id": "3",
+    "username": "test3",
     "game_id": "20",
     "last_2_weeks": "20",
     "title": "Team Fortress Classic"
@@ -47,20 +47,20 @@ export const test1SqlResult = [
   {
     "friend_steam_id": "2",
     "username": "test2",
+    "game_id": "20",
+    "last_2_weeks": "20",
+    "title": "Team Fortress Classic"
+  },
+  {
+    "friend_steam_id": "3",
+    "username": "test3",
     "game_id": "10",
     "last_2_weeks": "10",
     "title": "Counter-Strike"
   },
   {
-    "friend_steam_id": "3",
-    "username": "test3",
-    "game_id": "20",
-    "last_2_weeks": "20",
-    "title": "Team Fortress Classic"
-  },
-  {
-    "friend_steam_id": "3",
-    "username": "test3",
+    "friend_steam_id": "2",
+    "username": "test2",
     "game_id": "10",
     "last_2_weeks": "10",
     "title": "Counter-Strike"
