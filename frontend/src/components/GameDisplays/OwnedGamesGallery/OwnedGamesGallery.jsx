@@ -47,64 +47,65 @@ const OwnedGamesGallery = () => {
   }
 
   if (error) {
-    return (
-      <div className={styles.scrollContainer}>
-        <a className={styles.sectionHeader}>Dive Back Into the Action</a>
-        <a className={styles.subHeader}>
-          Pick up where you left off in these recent games
-        </a>
-        <p className={styles.errorText}>{error}Something went Wrong</p>
-      </div>
-    )
+    return
   }
 
-  return (
-    <div>
-      <div className={styles.scrollContainer}>
-        <a className={styles.sectionHeader}>Dive Back Into the Action</a>
-        <a className={styles.subHeader}>
-          Pick up where you left off in these recent games
-        </a>
-        <div className={styles.gridContainer}>
-          {ownedGames.length > 0 ? (
-            ownedGames.map((game) => (
-              <a
-                key={game.id}
-                href={`/SingleGame/${game.id}`}
-                className={styles.imageWrapper}
-              >
-                <img
-                  src={
-                    game.header_image ||
-                    `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
-                  }
-                  alt={game.title || `Game ${game.id}`}
-                  className={styles.gameImage}
-                />
-                <div className={styles.gameTitle}>
-                  <small>
-                    Go To Game Page
-                    <img src='/redirect.png' className={styles.redirectImage}></img>
-                  </small>
-                </div>
-                <div className={styles.gameCardInfo}>
-                  <strong>{game.title}</strong>
-                  <br />
-                  <small>
-                    {game.playtime_2weeks > 0
-                      ? (game.playtime_2weeks / 60).toFixed(2) + ' Hours Played'
-                      : "Huh? You haven't played this recently"}
-                  </small>{' '}
-                </div>
-              </a>
-            ))
-          ) : (
-            <p className={styles.loadingText}>No owned games to display</p>
-          )}
+  let hasRecent = false;
+  ownedGames.map((game) => {
+    if(game.playtime_2weeks > 0) hasRecent = true;
+  })
+  if (hasRecent)
+  {
+    return (
+      <div>
+        <div className={styles.scrollContainer}>
+          <a className={styles.sectionHeader}>Dive Back Into the Action</a>
+          <a className={styles.subHeader}>
+            Pick up where you left off in these recent games
+          </a>
+          <div className={styles.gridContainer}>
+            {ownedGames.length > 0 ? (
+              ownedGames.map((game) => (
+                <a
+                  key={game.id}
+                  href={`/SingleGame/${game.id}`}
+                  className={styles.imageWrapper}
+                >
+                  <img
+                    src={
+                      game.header_image ||
+                      `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
+                    }
+                    alt={game.title || `Game ${game.id}`}
+                    className={styles.gameImage}
+                  />
+                  <div className={styles.gameTitle}>
+                    <small>
+                      Go To Game Page
+                      <img src='/redirect.png' className={styles.redirectImage}></img>
+                    </small>
+                  </div>
+                  <div className={styles.gameCardInfo}>
+                    <strong>{game.title}</strong>
+                    <br />
+                    <small>
+                      {game.playtime_2weeks > 0
+                        ? (game.playtime_2weeks / 60).toFixed(2) + ' Hours Played'
+                        : "Huh? You haven't played this recently"}
+                    </small>{' '}
+                  </div>
+                </a>
+              ))
+            ) : (
+              <p className={styles.loadingText}>No owned games to display</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  } else {
+    return;
+  }
 }
 
 export default OwnedGamesGallery
