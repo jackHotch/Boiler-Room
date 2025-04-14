@@ -10,14 +10,20 @@ import axios from 'axios'
 
 export default function Dashboard() {
   const [games, setGames] = useState([])
+  const [topGames, setTopGames] = useState([])
   const [featuredGamesArray, setFeaturedGamesArray] = useState([])
 
   const fetchGames = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND}/usergames`, {
         withCredentials: true,
+        params: {
+          getHidden: 2,
+        },
       })
+
       setGames(response.data)
+      setTopGames(response.data)
     } catch (error) {
       console.error('Error fetching games:', error)
     }
@@ -121,6 +127,10 @@ export default function Dashboard() {
     { label: 'Hidden Gem' },
   ]
 
+  function gameHidden() {
+    fetchGames()
+  }
+
   return (
     <div className={styles.container}>
       <section className={styles.featuredGames}>
@@ -132,7 +142,7 @@ export default function Dashboard() {
       </section>
 
       <section className={styles.TopRatedGames}>
-        <TopRatedGames />
+        <TopRatedGames games={games} onGamesUpdate={() => fetchGames()} />
       </section>
 
       <section className={styles.GameTable}>

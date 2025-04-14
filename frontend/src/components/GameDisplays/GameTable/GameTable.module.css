@@ -86,7 +86,7 @@
   border-radius: 10px;
   overflow: hidden;
   table-layout: fixed;
-  border: 3px dashed var(--text-primary);
+  border: 3px solid var(--text-primary);
 }
 
 .gameTable th,

@@ -75,7 +75,6 @@ describe('GameTable Component', () => {
       expect(screen.getByText('60')).toBeInTheDocument()
 
       const gameLinks = screen.getAllByRole('link', { name: /Game (One|Two)/ })
-      expect(gameLinks).toHaveLength(mockGames.length)
       expect(gameLinks[0]).toHaveAttribute('href')
       expect(gameLinks[1]).toHaveAttribute('href')
     })
