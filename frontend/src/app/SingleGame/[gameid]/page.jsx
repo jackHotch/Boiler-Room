@@ -93,7 +93,7 @@ const SingleGamePage = () => {
           </div>
 
           <div className={styles.releaseDate}>
-            Release Date: {game.released ? game.released : 'Price Not Available'}
+            Release Date: {game.released ? game.released : 'Not Available'}
           </div>
         </div>
 
@@ -109,7 +109,7 @@ const SingleGamePage = () => {
             </a>
             <a className={styles.gameTitle}>{game.name} |</a>
             <div className={styles.price}>
-              {game.price ? '$' + game.price : 'Not Available'}
+              {game.price ? '$' + game.price : 'Price Not Available'}
             </div>
           </div>
 
