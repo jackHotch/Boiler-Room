@@ -109,7 +109,7 @@ const SingleGamePage = () => {
             </a>
             <a className={styles.gameTitle}>{game.name} |</a>
             <div className={styles.price}>
-              {game.price ? '$' + game.price : 'Not Available'}
+              {game.price ? '$' + game.price : 'Price Not Available'}
             </div>
           </div>
 
