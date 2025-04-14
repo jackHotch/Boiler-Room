@@ -100,7 +100,7 @@ export default function GameRecommendation() {
       stats[0].avg_hltb
     )
     const params = {
-      minBoilRating: -1, // Default value
+      minBoilRating: 0, // Default value
       minYear: '1970-01-01',
       maxYear: '2037-12-31',
       platform: [stats[0].most_common_platform], // Use the most played platform
@@ -135,7 +135,7 @@ export default function GameRecommendation() {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    let minBoilRating = parseFloat(event.target.minBoilRating.value) || -1
+    let minBoilRating = parseFloat(event.target.minBoilRating.value) || 0
     let minYear = event.target.minYear.value || '1970-01-01'
     let maxYear = event.target.maxYear.value || '2037-12-31'
     let platform = [
