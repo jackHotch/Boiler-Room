@@ -6,6 +6,25 @@ import axios from 'axios'
 import Select from 'react-select'
 
 export default function GameRecommendation() {
+  //Function to check for login and redirect
+  //to error page if not logged in
+  if (!process.env.JEST_WORKER_ID) {
+    checkLogin()
+  }
+  async function checkLogin() {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
+        { withCredentials: true }
+      )
+      if (!response.data.steamId) {
+        //redirect to error page if not logged in
+        window.location.href = '/LoginRedirect'
+      }
+    } catch (error) {
+      window.location.href = '/LoginRedirect'
+    }
+  }
   const [gameList, setGameList] = useState([]) // Store fetched games
   const [userStats, setUserStats] = useState([]) //Stores User default preferences
   const [steamId, setSteamId] = useState(null) //Stores user's steamId
