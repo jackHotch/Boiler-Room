@@ -1,5 +1,4 @@
 'use client'
-
 import styles from './Navbar.module.css'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
