@@ -210,6 +210,7 @@
 .boil .boil_score {
   visibility: hidden;
   width: 100%;
+  max-width: 224px;
   bottom: 100%;
   left: -2.5%;
   background-color: rgba(0, 0, 0, 0.75);
@@ -224,6 +225,7 @@
 .reviews .numReviews{
   visibility: hidden;
   width: 100%;
+  max-width: 224px;
   bottom: 100%;
   left: -2.5%;
   background-color: rgba(0, 0, 0, 0.75);
