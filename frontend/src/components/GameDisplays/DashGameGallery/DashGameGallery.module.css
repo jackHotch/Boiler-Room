@@ -1,24 +1,30 @@
 .gallery {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    color: var(--text-bw);
-    font-family: Arial, sans-serif;
-    background-size: 20px 20px;
-}    
+  display: flex;
+  flex-wrap:nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0px;
+  padding: 50px;
+  color: var(--text-bw);
+  font-family: Arial, sans-serif;
+  max-width: 100% - 40px;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
 .gameContainer {
     flex-direction: column;
     text-align: center;
     background: radial-gradient(circle, var(--bg-light) 15%, var(--bg-dark) 100%);
-    transform: scale(1.05);    border-radius: 8px;
+    transform: scale(1.0);    border-radius: 8px;
     padding: 15px;
     box-shadow: 0 0px 2px var(--text-primary);
     filter: brightness(1);
     position: relative;
     scale: .8;
     transition: all 0.25s ease-in-out;
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);    border: 5px outset var(--bg-dark);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);    
+    border: 5px outset var(--bg-dark);
     border-radius: 20px;
 }
     
@@ -32,44 +38,36 @@
 }
     
 .gallery img {
-    border: 1px solid var(--text-bw);
-    border-radius: 8px;
-    aspect-ratio: 2/3;
-    transition: all 0.25s ease-in-out;
-    cursor: pointer;
-    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.25);
-    filter: brightness(1);
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--text-bw);
+  border-radius: 8px;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+  box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.25);
+  filter: brightness(1);
 }
-    
+
 .gameContainer img:hover {
     outline: 1px solid var(--bg-accent);
     filter: brightness(1.1) scale(1.05) translateY(-5px);
     transition: all 0.25s ease-in-out;
 }
-    
-.gallery {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    color: var(--text-bw);
-    font-family: Arial, sans-serif;
-  }
   
-  .gameCategory {
+.gameCategory {
     margin-top: 5px;
-    font-size: 30px;
     margin-bottom: 15px;
+    font-size: clamp(1.5rem, 2vw, 2rem);
     font-weight: bold;
     font-variant: small-caps;
-    transition: color 0.25s ease-in-out; 
-  }
-  
-  .gameName {
-    font-size: 30px;
+    transition: color 0.25s ease-in-out;
+}
+
+.gameName {
+    font-size: clamp(1.5rem, 2vw, 2rem);
     padding-top: 10px;
-    margin: 5px 5px 0px 5px;
+    margin: 5px;
     color: var(--text-bw);
     cursor: default;
-    transition: color 0.25s ease-in-out; 
-  }
+    transition: color 0.25s ease-in-out;
+}

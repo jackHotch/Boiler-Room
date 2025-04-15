@@ -85,21 +85,12 @@ export default function Dashboard() {
         return currentYear - releaseYear >= 5
       }) || null
 
-    // Find a hidden gem: game with the lowest total reviews but the highest positive review percentage
-    // Note: We may switch out with a hand picked table of games later
-    const hiddenGem =
-      sortedGames
-        .filter((game) => game.positive + game.negative > 0) // Ensure it has reviews
-        .sort((a, b) => {
-          const aTotalReviews = a.positive + a.negative
-          const bTotalReviews = b.positive + b.negative
-
-          // Sort first by total reviews (ascending), then by positive percentage (descending)
-          return (
-            aTotalReviews - bTotalReviews ||
-            b.positive / bTotalReviews - a.positive / aTotalReviews
-          )
-        })[0] || null
+    const modernClassic =
+      sortedGames.find((game) => {
+        if (!game.released) return false
+        const releaseYear = parseInt(game.released.split('-')[0], 10)
+        return currentYear - releaseYear <= 3
+      }) || sortedGames[0]
 
     const sorted = sortedGames.sort((a, b) => {
       if (b.positive === a.positive) {
@@ -114,22 +105,18 @@ export default function Dashboard() {
           (game) =>
             game.hltb_score !== null &&
             game.game_id !== acclaimedClassic.game_id &&
-            game.game_id !== hiddenGem.game_id
+            game.game_id !== modernClassic.game_id
         )
         .sort((a, b) => a.hltb_score - b.hltb_score)[0] || null
 
-    return [quickPick, acclaimedClassic, hiddenGem]
+    return [quickPick, modernClassic, acclaimedClassic]
   }
 
   const featuredCategories = [
     { label: 'Quick Pick' },
+    { label: 'Modern Classic' },
     { label: 'Acclaimed Classic' },
-    { label: 'Hidden Gem' },
   ]
-
-  function gameHidden() {
-    fetchGames()
-  }
 
   return (
     <div className={styles.container}>

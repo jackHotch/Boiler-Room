@@ -171,7 +171,11 @@ app.get('/steam/setsession/:steamId', async (req, res) => {
   } catch (error) {
     console.error('Error in steam/setsession:', error)
     if (!res.headersSent) {
-      return res.status(500).send('Error processing Steam authentication')
+      return res
+        .status(500)
+        .send(
+          'Something went wrong processing Steam authentication, Please Try Logging in Again or Refreshing'
+        )
     }
   }
 })
