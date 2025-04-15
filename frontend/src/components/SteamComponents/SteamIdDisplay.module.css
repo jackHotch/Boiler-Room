@@ -5,32 +5,35 @@
     justify-content: space-between;
     align-items: stretch;
     position: absolute;
-    top: 110%;
-    right: -75%;
+    right: -100%;
     z-index: 100;
-    min-width: 200px; /* Matching searchbar width for consistency */
-    filter: opacity(0.9);
+    min-width: 200px;
+    scale: 1.1;    
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        background: var(--bg-dark);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(12px);
 }
 
 .infoContainer {
-    background: var(--bg-dark);
-    backdrop-filter: blur(10px);
-    border-radius: 8px; /* Matching navbar border radius */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background:
+    radial-gradient(ellipse at bottom, var(--bg-dark), transparent),
+    radial-gradient(ellipse at top, var(--bg-primary), transparent);
+    transition: all 0.25s ease-in-out;    backdrop-filter: blur(10px);
+    border-radius: 8px; 
     padding: 16px;
     width: 90%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 120px; /* Minimum height to accommodate content and buttons */
+    min-height: 120px; 
 }
-
+  
 .profileWrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 8px; /* Spacing between text sections */
+    gap: 8px; 
 }
 
 .textContainer {
@@ -40,7 +43,7 @@
     align-items: flex-start;
     flex-grow: 1;
     padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Separator line */
+    border-bottom: 1px solid var(--text-primary); /* Separator line */
 }
 
 .buttonContainer {

@@ -5,27 +5,26 @@
     padding: 40px;
     color: var(--text-bw);
     font-family: Arial, sans-serif;
-      opacity: 0.8;
-      background-size: 20px 20px;
+    background-size: 20px 20px;
 }    
 .gameContainer {
     flex-direction: column;
     text-align: center;
     background: radial-gradient(circle, var(--bg-light) 15%, var(--bg-dark) 100%);
-      transform: scale(1.05);    border-radius: 8px;
+    transform: scale(1.05);    border-radius: 8px;
     padding: 15px;
     box-shadow: 0 0px 2px var(--text-primary);
     filter: brightness(1);
     position: relative;
-    scale: .8;
+    scale: .9;
     transition: all 0.25s ease-in-out;
-    box-shadow: 0px 10px 25px -15px var(--text-primary), 5px 22px 24px 5px rgba(0, 0, 0, 0);
-    border: 5px outset var(--bg-dark);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);    border: 5px outset var(--bg-dark);
     border-radius: 20px;
+    margin: 15px;
 }
     
 .gameContainer:nth-child(even) {
-  scale: .85;
+  scale: 1;
 }
 
 .gameContainer:hover {

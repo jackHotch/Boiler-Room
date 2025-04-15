@@ -68,9 +68,10 @@ const SingleGamePage = () => {
 
   // Added a Function to determine the color of the progress bar
   const getStrokeColor = (score) => {
-    if (score >= 70) return 'Green'
-    if (score >= 40) return 'Yellow'
-    return 'Red'
+    if (score >= 75) return '#090'
+        if (score >= 50) return '#EE0'
+    if (score >= 25) return '#D70'
+    return '#500'
   }
 
   return error ? (
@@ -93,8 +94,10 @@ const SingleGamePage = () => {
           </div>
 
           <div className={styles.releaseDate}>
-            Release Date: {game.released ? game.released : 'Not Available'}
-          </div>
+                Release Date
+                <div className={styles.date}>{game.released ? game.released : 'Not Available'}</div>
+          
+              </div>
         </div>
 
         {/* Right Column */}

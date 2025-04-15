@@ -6,25 +6,6 @@ import axios from 'axios'
 import Select from 'react-select'
 
 export default function GameRecommendation() {
-  //Function to check for login and redirect
-  //to error page if not logged in
-  if (!process.env.JEST_WORKER_ID) {
-    checkLogin()
-  }
-  async function checkLogin() {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND}/steam/logininfo`,
-        { withCredentials: true }
-      )
-      if (!response.data.steamId) {
-        //redirect to error page if not logged in
-        window.location.href = '/LoginRedirect'
-      }
-    } catch (error) {
-      window.location.href = '/LoginRedirect'
-    }
-  }
   const [gameList, setGameList] = useState([]) // Store fetched games
   const [userStats, setUserStats] = useState([]) //Stores User default preferences
   const [steamId, setSteamId] = useState(null) //Stores user's steamId
@@ -119,7 +100,7 @@ export default function GameRecommendation() {
       stats[0].avg_hltb
     )
     const params = {
-      minBoilRating: 0, // Default value
+      minBoilRating: -1, // Default value
       minYear: '1970-01-01',
       maxYear: '2037-12-31',
       platform: [stats[0].most_common_platform], // Use the most played platform
@@ -154,7 +135,7 @@ export default function GameRecommendation() {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    let minBoilRating = parseFloat(event.target.minBoilRating.value) || 0
+    let minBoilRating = parseFloat(event.target.minBoilRating.value) || -1
     let minYear = event.target.minYear.value || '1970-01-01'
     let maxYear = event.target.maxYear.value || '2037-12-31'
     let platform = [
@@ -341,7 +322,7 @@ export default function GameRecommendation() {
         <div className={styles.gamesGrid}>
           {/* Recommended games */}
           {gameList.length > 0 ? (
-            gameList.slice(0, 10).map((game, index) => (
+            gameList.slice(0, 9).map((game, index) => (
               <div key={index} className={styles.gameCard}>
                 <a
                   key={game.id}
