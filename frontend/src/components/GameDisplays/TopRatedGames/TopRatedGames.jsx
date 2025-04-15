@@ -19,8 +19,12 @@ const TopRatedGames = ({ games }) => {
                 return game.hide === 0 // returns true for games with hide === 0
               })
               .slice(0, 12)
-              .map((game) => (
-                <a href={`/SingleGame/${game.game_id}`} className={styles.imageWrapper}>
+              .map((game, key) => (
+                <a
+                  key={key}
+                  href={`/SingleGame/${game.game_id}`}
+                  className={styles.imageWrapper}
+                >
                   <img
                     src={
                       game.header_image ||

@@ -16,15 +16,14 @@
     box-shadow: 0 0px 2px var(--text-primary);
     filter: brightness(1);
     position: relative;
-    scale: .9;
+    scale: .8;
     transition: all 0.25s ease-in-out;
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);    border: 5px outset var(--bg-dark);
     border-radius: 20px;
-    margin: 15px;
 }
     
 .gameContainer:nth-child(even) {
-  scale: 1;
+  scale: .85;
 }
 
 .gameContainer:hover {
