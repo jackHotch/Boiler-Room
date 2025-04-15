@@ -8,20 +8,21 @@
   color: var(--text-bw);
   font-family: Arial, sans-serif;
   max-width: 100% - 40px;
-  box-sizing: border-box;
-  overflow-x: auto;
+  box-sizing:content-box;
+  overflow-x: wrap;
 }
 
 .gameContainer {
     flex-direction: column;
     text-align: center;
     background: radial-gradient(circle, var(--bg-light) 15%, var(--bg-dark) 100%);
-    transform: scale(1.0);    border-radius: 8px;
-    padding: 15px;
+    scale: 1.0;    
+    border-radius: 8px;
+    padding: 10px;
     box-shadow: 0 0px 2px var(--text-primary);
     filter: brightness(1);
     position: relative;
-    scale: .8;
+    scale: .85;
     transition: all 0.25s ease-in-out;
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);    
     border: 5px outset var(--bg-dark);
@@ -29,19 +30,18 @@
 }
     
 .gameContainer:nth-child(even) {
-  scale: .85;
+  scale: .95;
 }
 
 .gameContainer:hover {
-  transform: scale(1.075) translateY(-5px);
-  filter: brightness(1.03);
+  transform: scale(1.025) translateY(-10px);
+  filter: brightness(1.1);
 }
     
 .gallery img {
   max-width: 100%;
   height: auto;
   border: 1px solid var(--text-bw);
-  border-radius: 8px;
   transition: all 0.25s ease-in-out;
   cursor: pointer;
   box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.25);
