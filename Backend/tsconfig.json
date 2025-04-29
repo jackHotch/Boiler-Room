@@ -17,7 +17,7 @@
     "outDir": "dist",
   },
   
-  "include": ["src/**/*",
+  "include": ["./api/*.ts", "src/**/*",
   "src/types/**/*" ],
   "exclude": ["jest.config.ts"]
 }
