@@ -22,6 +22,9 @@ app.set('trust proxy', 1)
 // Connect to the database
 const pool = new Pool({
   connectionString: process.env.DB_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 })
 pool.connect()
 
